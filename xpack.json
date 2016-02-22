@@ -1,0 +1,60 @@
+{
+	"$schema": "http://xcdl.github.io/schemas/xpack-1-1.json",
+	"name": "ilg-micro-os-plus-iii",
+	"title": "µOS++ IIIe",
+	"description": "An xPack with the µOS++ IIIe scheduler code.",
+	"xcdlFile": ".xcdl.json",
+	"repository": 
+	{
+		"type": "git",
+		"url": "https://github.com/micro-os-plus/micro-os-plus-iii.git",
+		"archive": "https://github.com/micro-os-plus/micro-os-plus-iii/archive/xpack.zip"
+	},
+
+	"version": "0.1.1",
+	"releases": [
+		
+	],
+
+	"keywords": [
+		"posix",
+		"µOS++",
+		"cmsis++",
+		"micro-os-plus",
+		"portable"
+	],
+
+	"homepage": "https://github.com/micro-os-plus/micro-os-plus-iii",
+	"support": [
+		{
+			"description": "forum",
+			"url": "http://www.element14.com/community/groups/gnu-arm-eclipse"
+		},
+
+		{
+			"description": "bugs & enhancements",
+			"url": "https://github.com/micro-os-plus/micro-os-plus-iii/issues"
+		}
+	],
+
+	"license": "LGPL-3.0",
+	"maintainers": [
+		{
+			"name": "Liviu Ionescu",
+			"email": "ilg@livius.net",
+			"url": "http://liviusdotnet.worldpress.com"
+		}
+	],
+
+	"contributors": [
+		{
+			"name": "Liviu Ionescu",
+			"email": "ilg@livius.net",
+			"url": "http://liviusdotnet.worldpress.com"
+		}
+	],
+
+	"dependencies": [
+		
+	]
+}
