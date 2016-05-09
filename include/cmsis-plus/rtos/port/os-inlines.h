@@ -67,9 +67,21 @@ namespace os
         __attribute__((always_inline))
         greeting (void)
         {
-          ;
+          trace::printf ("µOS++ Cortex-M");
+#if defined(__ARM_ARCH_7EM__)
+          trace::printf ("4");
+#if defined(__VFP_FP__) && !defined(__SOFTFP__)
+          trace::printf (" FP");
+#endif
+#elif defined(__ARM_ARCH_7M__)
+          trace::printf ("3");
+#elif defined(__ARM_ARCH_6M__)
+          trace::printf ("0/0+");
+#endif
+          trace::printf (" scheduler; preemptive.\n");
         }
 
+        // Mandatory inline in main().
         inline result_t
         __attribute__((always_inline))
         initialize (void)
@@ -126,7 +138,7 @@ namespace os
           uint32_t pri = __get_BASEPRI ();
           __set_BASEPRI_MAX (
               OS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY
-              << ((8 - __NVIC_PRIO_BITS)));
+                  << ((8 - __NVIC_PRIO_BITS)));
 #endif
           // Apparently not required by architecture, but used by
           // FreeRTOS, with an unconvincing motivation ("...  ensure
@@ -193,14 +205,6 @@ namespace os
         prepare_suspend (void)
         {
           ;
-        }
-
-        inline void
-        __attribute__((always_inline))
-        yield (void)
-        {
-          rtos::scheduler::current_thread_->resume ();
-          scheduler::reschedule ();
         }
 
       } /* namespace this_thread */
