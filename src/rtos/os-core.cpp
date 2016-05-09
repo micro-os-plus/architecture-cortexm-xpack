@@ -39,7 +39,8 @@
 #include <cmsis_device.h>
 
 /*
- *
+ * Implementation routines for the CMSIS++ reference scheduler, mainly
+ * the context switching and contet creation.
  */
 
 namespace os
