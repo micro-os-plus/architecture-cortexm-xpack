@@ -25,6 +25,7 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
+#include <string.h>
 #include <cassert>
 
 #include <cmsis-plus/rtos/os.h>
@@ -102,8 +103,15 @@ namespace os
 
           // The stack as if after a context save.
 
-          // Link register
-          *--p = 0x00000000; // LR   +13*4=56
+          // Link register // LR   +13*4=56
+#if defined(OS_BOOL_RTOS_PORT_CONTEX_CREATE_ZERO_LR)
+          *--p = 0x00000000;
+#else
+          // 0x0 looks odd in the debugger.
+          // The 'func+2' will make the stack trace start with 'func'.
+          *--p = (rtos::stack::element_t) (((ptrdiff_t) func + 2));
+#endif
+
           *--p = 12;  // R12  +12*4=52
 
           // According to ARM ABI, the first 4 word parameters are
@@ -185,9 +193,17 @@ namespace os
           NVIC_SetPriority (PendSV_IRQn, (1UL << __NVIC_PRIO_BITS) - 1UL);
 
           // The first context switch will want to save the initial SP
-          // somewhere, so prepare a fake pointer.
-          stack::element_t* fake;
-          stack_ptr_ptr = &fake;
+          // somewhere, so prepare a fake thread.
+          os_thread_t fake_thread;
+          memset (&fake_thread, 0, sizeof(os_thread_t));
+
+          fake_thread.name = "none";
+          rtos::Thread* pth = (rtos::Thread*) &fake_thread;
+
+          // Make the fake thread look like the current thread.
+          rtos::scheduler::current_thread_ = pth;
+          // Point the stack_ptr_ptr to the fake thread context.
+          stack_ptr_ptr = &pth->context ().port_.stack_ptr;
 
           // Trigger the PendSV; the exception will happen later,
           // after re-enabling the interrupts.
@@ -216,16 +232,20 @@ namespace os
 
         // Must be called in a critical section.
         void
-        reschedule (bool save __attribute__((unused)))
+        reschedule (void)
         {
-#if defined(OS_TRACE_RTOS_THREAD_CONTEXT)
-          trace::printf ("%s()\n", __func__);
-#endif
           if (rtos::scheduler::locked ())
             {
+#if defined(OS_TRACE_RTOS_THREAD_CONTEXT)
+              trace::printf ("%s() %s nop\n", __func__,
+                             rtos::scheduler::current_thread_->name ());
+#endif
               return;
             }
 
+#if defined(OS_TRACE_RTOS_THREAD_CONTEXT)
+          trace::printf ("%s()\n", __func__);
+#endif
           // Set PendSV to request a context switch.
           SCB->ICSR = SCB_ICSR_PENDSVSET_Msk;
 
@@ -237,13 +257,24 @@ namespace os
         void
         get_next_context (void)
         {
+          rtos::Thread* old_thread = rtos::scheduler::current_thread_;
+
 #if defined(OS_TRACE_RTOS_THREAD_CONTEXT)
-          trace::printf ("%s() leave %s (pps=%p,%p)\n", __func__,
-                         rtos::scheduler::current_thread_->name (),
-                         stack_ptr_ptr, *stack_ptr_ptr);
+          trace::printf ("%s() leave %s\n", __func__, old_thread->name ());
 #endif
+
           // Clear the PendSV bit.
           SCB->ICSR = SCB_ICSR_PENDSVCLR_Msk;
+
+          if (old_thread->sched_state () == rtos::thread::state::running)
+            {
+              Waiting_thread_node& crt_node = old_thread->ready_node_;
+              if (crt_node.next == nullptr)
+                {
+                  rtos::scheduler::ready_threads_list_.link (crt_node);
+                  // Ready state set in above link().
+                }
+            }
 
           // Determine the next thread.
           rtos::scheduler::current_thread_ =
@@ -254,9 +285,8 @@ namespace os
               &rtos::scheduler::current_thread_->context ().port_.stack_ptr;
 
 #if defined(OS_TRACE_RTOS_THREAD_CONTEXT)
-          trace::printf ("%s() in %s (pps=%p,%p)\n", __func__,
-                         rtos::scheduler::current_thread_->name (),
-                         stack_ptr_ptr, *stack_ptr_ptr);
+          trace::printf ("%s() switch to %s\n", __func__,
+                         rtos::scheduler::current_thread_->name ());
 #endif
         }
 
@@ -266,7 +296,8 @@ namespace os
       Systick_clock::start (void)
       {
         assert(
-            SysTick_Config (SystemCoreClock / rtos::Systick_clock::frequency_hz) == 0);
+            SysTick_Config (SystemCoreClock / rtos::Systick_clock::frequency_hz)
+                == 0);
 
         // Set SysTick interrupt priority to the lowest level (highest value).
         NVIC_SetPriority (SysTick_IRQn, (1UL << __NVIC_PRIO_BITS) - 1UL);
