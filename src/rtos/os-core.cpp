@@ -98,8 +98,8 @@ namespace os
           // Thread starts with interrupts enabled (T bit set).
           *--p = 0x01000000; // xPSR +15*4=64
 
-          // The address of the trampoline code.
-          *--p = (rtos::stack::element_t) (((ptrdiff_t) func) & (~1)); // PCL +14*4=60
+          // The address of the trampoline code. // PCL +14*4=60
+          *--p = (rtos::stack::element_t) (((ptrdiff_t) func) & (~1));
 
           // The stack as if after a context save.
 
@@ -107,12 +107,13 @@ namespace os
 #if defined(OS_BOOL_RTOS_PORT_CONTEX_CREATE_ZERO_LR)
           *--p = 0x00000000;
 #else
-          // 0x0 looks odd in the debugger.
-          // The 'func+2' will make the stack trace start with 'func'.
+          // 0x0 looks odd in the debugger, so try to hide it.
+          // In Eclipse using 'func+2' will make the stack trace
+          // start with 'func' (don't ask why).
           *--p = (rtos::stack::element_t) (((ptrdiff_t) func + 2));
 #endif
 
-          *--p = 12;  // R12  +12*4=52
+          *--p = 12;  // R12 +12*4=52
 
           // According to ARM ABI, the first 4 word parameters are
           // passed in R0-R3. Only 1 is used.
@@ -144,8 +145,6 @@ namespace os
 
       namespace scheduler
       {
-
-        rtos::stack::element_t** stack_ptr_ptr;
 
         void
         start (void)
@@ -202,8 +201,6 @@ namespace os
 
           // Make the fake thread look like the current thread.
           rtos::scheduler::current_thread_ = pth;
-          // Point the stack_ptr_ptr to the fake thread context.
-          stack_ptr_ptr = &pth->context ().port_.stack_ptr;
 
           // Trigger the PendSV; the exception will happen later,
           // after re-enabling the interrupts.
@@ -224,7 +221,7 @@ namespace os
           /* NOTREACHED */
         }
 
-        // The DSB/ISB are recommended by ARM after after programming
+        // The DSB/ISB are recommended by ARM after programming
         // the control registers.
         // (Application Note 321: ARM Cortex-M Programming Guide to
         // Memory Barrier Instructions)
@@ -254,10 +251,19 @@ namespace os
         }
 
         // Called from PendSV_Handler to perform the context switch.
-        void
-        get_next_context (void)
+        rtos::stack::element_t*
+        switch_stacks (rtos::stack::element_t* sp)
         {
+          // Enter a local critical section to protect the lists.
+          uint32_t pri = __get_BASEPRI ();
+          __set_BASEPRI_MAX (
+              OS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY
+                  << ((8 - __NVIC_PRIO_BITS)));
+
           rtos::Thread* old_thread = rtos::scheduler::current_thread_;
+
+          // Save the current SP in the initial context.
+          old_thread->context ().port_.stack_ptr = sp;
 
 #if defined(OS_TRACE_RTOS_THREAD_CONTEXT)
           trace::printf ("%s() leave %s\n", __func__, old_thread->name ());
@@ -268,6 +274,8 @@ namespace os
 
           if (old_thread->sched_state () == rtos::thread::state::running)
             {
+              // If the current thread is running, save it to the
+              // ready list, so that it will be resumed later.
               Waiting_thread_node& crt_node = old_thread->ready_node_;
               if (crt_node.next == nullptr)
                 {
@@ -276,18 +284,25 @@ namespace os
                 }
             }
 
-          // Determine the next thread.
+          // The top of the ready list gives the next thread to run.
           rtos::scheduler::current_thread_ =
               rtos::scheduler::ready_threads_list_.remove_top ();
-
-          // Update the pointer to the thread stack.
-          stack_ptr_ptr =
-              &rtos::scheduler::current_thread_->context ().port_.stack_ptr;
 
 #if defined(OS_TRACE_RTOS_THREAD_CONTEXT)
           trace::printf ("%s() switch to %s\n", __func__,
                          rtos::scheduler::current_thread_->name ());
 #endif
+
+          // Prepare a local copy of the new thread SP.
+          stack::element_t* out_sp =
+              rtos::scheduler::current_thread_->context ().port_.stack_ptr;
+
+          // Restore priorities.
+          __set_BASEPRI (pri);
+
+          // Return the new thread SP. Registers will be
+          // restored in the assembly code.
+          return out_sp;
         }
 
       } /* namespace scheduler */
@@ -310,22 +325,24 @@ namespace os
 extern "C" void
 PendSV_Handler (void);
 
+// Credits: inspired by FreeRTOS Cortex-M3/M4 xPortPendSVHandler(),
+// but simplified by moving the stack pointer save/restore to C++,
+// so that it is no longer needed to keep a separate global
+// pointer to the context.
+
 void
 __attribute__ ((section(".after_vectors"), naked, used))
 PendSV_Handler (void)
 {
-  // Credits: inspired by FreeRTOS Cortex-M3/M4 xPortPendSVHandler().
-
   asm volatile
   (
       // Registers R0-R3 are saved as part of the exception frame
       // and are free to use. The rest must be manually saved/restored.
 
-      "       mrs r0, PSP                         \n"// Get the main stack in R0
-      "       isb                                 \n"
+      "       stmdb sp!, {lr}                     \n"// Save LR on MSP (not on PSP!)
       "                                           \n"
-      "       ldr r3, ppstack                     \n"// Get the address of stack_ptr_ptr.
-      "       ldr r2, [r3, #0]                    \n"// Get the address of the context stack pointer.
+      "       mrs r0, PSP                         \n"// Get the thread stack in R0
+      "       isb                                 \n"
       "                                           \n"
 #if defined (__VFP_FP__) && !defined (__SOFTFP__)
       "       tst r14, #0x10                      \n" // Is the task using the FPU context?
@@ -335,22 +352,7 @@ PendSV_Handler (void)
       "                                           \n"
       "       stmdb r0!, {r4-r9,sl,fp}            \n" // Save the core registers r4-r11.
       "                                           \n"
-      "       str r0, [r2, #0]                    \n"// Save the new top of stack into the context.
-      "                                           \n"
-      "       stmdb sp!, {r3, lr}                 \n"
-      "                                           \n"
-      "       mov r0, %[pri]                      \n"// Disable interrupts allowed to make system calls
-      "       msr BASEPRI, r0                     \n"
-      "                                           \n"
-      "       bl %[gnc]                           \n"// get_next_context()
-      "                                           \n"
-      "       mov r0, #0                          \n"// Setting a value of 0 will cancel masking completely,
-      "       msr BASEPRI, r0                     \n"// enabling all interrupts.
-      "                                           \n"
-      "       ldmia sp!, {r3, lr}                 \n"
-      "                                           \n"
-      "       ldr r1, [r3, #0]                    \n"// At *stack_ptr_ptr is the new stack pointer.
-      "       ldr r0, [r1, #0]                    \n"// Get the SP from context.
+      "       bl %[gnc]                           \n"// r0 = switch_stacks(r0)
       "                                           \n"
       "       ldmia r0!, {r4-r9,sl,fp}            \n"// Pop the core registers r4-r11.
       "                                           \n"
@@ -360,23 +362,14 @@ PendSV_Handler (void)
       "       vldmiaeq r0!, {s16-s31}             \n"// If so, pop the high vfp registers too.
 #endif
       "                                           \n"
-      "       msr PSP, r0                         \n" // Restore the main stack register.
+      "       msr PSP, r0                         \n" // Restore the thread stack register.
       "       isb                                 \n"
       "                                           \n"
-      "       bx lr                               \n"// Branch to LR (R14) to return from exception.
-      "                                           \n"
-      "       .align 2                            \n"
-      "ppstack: .word _ZN2os4rtos4port9scheduler13stack_ptr_ptrE \n"
-
+      "       ldmia sp!, {pc}                     \n"// Restore PC from MSP, where LR was saved
+      "                                           \n"// This will return from exception.
       : /* out */
       : /* in */
-      [pri] "i"(OS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY
-          << ((8 - __NVIC_PRIO_BITS))),
-      [gnc] "i"(&os::rtos::port::scheduler::get_next_context)
-      : "memory", "cc"
-
-      // Note: An XMC4000 specific errata workaround recommends
-      // a 'push { r14 } / pop { pc }' before 'bx lr'.
+      [gnc] "i"(&os::rtos::port::scheduler::switch_stacks)
+      : /* clobber */
   );
-
 }

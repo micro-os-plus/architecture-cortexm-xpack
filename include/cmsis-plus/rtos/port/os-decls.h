@@ -96,7 +96,6 @@ namespace os
 
       namespace scheduler
       {
-        extern stack::element_t** stack_ptr_ptr;
       } /* namespace scheduler */
 
     // ----------------------------------------------------------------------
@@ -104,30 +103,6 @@ namespace os
     } /* namespace port */
   } /* namespace rtos */
 } /* namespace os */
-
-// ----------------------------------------------------------------------------
-
-#if !defined(OS_INTEGER_RTOS_MAIN_STACK_SIZE_BYTES)
-/**
- * @brief Default definition for the `main()` stack size, in bytes.
- * @details
- * Redefine it in `<os-app-config.h>` to the actual value.
- *
- * @note Ignored for synthetic platforms.
- */
-#define OS_INTEGER_RTOS_MAIN_STACK_SIZE_BYTES               (os::rtos::port::stack::default_size_bytes)
-#endif
-
-#if !defined(OS_INTEGER_RTOS_IDLE_STACK_SIZE_BYTES)
-/**
- * @brief Default definition for the idle thread stack size, in bytes.
- * @details
- * Redefine it in `<os-app-config.h>` to the actual value.
- *
- * @note Ignored for synthetic platforms.
- */
-#define OS_INTEGER_RTOS_IDLE_STACK_SIZE_BYTES               (os::rtos::port::stack::default_size_bytes)
-#endif
 
 // ----------------------------------------------------------------------------
 
