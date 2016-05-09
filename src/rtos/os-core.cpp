@@ -322,16 +322,20 @@ namespace os
 
           asm volatile
           (
-              " mrs %[r], PSP                       \n" // Get the thread stack in R0
+              // Get the thread stack
+              " mrs %[r], PSP                       \n"
               " isb                                 \n"
 
 #if defined (__VFP_FP__) && !defined (__SOFTFP__)
-              " tst r14, #0x10                      \n" // Is the task using the FPU context?
+              // Is the task using the FPU context?
+              " tst r14, #0x10                      \n"
               " it eq                               \n"
-              " vstmdbeq %[r]!, {s16-s31}           \n"// If so, push high vfp registers.
+              // If so, push high vfp registers.
+              " vstmdbeq %[r]!, {s16-s31}           \n"
 #endif
 
-              " stmdb %[r]!, {r4-r9,sl,fp}          \n" // Save the core registers r4-r11.
+              // Save the core registers r4-r11.
+              " stmdb %[r]!, {r4-r9,sl,fp}          \n"
 
               : [r] "=r" (sp_) /* out */
               : /* in */
@@ -362,15 +366,19 @@ namespace os
 
           asm volatile
           (
-              " ldmia %[r]!, {r4-r9,sl,fp}          \n" // Pop the core registers r4-r11.
+              // Pop the core registers r4-r11.
+              " ldmia %[r]!, {r4-r9,sl,fp}          \n"
 
 #if defined (__VFP_FP__) && !defined (__SOFTFP__)
-              " tst r14, #0x10                      \n" // Is the task using the FPU context?
+              // Is the task using the FPU context?
+              " tst r14, #0x10                      \n"
               " it eq                               \n"
-              " vldmiaeq %[r]!, {s16-s31}           \n"// If so, pop the high vfp registers too.
+              // If so, pop the high vfp registers too.
+              " vldmiaeq %[r]!, {s16-s31}           \n"
 #endif
 
-              " msr PSP, %[r]                       \n" // Restore the thread stack register.
+              // Restore the thread stack register.
+              " msr PSP, %[r]                       \n"
               " isb                                 \n"
 
               : /* out */
