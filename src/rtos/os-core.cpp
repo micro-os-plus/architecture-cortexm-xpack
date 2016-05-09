@@ -39,9 +39,6 @@
 #include <cmsis_device.h>
 
 /*
- * After power up, the processor hardware automatically
- * initialises the MSP by reading the vector table.
- * The core has CONTROL.SPSEL(bit2) = 0, always using MSP.
  *
  */
 
@@ -56,9 +53,17 @@ namespace os
       namespace thread
       {
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wunused-parameter"
-
+        /**
+         * @brief Create a new thread context on the stack.
+         * @param context Pointer to thread context.
+         * @param func Pointer to function to execute in the new context.
+         * @param args Function arguments.
+         *
+         * @details
+         * Initialise the stack with a repetitive pattern; create an
+         * exception stack frame (at stack top) such that an later
+         * PendSV will pass control to the new context.
+         */
         void
         Context::create (rtos::thread::Context* context, void* func, void* args)
         {
@@ -139,12 +144,50 @@ namespace os
           context->port_.stack_ptr = p;
         }
 
-#pragma GCC diagnostic pop
-
       } /* namespace thread */
+
+      /**
+       * @brief Start the SysTick.
+       *
+       * @details
+       * Some vendors libraries (like ST HAL) call it during
+       * inits, but with a default rate.
+       *
+       * It is here mainly to be sure it is always done properly, with the
+       * required rate.
+       */
+      void
+      Systick_clock::start (void)
+      {
+        assert(
+            SysTick_Config (SystemCoreClock / rtos::Systick_clock::frequency_hz)
+                == 0);
+
+        // Set SysTick interrupt priority to the lowest level (highest value).
+        NVIC_SetPriority (SysTick_IRQn, (1UL << __NVIC_PRIO_BITS) - 1UL);
+      }
+
+      // ----------------------------------------------------------------------------
 
       namespace scheduler
       {
+        /**
+         * @brief Start the scheduler.
+         *
+         * @details
+         * After power up, the processor hardware automatically
+         * initialises the MSP by reading the vector table.
+         * The core has CONTROL.SPSEL(bit2) = 0, always using MSP.
+         *
+         * The traditional way  to start the first thread
+         * is to use SVC 0.
+         *
+         * However, if the entire OS remains in privileged mode,
+         * this seems not necessary, and Chapter 12.9.1
+         * "Running a system with two stacks" in "The Definitive
+         * Guide to ARM Cortex!-M3 and Cortex-M4 Processors" by
+         * Joseph Yiu, provides a simpler solution.
+         */
 
         void
         start (void)
@@ -152,15 +195,6 @@ namespace os
 #if defined (__VFP_FP__) && !defined (__SOFTFP__)
           // The FPU should have been enabled by __initialize_hardware_early().
 #endif
-
-          // The traditional way to switch to start
-          // the first thread is to use SVC 0.
-
-          // However, if the entire OS remains in privileged mode,
-          // this seems not necessary, and Chapter 12.9.1
-          // "Running a system with two stacks" in "The Definitive
-          // Guide to ARM Cortex!-M3 and Cortex-M4 Processors" by
-          // Joseph Yiu, provides a simpler solution.
 
           // Disable all interrupts, to safely change the stack.
           __disable_irq ();
@@ -193,6 +227,8 @@ namespace os
 
           // The first context switch will want to save the initial SP
           // somewhere, so prepare a fake thread.
+          // Don't worry for being on the stack, this is used
+          // only once and can be overridden later.
           os_thread_t fake_thread;
           memset (&fake_thread, 0, sizeof(os_thread_t));
 
@@ -221,13 +257,21 @@ namespace os
           /* NOTREACHED */
         }
 
-        // The DSB/ISB are recommended by ARM after programming
-        // the control registers.
-        // (Application Note 321: ARM Cortex-M Programming Guide to
-        // Memory Barrier Instructions)
-        // http://infocenter.arm.com/help/topic/com.arm.doc.dai0321a/DAI0321A_programming_guide_memory_barriers_for_m_profile.pdf
+        // --------------------------------------------------------------------
 
-        // Must be called in a critical section.
+        /**
+         * @brief Reschedule the next thread.
+         *
+         * @details
+         * Thanks to the Cortex-M architecture, this is greatly
+         * simplified by the use of PendSV, which does the actual
+         * context switching.
+         *
+         * This routine only sets the PendSV request.
+         *
+         * @note Can be invoked from Interrupt Service Routines.
+         */
+
         void
         reschedule (void)
         {
@@ -235,7 +279,7 @@ namespace os
             {
 #if defined(OS_TRACE_RTOS_THREAD_CONTEXT)
               trace::printf ("%s() %s nop\n", __func__,
-                             rtos::scheduler::current_thread_->name ());
+                  rtos::scheduler::current_thread_->name ());
 #endif
               return;
             }
@@ -246,11 +290,114 @@ namespace os
           // Set PendSV to request a context switch.
           SCB->ICSR = SCB_ICSR_PENDSVSET_Msk;
 
+          // The DSB/ISB are recommended by ARM after programming
+          // the control registers.
+          // (Application Note 321: ARM Cortex-M Programming Guide to
+          // Memory Barrier Instructions)
+          // http://infocenter.arm.com/help/topic/com.arm.doc.dai0321a/DAI0321A_programming_guide_memory_barriers_for_m_profile.pdf
           __DSB ();
           __ISB ();
         }
 
-        // Called from PendSV_Handler to perform the context switch.
+        // --------------------------------------------------------------------
+
+        /**
+         * @brief Save the current thread context on stack.
+         * @return The current SP after saving the context.
+         *
+         * @details
+         * Get the current thread stack (PSP) and on it save R4-R11
+         * and possibly the FPU registers.
+         *
+         * The memory address after saving these registers is returned and
+         * will be saved by switch_stacks() in the current thread context.
+         */
+
+        inline stack::element_t*
+        __attribute__((always_inline))
+        save_on_stack (void)
+        {
+          register stack::element_t* sp_;
+
+          asm volatile
+          (
+              " mrs %[r], PSP                       \n" // Get the thread stack in R0
+              " isb                                 \n"
+
+#if defined (__VFP_FP__) && !defined (__SOFTFP__)
+              " tst r14, #0x10                      \n" // Is the task using the FPU context?
+              " it eq                               \n"
+              " vstmdbeq %[r]!, {s16-s31}           \n"// If so, push high vfp registers.
+#endif
+
+              " stmdb %[r]!, {r4-r9,sl,fp}          \n" // Save the core registers r4-r11.
+
+              : [r] "=r" (sp_) /* out */
+              : /* in */
+              : /* clobber */
+          );
+
+          return sp_;
+        }
+
+        /**
+         * @brief Restore the new thread from the given stack address.
+         * @param sp Address where the thread context was saved.
+         *
+         * @details
+         * Restore R4-R11 and possibly the FPU registers.
+         * Finally write the current stack address in PSP.
+         */
+
+        inline void
+        __attribute__((always_inline))
+        restore_from_stack (stack::element_t* sp)
+        {
+          // Without enforcing optimisations, an intermediate variable
+          // would be needed to avoid using R4, which collides with
+          // the R4 in the list of ldmia.
+
+          // register stack::element_t* sp_ asm ("r0") = sp;
+
+          asm volatile
+          (
+              " ldmia %[r]!, {r4-r9,sl,fp}          \n" // Pop the core registers r4-r11.
+
+#if defined (__VFP_FP__) && !defined (__SOFTFP__)
+              " tst r14, #0x10                      \n" // Is the task using the FPU context?
+              " it eq                               \n"
+              " vldmiaeq %[r]!, {s16-s31}           \n"// If so, pop the high vfp registers too.
+#endif
+
+              " msr PSP, %[r]                       \n" // Restore the thread stack register.
+              " isb                                 \n"
+
+              : /* out */
+              : [r] "r" (sp) /* in */
+              : /* clobber */
+          );
+        }
+
+        /**
+         * @brief Switch stacks to perform the reschedule().
+         * @param sp Pointer to the initial thread context.
+         * @return Pointer to the new thread context.
+         *
+         * @details
+         * This function is the heart of the scheduler and
+         * performs the context switches. It is called from the
+         * PendSV_Handler.
+         *
+         * The main purpose of this function is to:
+         * - remember the SP address in the thread context
+         * - possibly save the running thread in the ready list
+         * - select the next thread
+         * - get the new PSP from there
+         *
+         * To protect the internal lists, interrupts are partly
+         * disabled by a local critical section.
+         */
+
         rtos::stack::element_t*
         switch_stacks (rtos::stack::element_t* sp)
         {
@@ -290,7 +437,7 @@ namespace os
 
 #if defined(OS_TRACE_RTOS_THREAD_CONTEXT)
           trace::printf ("%s() switch to %s\n", __func__,
-                         rtos::scheduler::current_thread_->name ());
+              rtos::scheduler::current_thread_->name ());
 #endif
 
           // Prepare a local copy of the new thread SP.
@@ -305,71 +452,60 @@ namespace os
           return out_sp;
         }
 
+      // ----------------------------------------------------------------------
+
       } /* namespace scheduler */
-
-      void
-      Systick_clock::start (void)
-      {
-        assert(
-            SysTick_Config (SystemCoreClock / rtos::Systick_clock::frequency_hz)
-                == 0);
-
-        // Set SysTick interrupt priority to the lowest level (highest value).
-        NVIC_SetPriority (SysTick_IRQn, (1UL << __NVIC_PRIO_BITS) - 1UL);
-      }
-
     } /* namespace port */
   } /* namespace rtos */
 } /* namespace os */
 
+// ----------------------------------------------------------------------------
+
 extern "C" void
 PendSV_Handler (void);
 
-// Credits: inspired by FreeRTOS Cortex-M3/M4 xPortPendSVHandler(),
-// but simplified by moving the stack pointer save/restore to C++,
-// so that it is no longer needed to keep a separate global
-// pointer to the context.
+using namespace os::rtos;
+
+/**
+ * @brief PendSV exception handler.
+ *
+ * @details
+ * The PendSV_Handler is used to perform context switches.
+ * It should be configured with the lowest priority, and will
+ * execute right after being set or after the last interrupt
+ * if invoked from an ISR context.
+ *
+ * Its main purpose is to:
+ * - suspend the execution of the current thread
+ * - save all registers on the thread stack (PSP)
+ * - switch stacks
+ * - restore all registers from the new stack
+ * - resume execution of the new thread
+ *
+ * The optimize("s") is needed to avoid the nightmarish code
+ * generated on -O0.
+ *
+ * Without it, this function would have been naked and LR been
+ * manually pushed/popped because the inlined functions include
+ * variables, and on -O0 they always require local stack space,
+ * which manipulate R7, not saved in the exception frame, and
+ * this would complicate things to recover it from MSP.
+ *
+ * @note To be observed here is the use of two stacks.
+ * Being an exception handler, the regular push/pop in the function
+ * entry/exit code use MSP. However, part of the exception
+ * frame, R0-R3 are automatically saved on PSP. R4-R11 must be
+ * manually saved/restored.
+ */
 
 void
-__attribute__ ((section(".after_vectors"), naked, used))
+__attribute__ ((section(".after_vectors"), used, optimize("s")))
 PendSV_Handler (void)
 {
-  asm volatile
-  (
-      // Registers R0-R3 are saved as part of the exception frame
-      // and are free to use. The rest must be manually saved/restored.
-
-      "       stmdb sp!, {lr}                     \n"// Save LR on MSP (not on PSP!)
-      "                                           \n"
-      "       mrs r0, PSP                         \n"// Get the thread stack in R0
-      "       isb                                 \n"
-      "                                           \n"
-#if defined (__VFP_FP__) && !defined (__SOFTFP__)
-      "       tst r14, #0x10                      \n" // Is the task using the FPU context?
-      "       it eq                               \n"
-      "       vstmdbeq r0!, {s16-s31}             \n"// If so, push high vfp registers.
-#endif
-      "                                           \n"
-      "       stmdb r0!, {r4-r9,sl,fp}            \n" // Save the core registers r4-r11.
-      "                                           \n"
-      "       bl %[gnc]                           \n"// r0 = switch_stacks(r0)
-      "                                           \n"
-      "       ldmia r0!, {r4-r9,sl,fp}            \n"// Pop the core registers r4-r11.
-      "                                           \n"
-#if defined (__VFP_FP__) && !defined (__SOFTFP__)
-      "       tst r14, #0x10                      \n" // Is the task using the FPU context?
-      "       it eq                               \n"
-      "       vldmiaeq r0!, {s16-s31}             \n"// If so, pop the high vfp registers too.
-#endif
-      "                                           \n"
-      "       msr PSP, r0                         \n" // Restore the thread stack register.
-      "       isb                                 \n"
-      "                                           \n"
-      "       ldmia sp!, {pc}                     \n"// Restore PC from MSP, where LR was saved
-      "                                           \n"// This will return from exception.
-      : /* out */
-      : /* in */
-      [gnc] "i"(&os::rtos::port::scheduler::switch_stacks)
-      : /* clobber */
-  );
+  // The whole mystery of context switching, in one sentence. :-)
+  port::scheduler::restore_from_stack (
+      port::scheduler::switch_stacks (port::scheduler::save_on_stack ()));
 }
+
+// ----------------------------------------------------------------------------
+
