@@ -53,6 +53,34 @@ namespace os
     {
       // ----------------------------------------------------------------------
 
+      namespace stack
+      {
+        // Stack frame, as used by PendSV.
+        typedef struct frame_s
+        {
+          // Restored manually by ldmia %[r]!, {r4-r9,sl,fp}
+          stack::element_t r4;
+          stack::element_t r5;
+          stack::element_t r6;
+          stack::element_t r7;
+          stack::element_t r8;
+          stack::element_t r9;
+          stack::element_t r10; // sl
+          stack::element_t r11; // fp
+
+          // Restored automatically by exception return.
+          stack::element_t r0;
+          stack::element_t r1;
+          stack::element_t r2;
+          stack::element_t r3;
+
+          stack::element_t r12;
+          stack::element_t lr; // r14
+          stack::element_t pc; // r15
+          stack::element_t psr;
+        } frame_t;
+      } /* namespace stack */
+
       namespace thread
       {
 
@@ -85,59 +113,58 @@ namespace os
               *p = stack::magic;
             }
 
-          // Compute top of stack.
-          p = bottom + stack.size () / sizeof(rtos::stack::element_t);
+          // Compute top of stack. The -1 is to leave space for a magic
+          // that can be checked later to see if the stack is corrupted.
+          p = bottom
+              + (stack.size () - sizeof(stack::frame_t))
+                  / sizeof(rtos::stack::element_t) - 1;
 
-          // This magic should always be present here. If it is not,
-          // someone else damaged the thread stack.
-          *--p = stack::magic;           // magic
-
-          // To be safe, align the stack frames to 8. In total there are
-          // 16 words to store, so if the current address is not even,
-          // descend an extra word.
+          // Align the frame to 8 bytes.
           if (((int) p & 7) != 0)
             {
-              *--p = stack::magic;       // one more magic
+              --p;
             }
 
-          // Simulate the Cortex-M exception stack frame, i.e. how the stack
-          // would look after a call to yield().
-
-          // Thread starts with interrupts enabled (T bit set).
-          *--p = 0x01000000; // xPSR +15*4=64
-
-          // The address of the trampoline code. // PCL +14*4=60
-          *--p = (rtos::stack::element_t) (((ptrdiff_t) func) & (~1));
+          // For convenience, use the stack frame structure.
+          stack::frame_t* f = reinterpret_cast<stack::frame_t*> (p);
 
           // The stack as if after a context save.
 
-          // Link register // LR   +13*4=56
+          // Thread starts in thumb state (T bit set).
+          f->psr = 0x01000000; // xPSR +15*4=64
+
+          // The address of the trampoline code. // PC/R15 +14*4=60
+          f->pc = (rtos::stack::element_t) (((ptrdiff_t) func) & (~1));
+
+          // Link register // LR/R14 +13*4=56
 #if defined(OS_BOOL_RTOS_PORT_CONTEX_CREATE_ZERO_LR)
-          *--p = 0x00000000;
+          f->lr = 0x00000000;
 #else
           // 0x0 looks odd in the debugger, so try to hide it.
           // In Eclipse using 'func+2' will make the stack trace
           // start with 'func' (don't ask why).
-          *--p = (rtos::stack::element_t) (((ptrdiff_t) func + 2));
+          f->lr = (rtos::stack::element_t) (((ptrdiff_t) func + 2));
 #endif
+          // R13 is the SP; it is not present in the frame,
+          // it is loaded separately as PSP.
 
-          *--p = 12;  // R12 +12*4=52
+          f->r12 = 0xCCCCCCCC;  // R12 +12*4=52
 
           // According to ARM ABI, the first 4 word parameters are
           // passed in R0-R3. Only 1 is used.
-          *--p = 3; // R3 +11*4=48
-          *--p = 2; // R2 +10*4=44
-          *--p = 1; // R1 +9*4=40
-          *--p = (rtos::stack::element_t) args; // R0 +8*4=36
+          f->r3 = 0x33333333; // R3 +11*4=48
+          f->r2 = 0x22222222; // R2 +10*4=44
+          f->r1 = 0x11111111; // R1 +9*4=40
+          f->r0 = (rtos::stack::element_t) args; // R0 +8*4=36
 
-          *--p = 11; // R11  +7*4=32
-          *--p = 10; // R10  +6*4=28
-          *--p = 9; // R9 +5*4=24
-          *--p = 8; // R8 +4*4=20
-          *--p = 7; // R7 +3*4=16
-          *--p = 6; // R6 +2*4=12
-          *--p = 5; // R5 +1*4=8
-          *--p = 4; // R4 +0*4=4
+          f->r11 = 0xBBBBBBBB; // R11 +7*4=32
+          f->r10 = 0xAAAAAAAA; // R10 +6*4=28
+          f->r9 = 0x99999999; // R9 +5*4=24
+          f->r8 = 0x88888888; // R8 +4*4=20
+          f->r7 = 0x77777777; // R7 +3*4=16
+          f->r6 = 0x66666666; // R6 +2*4=12
+          f->r5 = 0x55555555; // R5 +1*4=8
+          f->r4 = 0x44444444; // R4 +0*4=4
 
           // Be sure the stack is large enough to hold at least
           // two more exception frames.
@@ -291,7 +318,7 @@ namespace os
             {
 #if defined(OS_TRACE_RTOS_THREAD_CONTEXT)
               trace::printf ("%s() %s nop\n", __func__,
-                             rtos::scheduler::current_thread_->name ());
+                  rtos::scheduler::current_thread_->name ());
 #endif
               return;
             }
@@ -338,8 +365,8 @@ namespace os
               " isb                                 \n"
 
 #if defined (__VFP_FP__) && !defined (__SOFTFP__)
-              // Is the task using the FPU context?
-              " tst r14, #0x10                      \n"
+              // Is the thread using the FPU context?
+              " tst lr, #0x10                      \n"
               " it eq                               \n"
               // If so, push high vfp registers.
               " vstmdbeq %[r]!, {s16-s31}           \n"
@@ -381,8 +408,8 @@ namespace os
               " ldmia %[r]!, {r4-r9,sl,fp}          \n"
 
 #if defined (__VFP_FP__) && !defined (__SOFTFP__)
-              // Is the task using the FPU context?
-              " tst r14, #0x10                      \n"
+              // Is the thread using the FPU context?
+              " tst lr, #0x10                      \n"
               " it eq                               \n"
               // If so, pop the high vfp registers too.
               " vldmiaeq %[r]!, {s16-s31}           \n"
@@ -463,7 +490,7 @@ namespace os
 
 #if defined(OS_TRACE_RTOS_THREAD_CONTEXT)
           trace::printf ("%s() switch to %s\n", __func__,
-                         rtos::scheduler::current_thread_->name ());
+              rtos::scheduler::current_thread_->name ());
 #endif
 
           // Prepare a local copy of the new thread SP.
