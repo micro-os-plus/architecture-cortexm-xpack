@@ -168,7 +168,7 @@ namespace os
         NVIC_SetPriority (SysTick_IRQn, (1UL << __NVIC_PRIO_BITS) - 1UL);
       }
 
-      // ----------------------------------------------------------------------------
+      // ----------------------------------------------------------------------
 
       namespace scheduler
       {
@@ -289,7 +289,7 @@ namespace os
             {
 #if defined(OS_TRACE_RTOS_THREAD_CONTEXT)
               trace::printf ("%s() %s nop\n", __func__,
-                  rtos::scheduler::current_thread_->name ());
+                             rtos::scheduler::current_thread_->name ());
 #endif
               return;
             }
@@ -434,8 +434,14 @@ namespace os
           trace::printf ("%s() leave %s\n", __func__, old_thread->name ());
 #endif
 
-          // Clear the PendSV bit.
-          SCB->ICSR = SCB_ICSR_PENDSVCLR_Msk;
+          // Clear the PendSV bit. This is done automatically,
+          // but it seems that in some extreme conditions with
+          // late arrival/preemption, it might trigger a new
+          // exception.
+          // (http://embeddedgurus.com/state-space/2011/09/whats-the-state-of-your-cortex/)
+          // However this shouldn't be a problem for this scheduler,
+          // so currently do not use it.
+          // SCB->ICSR = SCB_ICSR_PENDSVCLR_Msk;
 
           if (old_thread->sched_state () == rtos::thread::state::running)
             {
@@ -451,11 +457,11 @@ namespace os
 
           // The top of the ready list gives the next thread to run.
           rtos::scheduler::current_thread_ =
-              rtos::scheduler::ready_threads_list_.remove_top ();
+              rtos::scheduler::ready_threads_list_.unlink_head ();
 
 #if defined(OS_TRACE_RTOS_THREAD_CONTEXT)
           trace::printf ("%s() switch to %s\n", __func__,
-              rtos::scheduler::current_thread_->name ());
+                         rtos::scheduler::current_thread_->name ());
 #endif
 
           // Prepare a local copy of the new thread SP.
