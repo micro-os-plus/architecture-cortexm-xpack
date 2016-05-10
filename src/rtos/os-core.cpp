@@ -199,7 +199,7 @@ namespace os
         start (void)
         {
 #if defined (__VFP_FP__) && !defined (__SOFTFP__)
-          // The FPU should have been enabled by __initialize_hardware_early().
+          // The FPU should have been enabled by os_initialize_hardware_early().
 #endif
 
           // Disable all interrupts, to safely change the stack.
