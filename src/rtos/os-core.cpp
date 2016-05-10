@@ -40,7 +40,7 @@
 
 /*
  * Implementation routines for the CMSIS++ reference scheduler, mainly
- * the context switching and contet creation.
+ * the context switching and context creation.
  */
 
 namespace os
@@ -56,13 +56,13 @@ namespace os
 
         /**
          * @brief Create a new thread context on the stack.
-         * @param context Pointer to thread context.
-         * @param func Pointer to function to execute in the new context.
-         * @param args Function arguments.
+         * @param [in] context Pointer to thread context.
+         * @param [in] func Pointer to function to execute in the new context.
+         * @param [in] args Function arguments.
          *
          * @details
          * Initialise the stack with a repetitive pattern; create an
-         * exception stack frame (at stack top) such that an later
+         * exception stack frame (at stack top) such that a later
          * PendSV will pass control to the new context.
          */
         void
@@ -148,14 +148,14 @@ namespace os
       } /* namespace thread */
 
       /**
-       * @brief Start the SysTick.
+       * @brief Start the SysTick clock.
        *
        * @details
-       * Some vendors libraries (like ST HAL) call it during
-       * inits, but with a default rate.
+       * Some vendors libraries (like ST HAL) already initialise SysTick
+       * during their code, but with a default rate.
        *
-       * It is here mainly to be sure it is always done properly, with the
-       * required rate.
+       * It is here explicitly to be sure it is always done properly,
+       * with the required rate.
        */
       void
       Systick_clock::start (void)
@@ -173,15 +173,18 @@ namespace os
       namespace scheduler
       {
         /**
-         * @brief Start the scheduler.
+         * @brief Start the scheduler and pass control to the main thread.
          *
          * @details
-         * After power up, the processor hardware automatically
-         * initialises the MSP by reading the vector table.
-         * The core has CONTROL.SPSEL(bit2) = 0, always using MSP.
+         * After power up, the processor is in privileged mode.
+         * The hardware automatically
+         * initialises the MSP with the first word in the vector table.
+         * The core has CONTROL.SPSEL = 0 (bit 1), meaning
+         * "always using MSP".
          *
-         * The traditional way  to start the first thread
-         * is to use SVC 0.
+         * The traditional way to start the first thread
+         * is to use SVC 0 and in the handler change the stack
+         * pointer, change the mode and return into the first thread.
          *
          * However, if the entire OS remains in privileged mode,
          * this seems not necessary, and Chapter 12.9.1
@@ -202,7 +205,7 @@ namespace os
 
           // The main trick is to switch the current SP from MSP to PSP
           // without breaking the running code. This is simply done by
-          // initialising PSP to be the same as MSP.
+          // initialising PSP with the same value as MSP.
           __set_PSP (__get_MSP ());
           // Configure thread mode to use PSP (CONTROL.SPSEL=1).
           __set_CONTROL (__get_CONTROL () | CONTROL_SPSEL_Msk);
@@ -226,8 +229,9 @@ namespace os
           // Set PendSV interrupt priority to the lowest level (highest value).
           NVIC_SetPriority (PendSV_IRQn, (1UL << __NVIC_PRIO_BITS) - 1UL);
 
-          // The first context switch will want to save the initial SP
-          // somewhere, so prepare a fake thread.
+          // One disadvantage of this simple method is that
+          // the first context switch will want to save the initial SP
+          // somewhere, so prepare a fake thread context.
           // Don't worry for being on the stack, this is used
           // only once and can be overridden later.
           os_thread_t fake_thread;
@@ -239,7 +243,7 @@ namespace os
           // Make the fake thread look like the current thread.
           rtos::scheduler::current_thread_ = pth;
 
-          // Trigger the PendSV; the exception will happen later,
+          // Trigger the PendSV; the exception will happen a bit later,
           // after re-enabling the interrupts.
           scheduler::reschedule ();
 
@@ -251,7 +255,7 @@ namespace os
           // Enable all interrupts; allow PendSV to occur.
           __enable_irq ();
 
-          // The context switch should occur somewhere here.
+          // The context switch will occur somewhere here.
           for (;;)
             __NOP ();
 
@@ -268,7 +272,12 @@ namespace os
          * simplified by the use of PendSV, which does the actual
          * context switching.
          *
-         * This routine only sets the PendSV request.
+         * This routine only sets the PendSV request, the actual
+         * rescheduling is done in the PendSV_Handler.
+         *
+         * If interrupts are disabled, it can be invoked multiple
+         * times without a problem, the handler will be entered
+         * when interrupts are enabled.
          *
          * @note Can be invoked from Interrupt Service Routines.
          */
@@ -304,7 +313,7 @@ namespace os
 
         /**
          * @brief Save the current thread context on stack.
-         * @return The current SP after saving the context.
+         * @return The SP after saving the context.
          *
          * @details
          * Get the current thread stack (PSP) and on it save R4-R11
@@ -347,7 +356,7 @@ namespace os
 
         /**
          * @brief Restore the new thread from the given stack address.
-         * @param sp Address where the thread context was saved.
+         * @param [in] sp Address where the thread context was saved.
          *
          * @details
          * Restore R4-R11 and possibly the FPU registers.
@@ -388,8 +397,8 @@ namespace os
         }
 
         /**
-         * @brief Switch stacks to perform the reschedule().
-         * @param sp Pointer to the initial thread context.
+         * @brief Switch stacks to perform the rescheduling.
+         * @param [in] sp Pointer to the initial thread context.
          * @return Pointer to the new thread context.
          *
          * @details
@@ -399,9 +408,9 @@ namespace os
          *
          * The main purpose of this function is to:
          * - remember the SP address in the thread context
-         * - possibly save the running thread in the ready list
+         * - add the running thread to the ready list
          * - select the next thread
-         * - get the new PSP from there
+         * - get the new SP from there
          *
          * To protect the internal lists, interrupts are partly
          * disabled by a local critical section.
@@ -430,7 +439,7 @@ namespace os
 
           if (old_thread->sched_state () == rtos::thread::state::running)
             {
-              // If the current thread is running, save it to the
+              // If the current thread is running, add it to the
               // ready list, so that it will be resumed later.
               Waiting_thread_node& crt_node = old_thread->ready_node_;
               if (crt_node.next == nullptr)
@@ -479,26 +488,26 @@ using namespace os::rtos;
  * @brief PendSV exception handler.
  *
  * @details
- * The PendSV_Handler is used to perform context switches.
- * It should be configured with the lowest priority, and will
- * execute right after being set or after the last interrupt
- * if invoked from an ISR context.
+ * The PendSV_Handler is used to perform the context switches.
+ * PendSV should be configured with the lowest priority; it will
+ * execute right after interrupts are enabled or after the last
+ * interrupt is terminated if invoked from an ISR context.
  *
  * Its main purpose is to:
  * - suspend the execution of the current thread
- * - save all registers on the thread stack (PSP)
+ * - save all registers on the thread stack (using PSP)
  * - switch stacks
  * - restore all registers from the new stack
  * - resume execution of the new thread
  *
- * The optimize("s") is needed to avoid the nightmarish code
- * generated on -O0.
+ * The `optimize("s")` is needed to avoid the nightmarish code
+ * generated with `-O0`.
  *
- * Without it, this function would have been naked and LR been
+ * Without it, this function would have been naked and LR have been
  * manually pushed/popped because the inlined functions include
- * variables, and on -O0 they always require local stack space,
- * which manipulate R7, not saved in the exception frame, and
- * this would complicate things to recover it from MSP.
+ * variables, and on `-O0` they always get allocated local stack space,
+ * which manipulates R7, and R7 is not saved in the exception frame,
+ * so this would unnecessarily complicate things to recover it from MSP.
  *
  * @note To be observed here is the use of two stacks.
  * Being an exception handler, the regular push/pop in the function
