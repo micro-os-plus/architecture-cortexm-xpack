@@ -31,6 +31,8 @@
 #include <cmsis-plus/rtos/os.h>
 #include <cmsis-plus/rtos/port/os-inlines.h>
 
+#include <cmsis-plus/cortexm/exception-handlers.h>
+
 // Better be the last, to undef putchar()
 #include <cmsis-plus/diag/trace.h>
 
@@ -484,9 +486,6 @@ namespace os
 } /* namespace os */
 
 // ----------------------------------------------------------------------------
-
-extern "C" void
-PendSV_Handler (void);
 
 using namespace os::rtos;
 
