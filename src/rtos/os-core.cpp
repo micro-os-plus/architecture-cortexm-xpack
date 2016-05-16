@@ -468,9 +468,10 @@ namespace os
           // late arrival/preemption, it might trigger a new
           // exception.
           // (http://embeddedgurus.com/state-space/2011/09/whats-the-state-of-your-cortex/)
-          // However this shouldn't be a problem for this scheduler,
-          // so currently do not use it.
-          // SCB->ICSR = SCB_ICSR_PENDSVCLR_Msk;
+          // This shouldn't be a problem for this scheduler,
+          // but without it the semaphore stress test sometimes fails
+          // on debug, so better safe than sorry.
+          SCB->ICSR = SCB_ICSR_PENDSVCLR_Msk;
 
           if (old_thread->sched_state () == rtos::thread::state::running)
             {
