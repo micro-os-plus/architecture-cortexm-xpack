@@ -454,15 +454,6 @@ namespace os
               OS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY
                   << ((8 - __NVIC_PRIO_BITS)));
 
-          rtos::Thread* old_thread = rtos::scheduler::current_thread_;
-
-          // Save the current SP in the initial context.
-          old_thread->context ().port_.stack_ptr = sp;
-
-#if defined(OS_TRACE_RTOS_THREAD_CONTEXT)
-          trace::printf ("%s() leave %s\n", __func__, old_thread->name ());
-#endif
-
           // Clear the PendSV bit. This is done automatically,
           // but it seems that in some extreme conditions with
           // late arrival/preemption, it might trigger a new
@@ -472,6 +463,15 @@ namespace os
           // but without it the semaphore stress test sometimes fails
           // on debug, so better safe than sorry.
           SCB->ICSR = SCB_ICSR_PENDSVCLR_Msk;
+
+          rtos::Thread* old_thread = rtos::scheduler::current_thread_;
+
+          // Save the current SP in the initial context.
+          old_thread->context ().port_.stack_ptr = sp;
+
+#if defined(OS_TRACE_RTOS_THREAD_CONTEXT)
+          trace::printf ("%s() leave %s\n", __func__, old_thread->name ());
+#endif
 
           if (old_thread->sched_state () == rtos::thread::state::running)
             {
@@ -490,7 +490,7 @@ namespace os
               rtos::scheduler::ready_threads_list_.unlink_head ();
 
 #if defined(OS_TRACE_RTOS_THREAD_CONTEXT)
-          trace::printf ("%s() switch to %s\n", __func__,
+          trace::printf ("%s() to %s\n", __func__,
               rtos::scheduler::current_thread_->name ());
 #endif
 
