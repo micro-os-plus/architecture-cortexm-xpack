@@ -81,100 +81,99 @@ namespace os
         } frame_t;
       } /* namespace stack */
 
-      namespace thread
+      /**
+       * @brief Create a new thread context on the stack.
+       * @param [in] context Pointer to thread context.
+       * @param [in] func Pointer to function to execute in the new context.
+       * @param [in] args Function arguments.
+       *
+       * @details
+       * Initialise the stack with a repetitive pattern; create an
+       * exception stack frame (at stack top) such that a later
+       * PendSV will pass control to the new context.
+       */
+      void
+      context::create (void* context, void* func, void* args)
       {
-
-        /**
-         * @brief Create a new thread context on the stack.
-         * @param [in] context Pointer to thread context.
-         * @param [in] func Pointer to function to execute in the new context.
-         * @param [in] args Function arguments.
-         *
-         * @details
-         * Initialise the stack with a repetitive pattern; create an
-         * exception stack frame (at stack top) such that a later
-         * PendSV will pass control to the new context.
-         */
-        void
-        Context::create (rtos::thread::Context* context, void* func, void* args)
-        {
 #if defined(OS_TRACE_RTOS_THREAD_CONTEXT)
-          trace::printf ("%s(%p)\n", __func__, context);
+        trace::printf ("%s(%p)\n", __func__, context);
 #endif
-          rtos::thread::Stack& stack = context->stack ();
-          rtos::stack::element_t* bottom = stack.bottom ();
+        class rtos::thread::context* th_ctx =
+            static_cast<class rtos::thread::context*> (context);
 
-          rtos::stack::element_t* p;
+        rtos::thread::stack & stack = th_ctx->stack ();
+        rtos::thread::stack::element_t* bottom = stack.bottom ();
 
-          // Initialise the entire stack with the magic word.
-          for (p = bottom;
-              p < bottom + stack.size () / sizeof(rtos::stack::element_t); ++p)
-            {
-              *p = stack::magic;
-            }
+        rtos::thread::stack::element_t* p;
 
-          // Compute top of stack. The -1 is to leave space for a magic
-          // that can be checked later to see if the stack is corrupted.
-          p = bottom
-              + (stack.size () - sizeof(stack::frame_t))
-                  / sizeof(rtos::stack::element_t) - 1;
+        // Initialise the entire stack with the magic word.
+        for (p = bottom;
+            p < bottom + stack.size () / sizeof(rtos::thread::stack::element_t);
+            ++p)
+          {
+            *p = stack::magic;
+          }
 
-          // Align the frame to 8 bytes.
-          if (((int) p & 7) != 0)
-            {
-              --p;
-            }
+        // Compute top of stack. The -1 is to leave space for a magic
+        // that can be checked later to see if the stack is corrupted.
+        p = bottom
+            + (stack.size () - sizeof(stack::frame_t))
+                / sizeof(rtos::thread::stack::element_t) - 1;
 
-          // For convenience, use the stack frame structure.
-          stack::frame_t* f = reinterpret_cast<stack::frame_t*> (p);
+        // Align the frame to 8 bytes.
+        if (((int) p & 7) != 0)
+          {
+            --p;
+          }
 
-          // The stack as if after a context save.
+        // For convenience, use the stack frame structure.
+        stack::frame_t* f = reinterpret_cast<stack::frame_t*> (p);
 
-          // Thread starts in thumb state (T bit set).
-          f->psr = 0x01000000; // xPSR +15*4=64
+        // The stack as if after a context save.
 
-          // The address of the trampoline code. // PC/R15 +14*4=60
-          f->pc = (rtos::stack::element_t) (((ptrdiff_t) func) & (~1));
+        // Thread starts in thumb state (T bit set).
+        f->psr = 0x01000000; // xPSR +15*4=64
 
-          // Link register // LR/R14 +13*4=56
+        // The address of the trampoline code. // PC/R15 +14*4=60
+        f->pc = (rtos::thread::stack::element_t) (((ptrdiff_t) func) & (~1));
+
+        // Link register // LR/R14 +13*4=56
 #if defined(OS_BOOL_RTOS_PORT_CONTEX_CREATE_ZERO_LR)
-          f->lr = 0x00000000;
+        f->lr = 0x00000000;
 #else
-          // 0x0 looks odd in the debugger, so try to hide it.
-          // In Eclipse using 'func+2' will make the stack trace
-          // start with 'func' (don't ask why).
-          f->lr = (rtos::stack::element_t) (((ptrdiff_t) func + 2));
+        // 0x0 looks odd in the debugger, so try to hide it.
+        // In Eclipse using 'func+2' will make the stack trace
+        // start with 'func' (don't ask why).
+        f->lr = (rtos::thread::stack::element_t) (((ptrdiff_t) func + 2));
 #endif
-          // R13 is the SP; it is not present in the frame,
-          // it is loaded separately as PSP.
+        // R13 is the SP; it is not present in the frame,
+        // it is loaded separately as PSP.
 
-          f->r12 = 0xCCCCCCCC;  // R12 +12*4=52
+        f->r12 = 0xCCCCCCCC;  // R12 +12*4=52
 
-          // According to ARM ABI, the first 4 word parameters are
-          // passed in R0-R3. Only 1 is used.
-          f->r3 = 0x33333333; // R3 +11*4=48
-          f->r2 = 0x22222222; // R2 +10*4=44
-          f->r1 = 0x11111111; // R1 +9*4=40
-          f->r0 = (rtos::stack::element_t) args; // R0 +8*4=36
+        // According to ARM ABI, the first 4 word parameters are
+        // passed in R0-R3. Only 1 is used.
+        f->r3 = 0x33333333; // R3 +11*4=48
+        f->r2 = 0x22222222; // R2 +10*4=44
+        f->r1 = 0x11111111; // R1 +9*4=40
+        f->r0 = (rtos::thread::stack::element_t) args; // R0 +8*4=36
 
-          f->r11 = 0xBBBBBBBB; // R11 +7*4=32
-          f->r10 = 0xAAAAAAAA; // R10 +6*4=28
-          f->r9 = 0x99999999; // R9 +5*4=24
-          f->r8 = 0x88888888; // R8 +4*4=20
-          f->r7 = 0x77777777; // R7 +3*4=16
-          f->r6 = 0x66666666; // R6 +2*4=12
-          f->r5 = 0x55555555; // R5 +1*4=8
-          f->r4 = 0x44444444; // R4 +0*4=4
+        f->r11 = 0xBBBBBBBB; // R11 +7*4=32
+        f->r10 = 0xAAAAAAAA; // R10 +6*4=28
+        f->r9 = 0x99999999; // R9 +5*4=24
+        f->r8 = 0x88888888; // R8 +4*4=20
+        f->r7 = 0x77777777; // R7 +3*4=16
+        f->r6 = 0x66666666; // R6 +2*4=12
+        f->r5 = 0x55555555; // R5 +1*4=8
+        f->r4 = 0x44444444; // R4 +0*4=4
 
-          // Be sure the stack is large enough to hold at least
-          // two more exception frames.
-          assert((p - bottom) > (2 * 16));
+        // Be sure the stack is large enough to hold at least
+        // two more exception frames.
+        assert((p - bottom) > (2 * 16));
 
-          // Store the current stack pointer in the context.
-          context->port_.stack_ptr = p;
-        }
-
-      } /* namespace thread */
+        // Store the current stack pointer in the context.
+        th_ctx->port_.stack_ptr = p;
+      }
 
       /**
        * @brief Start the SysTick clock.
@@ -187,10 +186,10 @@ namespace os
        * with the required rate.
        */
       void
-      Systick_clock::start (void)
+      clock_systick::start (void)
       {
         assert(
-            SysTick_Config (SystemCoreClock / rtos::Systick_clock::frequency_hz)
+            SysTick_Config (SystemCoreClock / rtos::clock_systick::frequency_hz)
                 == 0);
 
         // Set SysTick interrupt priority to the lowest level (highest value).
@@ -267,7 +266,7 @@ namespace os
           memset (&fake_thread, 0, sizeof(os_thread_t));
 
           fake_thread.name = "none";
-          rtos::Thread* pth = (rtos::Thread*) &fake_thread;
+          rtos::thread* pth = (rtos::thread*) &fake_thread;
 
           // Make the fake thread look like the current thread.
           rtos::scheduler::current_thread_ = pth;
@@ -318,7 +317,7 @@ namespace os
             {
 #if defined(OS_TRACE_RTOS_THREAD_CONTEXT)
               trace::printf ("%s() %s nop\n", __func__,
-                  rtos::scheduler::current_thread_->name ());
+                             rtos::scheduler::current_thread_->name ());
 #endif
               return;
             }
@@ -445,8 +444,8 @@ namespace os
          * disabled by a local critical section.
          */
 
-        rtos::stack::element_t*
-        switch_stacks (rtos::stack::element_t* sp)
+        stack::element_t*
+        switch_stacks (stack::element_t* sp)
         {
           // Enter a local critical section to protect the lists.
           uint32_t pri = __get_BASEPRI ();
@@ -464,10 +463,10 @@ namespace os
           // on debug, so better safe than sorry.
           SCB->ICSR = SCB_ICSR_PENDSVCLR_Msk;
 
-          rtos::Thread* old_thread = rtos::scheduler::current_thread_;
+          rtos::thread* old_thread = rtos::scheduler::current_thread_;
 
           // Save the current SP in the initial context.
-          old_thread->context ().port_.stack_ptr = sp;
+          old_thread->context_.port_.stack_ptr = sp;
 
 #if defined(OS_TRACE_RTOS_THREAD_CONTEXT)
           trace::printf ("%s() leave %s\n", __func__, old_thread->name ());
@@ -477,7 +476,7 @@ namespace os
             {
               // If the current thread is running, add it to the
               // ready list, so that it will be resumed later.
-              Waiting_thread_node& crt_node = old_thread->ready_node_;
+              waiting_thread_node& crt_node = old_thread->ready_node_;
               if (crt_node.next == nullptr)
                 {
                   rtos::scheduler::ready_threads_list_.link (crt_node);
@@ -491,12 +490,12 @@ namespace os
 
 #if defined(OS_TRACE_RTOS_THREAD_CONTEXT)
           trace::printf ("%s() to %s\n", __func__,
-              rtos::scheduler::current_thread_->name ());
+                         rtos::scheduler::current_thread_->name ());
 #endif
 
           // Prepare a local copy of the new thread SP.
           stack::element_t* out_sp =
-              rtos::scheduler::current_thread_->context ().port_.stack_ptr;
+              rtos::scheduler::current_thread_->context_.port_.stack_ptr;
 
           // Restore priorities.
           __set_BASEPRI (pri);

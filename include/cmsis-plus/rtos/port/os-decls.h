@@ -86,13 +86,10 @@ namespace os
         constexpr status_t init_status = 0;
       } /* namespace interrupts */
 
-      namespace thread
-      {
-        using context_t = struct context_s
-          {
-            stack::element_t* stack_ptr;
-          };
-      } /* namespace thread */
+      using thread_context_t = struct context_s
+        {
+          stack::element_t* stack_ptr;
+        };
 
       namespace scheduler
       {

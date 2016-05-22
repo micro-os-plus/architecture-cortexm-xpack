@@ -131,7 +131,7 @@ namespace os
         // Enter an IRQ critical section
         inline rtos::interrupts::status_t
         __attribute__((always_inline))
-        Critical_section::enter (void)
+        critical_section::enter (void)
         {
           // TODO: on M0 & M0+ cores there is no BASEPRI
 #if defined(__ARM_ARCH_7M__)
@@ -153,7 +153,7 @@ namespace os
         // Exit an IRQ critical section
         inline void
         __attribute__((always_inline))
-        Critical_section::exit (rtos::interrupts::status_t status)
+        critical_section::exit (rtos::interrupts::status_t status)
         {
 #if defined(__ARM_ARCH_7M__)
           __set_BASEPRI (status);
@@ -168,7 +168,7 @@ namespace os
         // Enter an IRQ uncritical section
         inline rtos::interrupts::status_t
         __attribute__((always_inline))
-        Uncritical_section::enter (void)
+        uncritical_section::enter (void)
         {
 #if defined(__ARM_ARCH_7M__)
           uint32_t pri = __get_BASEPRI ();
@@ -184,7 +184,7 @@ namespace os
         // Exit an IRQ critical section
         inline void
         __attribute__((always_inline))
-        Uncritical_section::exit (rtos::interrupts::status_t status)
+        uncritical_section::exit (rtos::interrupts::status_t status)
         {
 #if defined(__ARM_ARCH_7M__)
           __set_BASEPRI (status);
