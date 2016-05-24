@@ -47,6 +47,10 @@
 
 #include <stdint.h>
 
+typedef uint64_t os_port_clock_timestamp_t;
+typedef uint32_t os_port_clock_duration_t;
+typedef uint64_t os_port_clock_offset_t;
+
 typedef uint32_t os_port_irq_status_t;
 
 typedef struct
