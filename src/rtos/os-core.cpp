@@ -25,6 +25,10 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
+#if defined(__ARM_EABI__)
+
+// ----------------------------------------------------------------------------
+
 #include <string.h>
 #include <cassert>
 
@@ -559,3 +563,4 @@ PendSV_Handler (void)
 
 // ----------------------------------------------------------------------------
 
+#endif /* defined(__ARM_EABI__) */
