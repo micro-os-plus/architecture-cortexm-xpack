@@ -100,12 +100,12 @@ namespace os
       context::create (void* context, void* func, void* args)
       {
 #if defined(OS_TRACE_RTOS_THREAD_CONTEXT)
-        trace::printf ("%s(%p)\n", __func__, context);
+        trace::printf ("port::context::%s(%p)\n", __func__, context);
 #endif
         class rtos::thread::context* th_ctx =
             static_cast<class rtos::thread::context*> (context);
 
-        rtos::thread::stack & stack = th_ctx->stack ();
+        rtos::thread::stack& stack = th_ctx->stack ();
         rtos::thread::stack::element_t* bottom = stack.bottom ();
 
         rtos::thread::stack::element_t* p;
@@ -320,14 +320,14 @@ namespace os
           if (rtos::scheduler::locked ())
             {
 #if defined(OS_TRACE_RTOS_THREAD_CONTEXT)
-              trace::printf ("%s() %s nop\n", __func__,
+              trace::printf ("port::scheduler::%s() %s nop\n", __func__,
                              rtos::scheduler::current_thread_->name ());
 #endif
               return;
             }
 
 #if defined(OS_TRACE_RTOS_THREAD_CONTEXT)
-          trace::printf ("%s()\n", __func__);
+          trace::printf ("port::scheduler::%s()\n", __func__);
 #endif
           // Set PendSV to request a context switch.
           SCB->ICSR = SCB_ICSR_PENDSVSET_Msk;
@@ -473,7 +473,7 @@ namespace os
           old_thread->context_.port_.stack_ptr = sp;
 
 #if defined(OS_TRACE_RTOS_THREAD_CONTEXT)
-          trace::printf ("%s() leave %s\n", __func__, old_thread->name ());
+          trace::printf ("port::scheduler::%s() leave %s\n", __func__, old_thread->name ());
 #endif
 
           if (old_thread->sched_state () == rtos::thread::state::running)
@@ -493,7 +493,7 @@ namespace os
               rtos::scheduler::ready_threads_list_.unlink_head ();
 
 #if defined(OS_TRACE_RTOS_THREAD_CONTEXT)
-          trace::printf ("%s() to %s\n", __func__,
+          trace::printf ("port::scheduler::%s() to %s\n", __func__,
                          rtos::scheduler::current_thread_->name ());
 #endif
 
