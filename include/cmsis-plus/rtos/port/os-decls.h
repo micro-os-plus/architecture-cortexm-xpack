@@ -30,7 +30,7 @@
  * replacement for C++ applications.
  *
  * It is included in `cmsis-plus/rtos/os.h` to customise
- * it with port specific declarations.
+ * it with Cortex-M specific declarations.
  */
 
 #ifndef CMSIS_PLUS_RTOS_PORT_OS_DECLS_H_
@@ -40,6 +40,24 @@
 
 #include <cmsis-plus/rtos/os-app-config.h>
 #include <cmsis-plus/rtos/port/os-c-decls.h>
+
+#if !defined(OS_INTEGER_RTOS_MIN_STACK_SIZE_BYTES)
+#define OS_INTEGER_RTOS_MIN_STACK_SIZE_BYTES (256)
+#endif
+
+#if !defined(OS_INTEGER_RTOS_DEFAULT_STACK_SIZE_BYTES)
+#define OS_INTEGER_RTOS_DEFAULT_STACK_SIZE_BYTES (2048)
+#endif
+
+#if !defined(OS_INTEGER_RTOS_MAIN_STACK_SIZE_BYTES)
+#define OS_INTEGER_RTOS_MAIN_STACK_SIZE_BYTES (OS_INTEGER_RTOS_DEFAULT_STACK_SIZE_BYTES)
+#endif
+
+#if !defined(OS_INTEGER_RTOS_IDLE_STACK_SIZE_BYTES)
+#define OS_INTEGER_RTOS_IDLE_STACK_SIZE_BYTES (OS_INTEGER_RTOS_DEFAULT_STACK_SIZE_BYTES)
+#endif
+
+// ----------------------------------------------------------------------------
 
 #include <signal.h>
 // Platform definitions
@@ -56,10 +74,8 @@ namespace os
 {
   namespace rtos
   {
-
     namespace port
     {
-
       // ----------------------------------------------------------------------
 
       namespace stack
@@ -71,16 +87,20 @@ namespace os
         using allocation_element_t = uint64_t;
 
         // Initial value for the minimum stack size in bytes.
-        constexpr std::size_t min_size_bytes = 256;
+        constexpr std::size_t min_size_bytes =
+            OS_INTEGER_RTOS_MIN_STACK_SIZE_BYTES;
 
         // Initial value for the default stack size in bytes.
-        constexpr std::size_t default_size_bytes = 2048;
+        constexpr std::size_t default_size_bytes =
+            OS_INTEGER_RTOS_DEFAULT_STACK_SIZE_BYTES;
 
+        // Used to fill in the stack.
         constexpr element_t magic = 0xEFBEADDE; // DEADBEEF
       } /* namespace stack */
 
       namespace interrupts
       {
+        // Type to store the entire processor interrupts mask.
         using status_t = uint32_t;
 
         constexpr status_t init_status = 0;
@@ -88,11 +108,14 @@ namespace os
 
       using thread_context_t = struct context_s
         {
+          // On Cortex-M cores the context itself is stored on the stack,
+          // only the stack pointer needs to be preserved.
           stack::element_t* stack_ptr;
         };
 
       namespace scheduler
       {
+        ;
       } /* namespace scheduler */
 
     // ----------------------------------------------------------------------
