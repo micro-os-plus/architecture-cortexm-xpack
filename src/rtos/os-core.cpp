@@ -106,23 +106,14 @@ namespace os
             static_cast<class rtos::thread::context*> (context);
 
         rtos::thread::stack& stack = th_ctx->stack ();
-        rtos::thread::stack::element_t* bottom = stack.bottom ();
 
-        rtos::thread::stack::element_t* p;
+        rtos::thread::stack::element_t* p = stack.top ();
 
-        // Initialise the entire stack with the magic word.
-        for (p = bottom;
-            p < bottom + stack.size () / sizeof(rtos::thread::stack::element_t);
-            ++p)
-          {
-            *p = stack::magic;
-          }
+        // Be sure the stack is large enough to hold at least
+        // two exception frames.
+        assert((p - stack.bottom ()) > (int)(2 * sizeof(stack::frame_t)));
 
-        // Compute top of stack. The -1 is to leave space for a magic
-        // that can be checked later to see if the stack is corrupted.
-        p = bottom
-            + (stack.size () - sizeof(stack::frame_t))
-                / sizeof(rtos::thread::stack::element_t) - 1;
+        p -= (sizeof(stack::frame_t) / sizeof(rtos::thread::stack::element_t));
 
         // Align the frame to 8 bytes.
         if (((int) p & 7) != 0)
@@ -170,10 +161,6 @@ namespace os
         f->r6 = 0x66666666; // R6 +2*4=12
         f->r5 = 0x55555555; // R5 +1*4=8
         f->r4 = 0x44444444; // R4 +0*4=4
-
-        // Be sure the stack is large enough to hold at least
-        // two more exception frames.
-        assert((p - bottom) > (2 * 16));
 
         // Store the current stack pointer in the context.
         th_ctx->port_.stack_ptr = p;
@@ -321,7 +308,7 @@ namespace os
             {
 #if defined(OS_TRACE_RTOS_THREAD_CONTEXT)
               trace::printf ("port::scheduler::%s() %s nop\n", __func__,
-                             rtos::scheduler::current_thread_->name ());
+                  rtos::scheduler::current_thread_->name ());
 #endif
               return;
             }
@@ -494,7 +481,7 @@ namespace os
 
 #if defined(OS_TRACE_RTOS_THREAD_CONTEXT)
           trace::printf ("port::scheduler::%s() to %s\n", __func__,
-                         rtos::scheduler::current_thread_->name ());
+              rtos::scheduler::current_thread_->name ());
 #endif
 
           // Prepare a local copy of the new thread SP.
