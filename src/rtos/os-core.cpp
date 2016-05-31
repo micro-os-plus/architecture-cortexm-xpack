@@ -111,7 +111,7 @@ namespace os
 
         // Be sure the stack is large enough to hold at least
         // two exception frames.
-        assert((p - stack.bottom ()) > (int)(2 * sizeof(stack::frame_t)));
+        assert((p - stack.bottom ()) > (int )(2 * sizeof(stack::frame_t)));
 
         p -= (sizeof(stack::frame_t) / sizeof(rtos::thread::stack::element_t));
 
@@ -256,7 +256,7 @@ namespace os
           os_thread_t fake_thread;
           memset (&fake_thread, 0, sizeof(os_thread_t));
 
-          fake_thread.name = "none";
+          fake_thread.name = "fake_thread";
           rtos::thread* pth = (rtos::thread*) &fake_thread;
 
           // Make the fake thread look like the current thread.
@@ -463,17 +463,8 @@ namespace os
           trace::printf ("port::scheduler::%s() leave %s\n", __func__, old_thread->name ());
 #endif
 
-          if (old_thread->sched_state () == rtos::thread::state::running)
-            {
-              // If the current thread is running, add it to the
-              // ready list, so that it will be resumed later.
-              waiting_thread_node& crt_node = old_thread->ready_node_;
-              if (crt_node.next == nullptr)
-                {
-                  rtos::scheduler::ready_threads_list_.link (crt_node);
-                  // Ready state set in above link().
-                }
-            }
+          // Normally the old running thread must be re-linked to ready.
+          old_thread->_relink_running ();
 
           // The top of the ready list gives the next thread to run.
           rtos::scheduler::current_thread_ =
