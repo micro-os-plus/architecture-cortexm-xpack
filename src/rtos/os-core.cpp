@@ -62,16 +62,18 @@ namespace os
         // Stack frame, as used by PendSV.
         typedef struct frame_s
         {
-          // Restored manually by ldmia %[r]!, {r4-r9,sl,fp}
+          // Restored manually by ldmia %[r]!, {r4-r9,sl,fp[,r14]}
           stack::element_t r4;
           stack::element_t r5;
           stack::element_t r6;
           stack::element_t r7;
           stack::element_t r8;
           stack::element_t r9;
-          stack::element_t r10; // sl
-          stack::element_t r11; // fp
-
+          stack::element_t r10_sl;
+          stack::element_t r11_fp;
+#if defined (__VFP_FP__) && !defined (__SOFTFP__)
+          stack::element_t r14_exec_return;
+#endif
           // Restored automatically by exception return.
           stack::element_t r0;
           stack::element_t r1;
@@ -79,8 +81,8 @@ namespace os
           stack::element_t r3;
 
           stack::element_t r12;
-          stack::element_t lr; // r14
-          stack::element_t pc; // r15
+          stack::element_t r14_lr; // r14
+          stack::element_t r15_pc; // r15
           stack::element_t psr;
         } frame_t;
       } /* namespace stack */
@@ -130,16 +132,17 @@ namespace os
         f->psr = 0x01000000; // xPSR +15*4=64
 
         // The address of the trampoline code. // PC/R15 +14*4=60
-        f->pc = (rtos::thread::stack::element_t) (((ptrdiff_t) func) & (~1));
+        f->r15_pc =
+            (rtos::thread::stack::element_t) (((ptrdiff_t) func) & (~1));
 
         // Link register // LR/R14 +13*4=56
 #if defined(OS_BOOL_RTOS_PORT_CONTEX_CREATE_ZERO_LR)
-        f->lr = 0x00000000;
+        f->r14_lr = 0x00000000;
 #else
         // 0x0 looks odd in the debugger, so try to hide it.
         // In Eclipse using 'func+2' will make the stack trace
         // start with 'func' (don't ask why).
-        f->lr = (rtos::thread::stack::element_t) (((ptrdiff_t) func + 2));
+        f->r14_lr = (rtos::thread::stack::element_t) (((ptrdiff_t) func + 2));
 #endif
         // R13 is the SP; it is not present in the frame,
         // it is loaded separately as PSP.
@@ -153,8 +156,18 @@ namespace os
         f->r1 = 0x11111111; // R1 +9*4=40
         f->r0 = (rtos::thread::stack::element_t) args; // R0 +8*4=36
 
-        f->r11 = 0xBBBBBBBB; // R11 +7*4=32
-        f->r10 = 0xAAAAAAAA; // R10 +6*4=28
+#if defined (__VFP_FP__) && !defined (__SOFTFP__)
+        // This frame does not include initial FPU registers.
+        // bit 4: 1 (8 words), 0 (26 words)
+        // bit 3: 1 (return to thread), 0 (return to handler)
+        // bit 2: 1 (return with PSP), 0 (return with MSP)
+        // bit 1 = 0
+        // bit 0 = 1
+        f->r14_exec_return = 0xFFFFFFFD;
+#endif
+
+        f->r11_fp = 0xBBBBBBBB; // R11 +7*4=32
+        f->r10_sl = 0xAAAAAAAA; // R10 +6*4=28
         f->r9 = 0x99999999; // R9 +5*4=24
         f->r8 = 0x88888888; // R8 +4*4=20
         f->r7 = 0x77777777; // R7 +3*4=16
@@ -355,16 +368,23 @@ namespace os
               " isb                                 \n"
 
 #if defined (__VFP_FP__) && !defined (__SOFTFP__)
+
               // Is the thread using the FPU context?
               " tst lr, #0x10                      \n"
               " it eq                               \n"
               // If so, push high vfp registers.
               " vstmdbeq %[r]!, {s16-s31}           \n"
-#endif
+              // Save the core registers r4-r11,r14.
+              // Also save EXC_RETURN to be able to test
+              // again this condition in the restore sequence.
+              " stmdb %[r]!, {r4-r9,sl,fp,lr}          \n"
+
+#else
 
               // Save the core registers r4-r11.
               " stmdb %[r]!, {r4-r9,sl,fp}          \n"
 
+#endif
               : [r] "=r" (sp_) /* out */
               : /* in */
               : /* clobber */
@@ -394,15 +414,24 @@ namespace os
 
           asm volatile
           (
-              // Pop the core registers r4-r11.
-              " ldmia %[r]!, {r4-r9,sl,fp}          \n"
 
 #if defined (__VFP_FP__) && !defined (__SOFTFP__)
+
+              // Pop the core registers r4-r11,r14.
+              // R14 contains the EXC_RETURN value
+              // and is restored for the next test.
+              " ldmia %[r]!, {r4-r9,sl,fp,lr}       \n"
               // Is the thread using the FPU context?
-              " tst lr, #0x10                      \n"
+              " tst lr, #0x10                       \n"
               " it eq                               \n"
               // If so, pop the high vfp registers too.
               " vldmiaeq %[r]!, {s16-s31}           \n"
+
+#else
+
+              // Pop the core registers r4-r11.
+              " ldmia %[r]!, {r4-r9,sl,fp}          \n"
+
 #endif
 
               // Restore the thread stack register.
