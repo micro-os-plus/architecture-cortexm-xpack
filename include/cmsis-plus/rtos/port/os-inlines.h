@@ -124,7 +124,7 @@ namespace os
 
       namespace interrupts
       {
-#if !defined(__ARM_ARCH_7M__)
+#if !defined(__ARM_ARCH_7M__) && !defined(__ARM_ARCH_7EM__)
 #error Critical sections not implemented of this architecture
 #endif
 
@@ -134,7 +134,7 @@ namespace os
         critical_section::enter (void)
         {
           // TODO: on M0 & M0+ cores there is no BASEPRI
-#if defined(__ARM_ARCH_7M__)
+#if defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
           uint32_t pri = __get_BASEPRI ();
           __set_BASEPRI_MAX (
               OS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY
@@ -155,7 +155,7 @@ namespace os
         __attribute__((always_inline))
         critical_section::exit (rtos::interrupts::status_t status)
         {
-#if defined(__ARM_ARCH_7M__)
+#if defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
           __set_BASEPRI (status);
 #endif
 
@@ -170,7 +170,7 @@ namespace os
         __attribute__((always_inline))
         uncritical_section::enter (void)
         {
-#if defined(__ARM_ARCH_7M__)
+#if defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
           uint32_t pri = __get_BASEPRI ();
           __set_BASEPRI (0);
 #endif
@@ -186,7 +186,7 @@ namespace os
         __attribute__((always_inline))
         uncritical_section::exit (rtos::interrupts::status_t status)
         {
-#if defined(__ARM_ARCH_7M__)
+#if defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
           __set_BASEPRI (status);
 #endif
 

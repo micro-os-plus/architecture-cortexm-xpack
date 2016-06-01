@@ -239,7 +239,7 @@ namespace os
           // use stack variables and does not return, but will switch
           // to the main thread, which has its own PSP, so the current
           // stack shouldn't be a problem.
-#if defined(__ARM_ARCH_7M__)
+#if defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
           __set_MSP (*((uint32_t*) SCB->VTOR));
 #else
 #error VTOR not available on this architecture!
@@ -267,7 +267,7 @@ namespace os
           scheduler::reschedule ();
 
           // Disable the base priority (allow all interrupts).
-#if defined(__ARM_ARCH_7M__)
+#if defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
           __set_BASEPRI (0);
 #endif
 
