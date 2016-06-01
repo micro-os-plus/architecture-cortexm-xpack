@@ -63,7 +63,7 @@ The core component of µOS++ is CMSIS++, a proposal for the next generation CMSI
 
 ## Status
 
-This project is currently in development stage.
+The CMSIS++ RTOS scheduler port is fully functional.
 
 ## Documentation
 
