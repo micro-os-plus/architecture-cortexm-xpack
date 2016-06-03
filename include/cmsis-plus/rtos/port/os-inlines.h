@@ -124,7 +124,7 @@ namespace os
 
       namespace interrupts
       {
-#if !defined(__ARM_ARCH_7M__) && !defined(__ARM_ARCH_7EM__)
+#if !defined(__ARM_ARCH_7M__) && !defined(__ARM_ARCH_7EM__) && !defined(__ARM_ARCH_6M__)
 #error Critical sections not implemented of this architecture
 #endif
 
@@ -133,12 +133,30 @@ namespace os
         __attribute__((always_inline))
         critical_section::enter (void)
         {
-          // TODO: on M0 & M0+ cores there is no BASEPRI
+          uint32_t pri;
+
 #if defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
-          uint32_t pri = __get_BASEPRI ();
+
+          // Read the current BASEPRI, to be returned and later restored.
+          pri = __get_BASEPRI ();
+
+          // According to ARM "MSR{cond} spec_reg, Rn":
+          // When you write to BASEPRI_MAX, the instruction writes to
+          // BASEPRI only if either:
+          // Rn is non-zero and the current BASEPRI value is 0
+          // Rn is non-zero and less than the current BASEPRI value.
           __set_BASEPRI_MAX (
               OS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY
                   << ((8 - __NVIC_PRIO_BITS)));
+
+#elif defined(__ARM_ARCH_6M__)
+
+          // Read the current PRIMASK, to be returned and later restored.
+          pri = __get_PRIMASK ();
+
+          // Disable all interrupts.
+          __disable_irq ();
+
 #endif
           // Apparently not required by architecture, but used by
           // FreeRTOS, with an unconvincing motivation ("...  ensure
@@ -156,7 +174,15 @@ namespace os
         critical_section::exit (rtos::interrupts::status_t status)
         {
 #if defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
+
+          // Restore BASEPRI to the value saved by enter().
           __set_BASEPRI (status);
+
+#elif defined(__ARM_ARCH_6M__)
+
+          // Restore PRIMASK to the value saved by enter().
+          __set_PRIMASK (status);
+
 #endif
 
           __DSB ();
@@ -170,9 +196,23 @@ namespace os
         __attribute__((always_inline))
         uncritical_section::enter (void)
         {
+          uint32_t pri;
+
 #if defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
-          uint32_t pri = __get_BASEPRI ();
+
+          pri = __get_BASEPRI ();
+
+          // Setting BASEPRI to 0 makes it ineffective,
+          // practically enabling all interrupts.
           __set_BASEPRI (0);
+
+#elif defined(__ARM_ARCH_6M__)
+
+          pri = __get_PRIMASK ();
+
+          // Enable all interrupts.
+          __enable_irq ();
+
 #endif
 
           __DSB ();
@@ -187,7 +227,11 @@ namespace os
         uncritical_section::exit (rtos::interrupts::status_t status)
         {
 #if defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
+          // Restore BASEPRI to the value saved by enter().
           __set_BASEPRI (status);
+#elif defined(__ARM_ARCH_6M__)
+          // Restore PRIMASK to the value saved by enter().
+          __set_PRIMASK (status);
 #endif
 
           __DSB ();

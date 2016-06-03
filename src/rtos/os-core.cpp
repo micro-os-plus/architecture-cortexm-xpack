@@ -49,6 +49,10 @@
  * the context switching and context creation.
  */
 
+#if !defined(__ARM_ARCH_7M__) && !defined(__ARM_ARCH_7EM__)
+#error Context switching not yet implemented for the current architecture.
+#endif
+
 namespace os
 {
   namespace rtos
@@ -387,7 +391,7 @@ namespace os
 #endif
               : [r] "=r" (sp_) /* out */
               : /* in */
-              : /* clobber */
+              : "memory" /* clobber */
           );
 
           return sp_;
@@ -440,7 +444,7 @@ namespace os
 
               : /* out */
               : [r] "r" (sp) /* in */
-              : /* clobber */
+              : "r4","r5","r6","r7","r8","r9","r10","r11" /* clobber */
           );
         }
 
@@ -467,11 +471,25 @@ namespace os
         stack::element_t*
         switch_stacks (stack::element_t* sp)
         {
+          uint32_t pri;
+
           // Enter a local critical section to protect the lists.
-          uint32_t pri = __get_BASEPRI ();
+#if defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
+
+          pri = __get_BASEPRI ();
           __set_BASEPRI_MAX (
               OS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY
                   << ((8 - __NVIC_PRIO_BITS)));
+
+#elif defined(__ARM_ARCH_6M__)
+
+          // Read the current PRIMASK, to be returned and later restored.
+          pri = __get_PRIMASK ();
+
+          // Disable all interrupts.
+          __disable_irq ();
+
+#endif
 
           // Clear the PendSV bit. This is done automatically,
           // but it seems that in some extreme conditions with
@@ -508,8 +526,17 @@ namespace os
           stack::element_t* out_sp =
               rtos::scheduler::current_thread_->context_.port_.stack_ptr;
 
-          // Restore priorities.
+#if defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
+
+          // Restore BASEPRI to the value saved at the beginning.
           __set_BASEPRI (pri);
+
+#elif defined(__ARM_ARCH_6M__)
+
+          // Restore PRIMASK to the value saved at the beginning.
+          __set_PRIMASK (pri);
+
+#endif
 
           // Return the new thread SP. Registers will be
           // restored in the assembly code.
