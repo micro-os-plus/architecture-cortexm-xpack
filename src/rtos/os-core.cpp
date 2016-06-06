@@ -49,7 +49,12 @@
  * the context switching and context creation.
  */
 
-#if !defined(__ARM_ARCH_7M__) && !defined(__ARM_ARCH_7EM__)
+#if defined(__ARM_ARCH_6M__)
+extern uint32_t __vectors_start;
+#endif
+
+#if !defined(__ARM_ARCH_7M__) && !defined(__ARM_ARCH_7EM__) \
+  && !defined(__ARM_ARCH_6M__)
 #error Context switching not yet implemented for the current architecture.
 #endif
 
@@ -66,7 +71,9 @@ namespace os
         // Stack frame, as used by PendSV.
         typedef struct frame_s
         {
-          // Restored manually by ldmia %[r]!, {r4-r9,sl,fp[,r14]}
+          // Restored manually by ldmia %[r]!, {r4-r9,sl,fp[,r14]}.
+          // r14 is stored twice for a convenient restore, to test
+          // the FPU bit.
           stack::element_t r4;
           stack::element_t r5;
           stack::element_t r6;
@@ -256,10 +263,22 @@ namespace os
           // use stack variables and does not return, but will switch
           // to the main thread, which has its own PSP, so the current
           // stack shouldn't be a problem.
+
 #if defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
+
           __set_MSP (*((uint32_t*) SCB->VTOR));
+
+#elif defined(__ARM_ARCH_6M__)
+
+          // VTOR not available on this architecture.
+          // Read the stack pointer from the first word
+          // stored in the vectors table.
+          __set_MSP (*((uint32_t*) (0x00000000)));
+
 #else
-#error VTOR not available on this architecture!
+
+#error Implement __set_MSP() on this architecture.
+
 #endif
 
           // Set PendSV interrupt priority to the lowest level (highest value).
@@ -283,9 +302,11 @@ namespace os
           // after re-enabling the interrupts.
           scheduler::reschedule ();
 
-          // Disable the base priority (allow all interrupts).
 #if defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
+
+          // Disable the base priority (allow all interrupts).
           __set_BASEPRI (0);
+
 #endif
 
           // Enable all interrupts; allow PendSV to occur.
@@ -357,6 +378,10 @@ namespace os
          *
          * The memory address after saving these registers is returned and
          * will be saved by switch_stacks() in the current thread context.
+         *
+         * @warning Any change in this routine must be checked in the
+         * generated code, otherwise bad surprises can occur, like
+         * adding clobber registers that added more initial pushes.
          */
 
         inline stack::element_t*
@@ -404,6 +429,10 @@ namespace os
          * @details
          * Restore R4-R11 and possibly the FPU registers.
          * Finally write the current stack address in PSP.
+         *
+         * @warning Any change in this routine must be checked in the
+         * generated code, otherwise bad surprises can occur, like
+         * adding clobber registers that added more initial pushes.
          */
 
         inline void
@@ -476,10 +505,22 @@ namespace os
           // Enter a local critical section to protect the lists.
 #if defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
 
+#if defined(OS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY)
+
           pri = __get_BASEPRI ();
           __set_BASEPRI_MAX (
               OS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY
                   << ((8 - __NVIC_PRIO_BITS)));
+
+#else
+
+          // Read the current PRIMASK, to be returned and later restored.
+          pri = __get_PRIMASK ();
+
+          // Disable all interrupts.
+          __disable_irq ();
+
+#endif /* defined(OS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY) */
 
 #elif defined(__ARM_ARCH_6M__)
 
@@ -528,8 +569,17 @@ namespace os
 
 #if defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
 
+#if defined(OS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY)
+
           // Restore BASEPRI to the value saved at the beginning.
           __set_BASEPRI (pri);
+
+#else
+
+          // Restore PRIMASK to the value saved at the beginning.
+          __set_PRIMASK (pri);
+
+#endif /* defined(OS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY) */
 
 #elif defined(__ARM_ARCH_6M__)
 

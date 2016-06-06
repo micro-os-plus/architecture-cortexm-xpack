@@ -137,6 +137,8 @@ namespace os
 
 #if defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
 
+#if defined(OS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY)
+
           // Read the current BASEPRI, to be returned and later restored.
           pri = __get_BASEPRI ();
 
@@ -149,6 +151,17 @@ namespace os
               OS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY
                   << ((8 - __NVIC_PRIO_BITS)));
 
+#else
+
+          // Read the current PRIMASK, to be returned and later restored.
+          pri = __get_PRIMASK ();
+
+          // Disable all interrupts.
+          __disable_irq ();
+
+#endif /* defined(OS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY) */
+
+
 #elif defined(__ARM_ARCH_6M__)
 
           // Read the current PRIMASK, to be returned and later restored.
@@ -158,6 +171,7 @@ namespace os
           __disable_irq ();
 
 #endif
+
           // Apparently not required by architecture, but used by
           // FreeRTOS, with an unconvincing motivation ("...  ensure
           // the code is completely within the specified behaviour
@@ -175,8 +189,17 @@ namespace os
         {
 #if defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
 
+#if defined(OS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY)
+
           // Restore BASEPRI to the value saved by enter().
           __set_BASEPRI (status);
+
+#else
+
+          // Restore PRIMASK to the value saved by enter().
+          __set_PRIMASK (status);
+
+#endif /* defined(OS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY) */
 
 #elif defined(__ARM_ARCH_6M__)
 
@@ -200,11 +223,22 @@ namespace os
 
 #if defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
 
+#if defined(OS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY)
+
           pri = __get_BASEPRI ();
 
           // Setting BASEPRI to 0 makes it ineffective,
           // practically enabling all interrupts.
           __set_BASEPRI (0);
+
+#else
+
+          pri = __get_PRIMASK ();
+
+          // Enable all interrupts.
+          __enable_irq ();
+
+#endif /* defined(OS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY) */
 
 #elif defined(__ARM_ARCH_6M__)
 
@@ -227,11 +261,24 @@ namespace os
         uncritical_section::exit (rtos::interrupts::status_t status)
         {
 #if defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
+
+#if defined(OS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY)
+
           // Restore BASEPRI to the value saved by enter().
           __set_BASEPRI (status);
-#elif defined(__ARM_ARCH_6M__)
+
+#else
+
           // Restore PRIMASK to the value saved by enter().
           __set_PRIMASK (status);
+
+#endif /* defined(OS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY) */
+
+#elif defined(__ARM_ARCH_6M__)
+
+          // Restore PRIMASK to the value saved by enter().
+          __set_PRIMASK (status);
+
 #endif
 
           __DSB ();
