@@ -558,6 +558,11 @@ namespace os
           rtos::scheduler::current_thread_ =
               rtos::scheduler::ready_threads_list_.unlink_head ();
 
+          // The new thread was marked as running in unlink_head(),
+          // so in case the handler is re-entered immediately,
+          // the relink_running() will simply reschedule it,
+          // otherwise the thread will be lost.
+
 #if defined(OS_TRACE_RTOS_THREAD_CONTEXT)
           trace::printf ("port::scheduler::%s() to %s\n", __func__,
               rtos::scheduler::current_thread_->name ());

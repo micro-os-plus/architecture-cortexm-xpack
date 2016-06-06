@@ -124,6 +124,54 @@ namespace os
 
       namespace interrupts
       {
+        /**
+         * @details
+         * In the simplest form, CMSIS++ can disable all interrupts
+         * when entering a critical region, and in this case all
+         * interrupt priorities are valid.
+         *
+         * If the application requires to have some very fast
+         * interrupts, never affected by the system critical regions,
+         * then while running inside the corresponding interrupt
+         * handlers, the user must not be allowed to invoke
+         * any system calls that may interfere with the scheduler.
+         *
+         * If the OS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY
+         * is defined, the numeric value of the current interrupt
+         * priority must be higher than or equal to the macro definition
+         * (lower priorities).
+         */
+        inline bool
+        is_priority_valid (void)
+        {
+#if defined(OS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY)
+
+          // The trick here is to properly account for differences
+          // between Cortex-M exception number stored in IPSR (an
+          // unsigned byte), and the CMSIS interrupt number (IRQn),
+          // which is [-15 ... -1, 0 ... 239 ], in other words
+          // it is negative for the system exceptions.
+          uint32_t exception_number = __get_IPSR ();
+          if (exception_number > 0)
+            {
+              uint32_t prio = NVIC_GetPriority (
+                  (IRQn_Type) (exception_number - 16));
+              return (prio
+                  >= OS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY);
+            }
+          else
+            {
+              return true;
+            }
+
+#else
+
+          // When using DI/EI, all priority levels are valid.
+          return true;
+
+#endif
+        }
+
 #if !defined(__ARM_ARCH_7M__) && !defined(__ARM_ARCH_7EM__) && !defined(__ARM_ARCH_6M__)
 #error Critical sections not implemented of this architecture
 #endif
@@ -160,7 +208,6 @@ namespace os
           __disable_irq ();
 
 #endif /* defined(OS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY) */
-
 
 #elif defined(__ARM_ARCH_6M__)
 
