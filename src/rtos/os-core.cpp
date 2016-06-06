@@ -391,7 +391,7 @@ namespace os
 #endif
               : [r] "=r" (sp_) /* out */
               : /* in */
-              : "memory" /* clobber */
+              : /* clobber. DO NOT add anything here! */
           );
 
           return sp_;
@@ -444,7 +444,7 @@ namespace os
 
               : /* out */
               : [r] "r" (sp) /* in */
-              : "r4","r5","r6","r7","r8","r9","r10","r11" /* clobber */
+              : /* clobber. DO NOT add anything here! */
           );
         }
 
