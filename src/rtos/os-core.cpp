@@ -203,9 +203,13 @@ namespace os
       void
       clock_systick::start (void)
       {
+#if defined(NDEBUG)
+        SysTick_Config (SystemCoreClock / rtos::clock_systick::frequency_hz);
+#else
         assert(
             SysTick_Config (SystemCoreClock / rtos::clock_systick::frequency_hz)
                 == 0);
+#endif
 
         // Set SysTick interrupt priority to the lowest level (highest value).
         NVIC_SetPriority (SysTick_IRQn, (1UL << __NVIC_PRIO_BITS) - 1UL);
@@ -641,13 +645,71 @@ using namespace os::rtos;
  * manually saved/restored.
  */
 
+/*
+ * An actual version of the Cortex-M3 handler looks pretty cool:
+ *
+ * 08000198 <PendSV_Handler>:
+ * 8000198: b500        push  {lr}
+ * 800019a: f3ef 8009   mrs r0, PSP
+ * 800019e: f3bf 8f6f   isb sy
+ * 80001a2: e920 0ff0   stmdb r0!, {r4, r5, r6, r7, r8, r9, sl, fp}
+ * 80001a6: f000 fe21   bl  8000dec <os::rtos::port::scheduler::switch_stacks(unsigned long*)>
+ * 80001aa: e8b0 0ff0   ldmia.w r0!, {r4, r5, r6, r7, r8, r9, sl, fp}
+ * 80001ae: f380 8809   msr PSP, r0
+ * 80001b2: f3bf 8f6f   isb sy
+ * 80001b6: bd00        pop {pc}
+ *
+ * The switch_stack() function (using BASEPRI) doesn't look bad either:
+ *
+ * 08000d88 <os::rtos::port::scheduler::switch_stacks(unsigned long*)>:
+ * 8000d88: b538        push  {r3, r4, r5, lr}
+ * 8000d8a: f3ef 8511   mrs r5, BASEPRI
+ * 8000d8e: 2340        movs  r3, #64 ; 0x40
+ * 8000d90: f383 8812   msr BASEPRI_MAX, r3
+ * 8000d94: 4b0c        ldr r3, [pc, #48] ; (8000dc8 <os::rtos::port::scheduler::switch_stacks(unsigned long*)+0x40>)
+ * 8000d96: f04f 6200   mov.w r2, #134217728  ; 0x8000000
+ * 8000d9a: 4c0c        ldr r4, [pc, #48] ; (8000dcc <os::rtos::port::scheduler::switch_stacks(unsigned long*)+0x44>)
+ * 8000d9c: 605a        str r2, [r3, #4]
+ * 8000d9e: 6821        ldr r1, [r4, #0]
+ * 8000da0: f891 3058   ldrb.w  r3, [r1, #88] ; 0x58
+ * 8000da4: 66c8        str r0, [r1, #108]  ; 0x6c
+ * 8000da6: 2b03        cmp r3, #3
+ * 8000da8: d105        bne.n 8000db6 <os::rtos::port::scheduler::switch_stacks(unsigned long*)+0x2e>
+ * 8000daa: 68cb        ldr r3, [r1, #12]
+ * 8000dac: b91b        cbnz  r3, 8000db6 <os::rtos::port::scheduler::switch_stacks(unsigned long*)+0x2e>
+ * 8000dae: 3108        adds  r1, #8
+ * 8000db0: 4807        ldr r0, [pc, #28] ; (8000dd0 <os::rtos::port::scheduler::switch_stacks(unsigned long*)+0x48>)
+ * 8000db2: f003 f935   bl  8004020 <os::rtos::ready_threads_list::link(os::rtos::waiting_thread_node&)>
+ * 8000db6: 4806        ldr r0, [pc, #24] ; (8000dd0 <os::rtos::port::scheduler::switch_stacks(unsigned long*)+0x48>)
+ * 8000db8: f003 f960   bl  800407c <os::rtos::ready_threads_list::unlink_head()>
+ * 8000dbc: 6020        str r0, [r4, #0]
+ * 8000dbe: 6823        ldr r3, [r4, #0]
+ * 8000dc0: 6ed8        ldr r0, [r3, #108]  ; 0x6c
+ * 8000dc2: f385 8811   msr BASEPRI, r5
+ * 8000dc6: bd38        pop {r3, r4, r5, pc}
+ * 8000dc8: e000ed00  .word 0xe000ed00
+ * 8000dcc: 20002ac4  .word 0x20002ac4
+ * 8000dd0: 20002abc  .word 0x20002abc
+ *
+ * In case you wonder, the link() and unlink() functions are also
+ * relatively simple, with link() slightly more complicated, since
+ * it needs to preserve the ready list order.
+ */
+
 void
-__attribute__ ((section(".after_vectors"), used, optimize("s")))
+__attribute__ ((section(".after_vectors"), naked, used, optimize("s")))
 PendSV_Handler (void)
 {
+  // The naked attribute and the push/pop are used to fully control
+  // the function entry/exit code; be sure other registers are not
+  // used in the assembly parts.
+  asm volatile ("push {lr}");
+
   // The whole mystery of context switching, in one sentence. :-)
   port::scheduler::restore_from_stack (
       port::scheduler::switch_stacks (port::scheduler::save_on_stack ()));
+
+  asm volatile ("pop {pc}");
 }
 
 // ----------------------------------------------------------------------------
