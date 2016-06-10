@@ -555,17 +555,7 @@ namespace os
           trace::printf ("port::scheduler::%s() leave %s\n", __func__, old_thread->name ());
 #endif
 
-          // Normally the old running thread must be re-linked to ready.
-          old_thread->_relink_running ();
-
-          // The top of the ready list gives the next thread to run.
-          rtos::scheduler::current_thread_ =
-              rtos::scheduler::ready_threads_list_.unlink_head ();
-
-          // The new thread was marked as running in unlink_head(),
-          // so in case the handler is re-entered immediately,
-          // the relink_running() will simply reschedule it,
-          // otherwise the thread will be lost.
+          rtos::scheduler::_switch_threads();
 
 #if defined(OS_TRACE_RTOS_THREAD_CONTEXT)
           trace::printf ("port::scheduler::%s() to %s\n", __func__,
