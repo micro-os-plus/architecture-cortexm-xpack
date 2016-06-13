@@ -197,7 +197,7 @@ namespace os
           // Rn is non-zero and less than the current BASEPRI value.
           __set_BASEPRI_MAX (
               OS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY
-                  << ((8 - __NVIC_PRIO_BITS)));
+              << ((8 - __NVIC_PRIO_BITS)));
 
 #else
 
@@ -219,13 +219,14 @@ namespace os
 
 #endif
 
+#if 0
           // Apparently not required by architecture, but used by
           // FreeRTOS, with an unconvincing motivation ("...  ensure
           // the code is completely within the specified behaviour
           // for the architecture").
           __DSB ();
           __ISB ();
-
+#endif
           return pri;
         }
 
@@ -255,8 +256,10 @@ namespace os
 
 #endif
 
+#if 0
           __DSB ();
           __ISB ();
+#endif
         }
 
         // ====================================================================
@@ -296,8 +299,10 @@ namespace os
 
 #endif
 
+#if 0
           __DSB ();
           __ISB ();
+#endif
 
           return pri;
         }
@@ -328,8 +333,10 @@ namespace os
 
 #endif
 
+#if 0
           __DSB ();
           __ISB ();
+#endif
         }
 
       } /* namespace interrupts */
