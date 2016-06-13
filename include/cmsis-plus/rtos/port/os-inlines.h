@@ -354,6 +354,57 @@ namespace os
 
       } /* namespace this_thread */
 
+      // ======================================================================
+
+      inline uint32_t
+      __attribute__((always_inline))
+      clock_highres::input_clock_frequency_hz (void)
+      {
+        // The SysTick is clocked with the CPU clock.
+        return SystemCoreClock;
+      }
+
+      inline uint32_t
+      __attribute__((always_inline))
+      clock_highres::cycles_per_tick (void)
+      {
+        return SysTick->LOAD + 1;
+      }
+
+      inline uint32_t
+      __attribute__((always_inline))
+      clock_highres::cycles_since_tick (void)
+      {
+        uint32_t load_value = SysTick->LOAD;
+
+        // Initial sample of the decrementing counter.
+        // If this happens before the event, will be used as such.
+        uint32_t val = SysTick->VAL;
+
+        // Check overflow. If the exception is pending, it means that the
+        // interrupt occurred during this critical section and was not
+        // yet processed, so the total cycles count in steady_count_
+        // does not yet reflect the correct value and needs to be
+        // adjusted by one full cycle length.
+        if (SysTick->CTRL & SCB_ICSR_PENDSTSET_Msk)
+          {
+            // Sample the decrementing counter again to validate the
+            // initial sample.
+            uint32_t val_subsequent = SysTick->VAL;
+
+            // If the value did decrease, the timer did not recycle
+            // between the two reads; in other words, the interrupt
+            // occurred before the first read.
+            if (val > val_subsequent)
+              {
+                // The count must be adjusted with a full cycle.
+                return load_value + 1 + (load_value - val);
+              }
+          }
+
+        return load_value - val;
+      }
+
     // ======================================================================
 
     } /* namespace port */
