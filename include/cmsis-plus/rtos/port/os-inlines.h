@@ -197,7 +197,7 @@ namespace os
           // Rn is non-zero and less than the current BASEPRI value.
           __set_BASEPRI_MAX (
               OS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY
-              << ((8 - __NVIC_PRIO_BITS)));
+                  << ((8 - __NVIC_PRIO_BITS)));
 
 #else
 
@@ -355,6 +355,13 @@ namespace os
       } /* namespace this_thread */
 
       // ======================================================================
+
+      inline void
+      __attribute__((always_inline))
+      clock_highres::start (void)
+      {
+        ;
+      }
 
       inline uint32_t
       __attribute__((always_inline))
