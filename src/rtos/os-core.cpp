@@ -118,7 +118,7 @@ namespace os
         class rtos::thread::context* th_ctx =
             static_cast<class rtos::thread::context*> (context);
 
-        rtos::thread::stack& stack = th_ctx->stack ();
+        class rtos::thread::stack& stack = th_ctx->stack ();
 
         rtos::thread::stack::element_t* p = stack.top ();
 
