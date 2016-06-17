@@ -147,7 +147,7 @@ namespace os
             (rtos::thread::stack::element_t) (((ptrdiff_t) func) & (~1));
 
         // Link register // LR/R14 +13*4=56
-#if defined(OS_BOOL_RTOS_PORT_CONTEX_CREATE_ZERO_LR)
+#if defined(OS_BOOL_RTOS_PORT_CONTEXT_CREATE_ZERO_LR)
         f->r14_lr = 0x00000000;
 #else
         // 0x0 looks odd in the debugger, so try to hide it.
