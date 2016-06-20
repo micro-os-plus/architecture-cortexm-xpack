@@ -89,15 +89,6 @@ namespace os
           return result::ok;
         }
 
-        inline bool
-        __attribute__((always_inline))
-        in_handler_mode (void)
-        {
-          // In Handler mode, IPSR holds the exception number.
-          // If 0, the core is in thread mode.
-          return (__get_IPSR () != 0);
-        }
-
         inline void
         __attribute__((always_inline))
         lock (rtos::scheduler::status_t status __attribute__((unused)))
@@ -114,7 +105,7 @@ namespace os
           trace::printf ("%s() \n", __func__);
 #endif
           // The DSB is recommended by ARM before WFI.
-          __DSB();
+          __DSB ();
           __WFI ();
 #endif
         }
@@ -128,6 +119,15 @@ namespace os
 
       namespace interrupts
       {
+        inline bool
+        __attribute__((always_inline))
+        in_handler_mode (void)
+        {
+          // In Handler mode, IPSR holds the exception number.
+          // If 0, the core is in thread mode.
+          return (__get_IPSR () != 0);
+        }
+
         /**
          * @details
          * In the simplest form, CMSIS++ can disable all interrupts
@@ -201,7 +201,7 @@ namespace os
           // Rn is non-zero and less than the current BASEPRI value.
           __set_BASEPRI_MAX (
               OS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY
-                  << ((8 - __NVIC_PRIO_BITS)));
+              << ((8 - __NVIC_PRIO_BITS)));
 
 #else
 
