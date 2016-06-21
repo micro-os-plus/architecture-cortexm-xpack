@@ -555,7 +555,7 @@ namespace os
           trace::printf ("port::scheduler::%s() leave %s\n", __func__, old_thread->name ());
 #endif
 
-          rtos::scheduler::_switch_threads();
+          rtos::scheduler::_switch_threads ();
 
 #if defined(OS_TRACE_RTOS_THREAD_CONTEXT)
           trace::printf ("port::scheduler::%s() to %s\n", __func__,
