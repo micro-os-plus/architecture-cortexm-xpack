@@ -41,6 +41,10 @@
 #include <cmsis-plus/os-app-config.h>
 #include <cmsis-plus/rtos/port/os-c-decls.h>
 
+#if !defined(OS_INTEGER_SYSTICK_FREQUENCY_HZ)
+#define OS_INTEGER_SYSTICK_FREQUENCY_HZ (1000)
+#endif
+
 #if !defined(OS_INTEGER_RTOS_MIN_STACK_SIZE_BYTES)
 #define OS_INTEGER_RTOS_MIN_STACK_SIZE_BYTES (256)
 #endif
