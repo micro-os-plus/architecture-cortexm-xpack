@@ -85,18 +85,18 @@ namespace os
       namespace stack
       {
         // Stack word.
-        using element_t = uint32_t;
+        using element_t = os_port_thread_stack_element_t;
 
         // Align stack to 8 bytes.
-        using allocation_element_t = uint64_t;
+        using allocation_element_t = os_port_thread_stack_allocation_element_t;
 
         // Initial value for the minimum stack size in bytes.
         constexpr std::size_t min_size_bytes =
-            OS_INTEGER_RTOS_MIN_STACK_SIZE_BYTES;
+        OS_INTEGER_RTOS_MIN_STACK_SIZE_BYTES;
 
         // Initial value for the default stack size in bytes.
         constexpr std::size_t default_size_bytes =
-            OS_INTEGER_RTOS_DEFAULT_STACK_SIZE_BYTES;
+        OS_INTEGER_RTOS_DEFAULT_STACK_SIZE_BYTES;
 
         // Used to fill in the stack.
         constexpr element_t magic = 0xEFBEADDE; // DEADBEEF
@@ -105,7 +105,7 @@ namespace os
       namespace interrupts
       {
         // Type to store the entire processor interrupts mask.
-        using status_t = uint32_t;
+        using status_t = os_port_irq_status_t;
 
         constexpr status_t init_status = 0;
       } /* namespace interrupts */

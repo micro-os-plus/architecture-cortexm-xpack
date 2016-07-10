@@ -53,9 +53,12 @@ typedef uint64_t os_port_clock_offset_t;
 
 typedef uint32_t os_port_irq_status_t;
 
+typedef uint32_t os_port_thread_stack_element_t;
+typedef uint64_t os_port_thread_stack_allocation_element_t;
+
 typedef struct
 {
-  void* stack_ptr;
+  os_port_thread_stack_element_t* stack_ptr;
 } os_port_thread_context_t;
 
 #endif /* CMSIS_PLUS_RTOS_PORT_OS_C_DECLS_H_ */
