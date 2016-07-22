@@ -208,7 +208,7 @@ namespace os
 #else
         assert(
             SysTick_Config (SystemCoreClock / rtos::clock_systick::frequency_hz)
-                == 0);
+            == 0);
 #endif
 
         // Set SysTick interrupt priority to the lowest level (highest value).
@@ -346,7 +346,9 @@ namespace os
         void
         reschedule (void)
         {
-          if (rtos::scheduler::locked ())
+          if (rtos::scheduler::locked ()
+              || (rtos::interrupts::in_handler_mode ()
+                  && !rtos::scheduler::preemptive ()))
             {
 #if defined(OS_TRACE_RTOS_THREAD_CONTEXT)
               trace::printf ("port::scheduler::%s() %s nop\n", __func__,
@@ -514,7 +516,7 @@ namespace os
           pri = __get_BASEPRI ();
           __set_BASEPRI_MAX (
               OS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY
-                  << ((8 - __NVIC_PRIO_BITS)));
+              << ((8 - __NVIC_PRIO_BITS)));
 
 #else
 

@@ -91,13 +91,6 @@ namespace os
 
         inline void
         __attribute__((always_inline))
-        preempt (void)
-        {
-          reschedule();
-        }
-
-        inline void
-        __attribute__((always_inline))
         lock (rtos::scheduler::status_t status __attribute__((unused)))
         {
           ;
