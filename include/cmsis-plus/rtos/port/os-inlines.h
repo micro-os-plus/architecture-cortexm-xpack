@@ -89,11 +89,25 @@ namespace os
           return result::ok;
         }
 
-        inline void
+        inline port::scheduler::state_t
         __attribute__((always_inline))
-        lock (rtos::scheduler::status_t status __attribute__((unused)))
+        lock (void)
         {
-          ;
+          return locked (state::locked);
+        }
+
+        inline port::scheduler::state_t
+        __attribute__((always_inline))
+        unlock (void)
+        {
+          return locked (state::unlocked);
+        }
+
+        inline bool
+        __attribute__((always_inline))
+        locked (void)
+        {
+          return lock_state != state::unlocked;
         }
 
         inline void

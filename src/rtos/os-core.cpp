@@ -208,7 +208,7 @@ namespace os
 #else
         assert(
             SysTick_Config (SystemCoreClock / rtos::clock_systick::frequency_hz)
-            == 0);
+                == 0);
 #endif
 
         // Set SysTick interrupt priority to the lowest level (highest value).
@@ -219,6 +219,8 @@ namespace os
 
       namespace scheduler
       {
+        state_t lock_state;
+
         /**
          * @brief Start the scheduler and pass control to the main thread.
          *
@@ -313,6 +315,8 @@ namespace os
 
 #endif
 
+          lock_state = state::init;
+
           // Enable all interrupts; allow PendSV to occur.
           __enable_irq ();
 
@@ -321,6 +325,28 @@ namespace os
             __NOP ();
 
           /* NOTREACHED */
+        }
+
+        // --------------------------------------------------------------------
+
+        state_t
+        locked (state_t state)
+        {
+#if defined(OS_TRACE_RTOS_SCHEDULER)
+          trace::printf ("port::scheduler::%s(%d) \n", __func__, state);
+#endif
+          os_assert_throw(!interrupts::in_handler_mode (), EPERM);
+
+          state_t tmp;
+
+            {
+              rtos::interrupts::critical_section ics;
+
+              tmp = lock_state;
+              lock_state = state;
+            }
+
+          return tmp;
         }
 
         // --------------------------------------------------------------------

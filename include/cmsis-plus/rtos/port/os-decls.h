@@ -100,6 +100,7 @@ namespace os
 
         // Used to fill in the stack.
         constexpr element_t magic = 0xEFBEADDE; // DEADBEEF
+
       } /* namespace stack */
 
       namespace interrupts
@@ -108,7 +109,23 @@ namespace os
         using status_t = os_port_irq_status_t;
 
         constexpr status_t init_status = 0;
+
       } /* namespace interrupts */
+
+      namespace scheduler
+      {
+        using state_t = bool;
+
+        namespace state
+        {
+          constexpr state_t locked = true;
+          constexpr state_t unlocked = false;
+          constexpr state_t init = unlocked;
+        } /* namespace state */
+
+        extern state_t lock_state;
+
+      } /* namespace scheduler */
 
       using thread_context_t = struct context_s
         {
@@ -116,11 +133,6 @@ namespace os
           // only the stack pointer needs to be preserved.
           stack::element_t* stack_ptr;
         };
-
-      namespace scheduler
-      {
-        ;
-      } /* namespace scheduler */
 
     // ----------------------------------------------------------------------
 
