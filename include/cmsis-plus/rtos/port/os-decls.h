@@ -106,15 +106,18 @@ namespace os
       namespace interrupts
       {
         // Type to store the entire processor interrupts mask.
-        using status_t = os_port_irq_status_t;
+        using state_t = os_port_irq_state_t;
 
-        constexpr status_t init_status = 0;
+        namespace state
+        {
+          constexpr state_t init = 0;
+        } /* namespace state */
 
       } /* namespace interrupts */
 
       namespace scheduler
       {
-        using state_t = bool;
+        using state_t = os_port_scheduler_state_t;
 
         namespace state
         {

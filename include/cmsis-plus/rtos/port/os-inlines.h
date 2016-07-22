@@ -195,7 +195,7 @@ namespace os
 #endif
 
         // Enter an IRQ critical section
-        inline rtos::interrupts::status_t
+        inline rtos::interrupts::state_t
         __attribute__((always_inline))
         critical_section::enter (void)
         {
@@ -251,26 +251,26 @@ namespace os
         // Exit an IRQ critical section
         inline void
         __attribute__((always_inline))
-        critical_section::exit (rtos::interrupts::status_t status)
+        critical_section::exit (rtos::interrupts::state_t state)
         {
 #if defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
 
 #if defined(OS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY)
 
           // Restore BASEPRI to the value saved by enter().
-          __set_BASEPRI (status);
+          __set_BASEPRI (state);
 
 #else
 
           // Restore PRIMASK to the value saved by enter().
-          __set_PRIMASK (status);
+          __set_PRIMASK (state);
 
 #endif /* defined(OS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY) */
 
 #elif defined(__ARM_ARCH_6M__)
 
           // Restore PRIMASK to the value saved by enter().
-          __set_PRIMASK (status);
+          __set_PRIMASK (state);
 
 #endif
 
@@ -283,7 +283,7 @@ namespace os
         // ====================================================================
 
         // Enter an IRQ uncritical section
-        inline rtos::interrupts::status_t
+        inline rtos::interrupts::state_t
         __attribute__((always_inline))
         uncritical_section::enter (void)
         {
@@ -328,26 +328,26 @@ namespace os
         // Exit an IRQ critical section
         inline void
         __attribute__((always_inline))
-        uncritical_section::exit (rtos::interrupts::status_t status)
+        uncritical_section::exit (rtos::interrupts::state_t state)
         {
 #if defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
 
 #if defined(OS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY)
 
           // Restore BASEPRI to the value saved by enter().
-          __set_BASEPRI (status);
+          __set_BASEPRI (state);
 
 #else
 
           // Restore PRIMASK to the value saved by enter().
-          __set_PRIMASK (status);
+          __set_PRIMASK (state);
 
 #endif /* defined(OS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY) */
 
 #elif defined(__ARM_ARCH_6M__)
 
           // Restore PRIMASK to the value saved by enter().
-          __set_PRIMASK (status);
+          __set_PRIMASK (state);
 
 #endif
 
