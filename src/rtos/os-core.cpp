@@ -221,6 +221,14 @@ namespace os
       {
         state_t lock_state;
 
+        result_t
+        initialize (void)
+        {
+          __disable_irq ();
+
+          return result::ok;
+        }
+
         /**
          * @brief Start the scheduler and pass control to the main thread.
          *
@@ -245,6 +253,10 @@ namespace os
         void
         start (void)
         {
+#if defined(OS_TRACE_RTOS_SCHEDULER)
+          trace::printf ("port::scheduler::%s() \n", __func__);
+#endif
+
 #if defined (__VFP_FP__) && !defined (__SOFTFP__)
           // The FPU should have been enabled by os_initialize_hardware_early().
 #endif
@@ -332,9 +344,6 @@ namespace os
         state_t
         locked (state_t state)
         {
-#if defined(OS_TRACE_RTOS_SCHEDULER)
-          trace::printf ("port::scheduler::%s(%d) \n", __func__, state);
-#endif
           os_assert_throw(!interrupts::in_handler_mode (), EPERM);
 
           state_t tmp;
@@ -542,7 +551,7 @@ namespace os
           pri = __get_BASEPRI ();
           __set_BASEPRI_MAX (
               OS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY
-              << ((8 - __NVIC_PRIO_BITS)));
+                  << ((8 - __NVIC_PRIO_BITS)));
 
 #else
 

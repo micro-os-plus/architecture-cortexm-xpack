@@ -81,14 +81,6 @@ namespace os
           trace::printf (" scheduler; preemptive.\n");
         }
 
-        // Mandatory inline in main().
-        inline result_t
-        __attribute__((always_inline))
-        initialize (void)
-        {
-          return result::ok;
-        }
-
         inline port::scheduler::state_t
         __attribute__((always_inline))
         lock (void)
