@@ -104,7 +104,7 @@ namespace os
 
         inline void
         __attribute__((always_inline))
-        _wait_for_interrupt (void)
+        wait_for_interrupt (void)
         {
 #if !defined(OS_EXCLUDE_RTOS_IDLE_SLEEP)
 #if defined(OS_TRACE_RTOS_THREAD_CONTEXT)
