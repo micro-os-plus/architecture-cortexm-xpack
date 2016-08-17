@@ -440,19 +440,40 @@ namespace os
 #if defined (__VFP_FP__) && !defined (__SOFTFP__)
 
               // Is the thread using the FPU context?
-              " tst lr, #0x10                      \n"
+              " tst lr, #0x10                       \n"
               " it eq                               \n"
               // If so, push high vfp registers.
               " vstmdbeq %[r]!, {s16-s31}           \n"
               // Save the core registers r4-r11,r14.
               // Also save EXC_RETURN to be able to test
               // again this condition in the restore sequence.
-              " stmdb %[r]!, {r4-r9,sl,fp,lr}          \n"
+              " stmdb %[r]!, {r4-r9,sl,fp,lr}       \n"
 
 #else
 
+#if defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
+
               // Save the core registers r4-r11.
               " stmdb %[r]!, {r4-r9,sl,fp}          \n"
+
+#elif defined(__ARM_ARCH_6M__)
+
+              // Save the core registers r4-r7.
+              " stmia %[r]!, {r4-r7}                \n"
+
+              // Move the core registers r8-r11 to lower registers.
+              " mov r4, r8                          \n"
+              " mov r5, r9                          \n"
+              " mov r6, sl                          \n"
+              " mov r7, fp                          \n"
+              // Save the core registers r8-r11.
+              " stmia %[r]!, {r4-r7}                \n"
+
+#else
+
+#error Implement registers save on this architecture.
+
+#endif
 
 #endif
               : [r] "=r" (sp_) /* out */
@@ -503,8 +524,30 @@ namespace os
 
 #else
 
-              // Pop the core registers r4-r11.
+#if defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
+
+              // Restore the core registers r4-r11.
               " ldmia %[r]!, {r4-r9,sl,fp}          \n"
+
+#elif defined(__ARM_ARCH_6M__)
+
+              // Restore the core registers r8-r11.
+              " ldmia %[r]!, {r4-r7}                \n"
+
+              // Move lower registers to core registers r8-r11.
+              " mov r8, r4                          \n"
+              " mov r9, r5                          \n"
+              " mov sl, r6                          \n"
+              " mov fp, r7                          \n"
+
+              // Restore the core registers r4-r7.
+              " ldmia %[r]!, {r4-r7}                \n"
+
+#else
+
+#error Implement registers restore on this architecture.
+
+#endif
 
 #endif
 
