@@ -437,6 +437,9 @@ namespace os
               " mrs %[r], PSP                       \n"
               " isb                                 \n"
 
+
+#if defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
+
 #if defined (__VFP_FP__) && !defined (__SOFTFP__)
 
               // Is the thread using the FPU context?
@@ -451,14 +454,19 @@ namespace os
 
 #else
 
-#if defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
-
-              // Save the core registers r4-r11.
+              // Save the core registers r4-r11. Decrement [r].
               " stmdb %[r]!, {r4-r9,sl,fp}          \n"
+
+#endif
+
 
 #elif defined(__ARM_ARCH_6M__)
 
-              // Save the core registers r4-r7.
+              // With decrement not available, manually
+              // move the pointer 8 words below.
+              " sub %[r], %[r], #32                 \n"
+
+              // Save the core registers r4-r7. Increment [r].
               " stmia %[r]!, {r4-r7}                \n"
 
               // Move the core registers r8-r11 to lower registers.
@@ -466,14 +474,15 @@ namespace os
               " mov r5, r9                          \n"
               " mov r6, sl                          \n"
               " mov r7, fp                          \n"
-              // Save the core registers r8-r11.
+              // Save the core registers r8-r11. Increment [r].
               " stmia %[r]!, {r4-r7}                \n"
+
+              // Move [r] down, to cancel increment.
+              " sub %[r], %[r], #32                 \n"
 
 #else
 
 #error Implement registers save on this architecture.
-
-#endif
 
 #endif
               : [r] "=r" (sp_) /* out */
@@ -510,6 +519,8 @@ namespace os
           asm volatile
           (
 
+#if defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
+
 #if defined (__VFP_FP__) && !defined (__SOFTFP__)
 
               // Pop the core registers r4-r11,r14.
@@ -524,30 +535,38 @@ namespace os
 
 #else
 
-#if defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
-
-              // Restore the core registers r4-r11.
+              // Restore the core registers r4-r11. Increment [r].
               " ldmia %[r]!, {r4-r9,sl,fp}          \n"
+
+#endif
 
 #elif defined(__ARM_ARCH_6M__)
 
-              // Restore the core registers r8-r11.
+              // Move [r] to upper registers location.
+              " add %[r], %[r], #16                 \n"
+
+              // Restore the core registers r8-r11 to lower registers.
+              // Increment [r].
               " ldmia %[r]!, {r4-r7}                \n"
 
-              // Move lower registers to core registers r8-r11.
+              // Move lower registers to upper registers r8-r11.
               " mov r8, r4                          \n"
               " mov r9, r5                          \n"
               " mov sl, r6                          \n"
               " mov fp, r7                          \n"
 
-              // Restore the core registers r4-r7.
+              // Move [r] down, to lower registers location.
+              " sub %[r], %[r], #32                 \n"
+
+              // Restore the core registers r4-r7. Increment [r].
               " ldmia %[r]!, {r4-r7}                \n"
+
+              // Move [r] up, after upper registers.
+              " add %[r], %[r], #16                 \n"
 
 #else
 
 #error Implement registers restore on this architecture.
-
-#endif
 
 #endif
 
