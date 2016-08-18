@@ -437,7 +437,6 @@ namespace os
               " mrs %[r], PSP                       \n"
               " isb                                 \n"
 
-
 #if defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
 
 #if defined (__VFP_FP__) && !defined (__SOFTFP__)
@@ -458,7 +457,6 @@ namespace os
               " stmdb %[r]!, {r4-r9,sl,fp}          \n"
 
 #endif
-
 
 #elif defined(__ARM_ARCH_6M__)
 
@@ -485,6 +483,7 @@ namespace os
 #error Implement registers save on this architecture.
 
 #endif
+
               : [r] "=r" (sp_) /* out */
               : /* in */
               : /* clobber. DO NOT add anything here! */
