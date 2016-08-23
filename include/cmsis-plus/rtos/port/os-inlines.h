@@ -154,6 +154,8 @@ namespace os
         inline bool
         is_priority_valid (void)
         {
+#if defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
+
 #if defined(OS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY)
 
           // The trick here is to properly account for differences
@@ -179,12 +181,15 @@ namespace os
           // When using DI/EI, all priority levels are valid.
           return true;
 
-#endif
-        }
+#endif /* defined(OS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY) */
 
-#if !defined(__ARM_ARCH_7M__) && !defined(__ARM_ARCH_7EM__) && !defined(__ARM_ARCH_6M__)
-#error Critical sections not implemented of this architecture
-#endif
+#elif defined(__ARM_ARCH_6M__)
+
+          // When using DI/EI, all priority levels are valid.
+           return true;
+
+#endif /* architecture */
+        }
 
         // Enter an IRQ critical section
         inline rtos::interrupts::state_t
