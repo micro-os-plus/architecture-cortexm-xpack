@@ -25,6 +25,11 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
+/*
+ * Implementation routines for the CMSIS++ reference scheduler, mainly
+ * the context switching and context creation.
+ */
+
 #if defined(__ARM_EABI__)
 
 // ----------------------------------------------------------------------------
@@ -44,19 +49,43 @@
 
 #include <cmsis_device.h>
 
-/*
- * Implementation routines for the CMSIS++ reference scheduler, mainly
- * the context switching and context creation.
- */
+// ----------------------------------------------------------------------------
+
+#if !defined(__ARM_ARCH_7M__) && !defined(__ARM_ARCH_7EM__) && !defined(__ARM_ARCH_6M__)
+#error "Architecture not supported."
+#endif
+
+#if defined(__ARM_ARCH_6M__)
+
+#if defined(OS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY)
+#error "OS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY should not be used with Cortex-M0/M0+ devices."
+#endif
+
+#endif /* defined(__ARM_ARCH_6M__) */
+
+#if defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
+
+#if defined(OS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY)
+
+#define __MAX_PRIO ((1 << __NVIC_PRIO_BITS) -1)
+
+static_assert (OS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY != 0, \
+               "OS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY cannot be 0");
+static_assert (OS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY <= __MAX_PRIO, \
+               "OS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY must be <= " \
+               OS_MACRO_STRINGIFY(__MAX_PRIO));
+
+#endif /* defined(OS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY) */
+
+#endif /* defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__) */
+
+// ----------------------------------------------------------------------------
 
 #if defined(__ARM_ARCH_6M__)
 extern uint32_t __vectors_start;
 #endif
 
-#if !defined(__ARM_ARCH_7M__) && !defined(__ARM_ARCH_7EM__) \
-  && !defined(__ARM_ARCH_6M__)
-#error Context switching not yet implemented for the current architecture.
-#endif
+// ----------------------------------------------------------------------------
 
 namespace os
 {
