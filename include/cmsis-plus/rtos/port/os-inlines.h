@@ -69,7 +69,7 @@ namespace os
         {
           trace::printf ("µOS++ Cortex-M");
 #if defined(__ARM_ARCH_7EM__)
-          trace::printf ("4");
+          trace::putchar ('0'+__CORTEX_M); // M4/M7
 #if defined(__VFP_FP__) && !defined(__SOFTFP__)
           trace::printf (" FP");
 #endif
