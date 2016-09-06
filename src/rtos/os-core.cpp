@@ -38,14 +38,8 @@
 #include <cassert>
 
 #include <cmsis-plus/rtos/os.h>
-#include <cmsis-plus/rtos/port/os-inlines.h>
 
 #include <cmsis-plus/cortexm/exception-handlers.h>
-
-// Better be the last, to undef putchar()
-#include <cmsis-plus/diag/trace.h>
-
-#include <cmsis-plus/estd/malloc.h>
 
 #include <cmsis_device.h>
 
