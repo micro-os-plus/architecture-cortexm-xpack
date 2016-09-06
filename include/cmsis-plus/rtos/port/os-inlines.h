@@ -50,7 +50,6 @@
 #include <cmsis_device.h>
 
 #include <cmsis-plus/diag/trace.h>
-#include <cmsis-plus/estd/malloc.h>
 
 namespace os
 {
@@ -79,6 +78,10 @@ namespace os
           trace::printf ("0/0+");
 #endif
           trace::printf (" scheduler; preemptive.\n");
+
+          // At this stage the system clock should have already been configured
+          // at high speed by __initialise_hardware().
+          trace::printf ("System clock: %u Hz.\n", SystemCoreClock);
         }
 
         inline port::scheduler::state_t
