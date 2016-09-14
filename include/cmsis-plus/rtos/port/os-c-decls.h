@@ -64,4 +64,8 @@ typedef struct
   os_port_thread_stack_element_t* stack_ptr;
 } os_port_thread_context_t;
 
+#define OS_INTEGER_RTOS_STACK_FILL_MAGIC (0xEFBEADDE)
+
+#define OS_HAS_INTERRUPTS_STACK
+
 #endif /* CMSIS_PLUS_RTOS_PORT_OS_C_DECLS_H_ */

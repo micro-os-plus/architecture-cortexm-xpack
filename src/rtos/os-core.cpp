@@ -63,11 +63,11 @@
 
 #define __MAX_PRIO ((1 << __NVIC_PRIO_BITS) -1)
 
-static_assert (OS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY != 0, \
-               "OS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY cannot be 0");
-static_assert (OS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY <= __MAX_PRIO, \
-               "OS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY must be <= " \
-               OS_MACRO_STRINGIFY(__MAX_PRIO));
+static_assert (OS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY != 0,
+    "OS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY cannot be 0");
+static_assert (OS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY <= __MAX_PRIO,
+    "OS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY must be <= "
+    OS_MACRO_STRINGIFY(__MAX_PRIO));
 
 #endif /* defined(OS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY) */
 
@@ -78,6 +78,14 @@ static_assert (OS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY <= __MAX_PRIO
 #if defined(__ARM_ARCH_6M__)
 extern uint32_t __vectors_start;
 #endif
+
+// ----------------------------------------------------------------------------
+
+extern "C"
+{
+  extern unsigned int _Heap_Limit;
+  extern unsigned int __stack;
+}
 
 // ----------------------------------------------------------------------------
 
@@ -321,6 +329,11 @@ namespace os
 #error Implement __set_MSP() on this architecture.
 
 #endif
+
+          // Set the beginning address and size of the interrupt stack.
+          rtos::interrupts::stack()->set (
+              reinterpret_cast<stack::element_t*> (&_Heap_Limit),
+              (&__stack - &_Heap_Limit) * sizeof(__stack));
 
           // Set PendSV interrupt priority to the lowest level (highest value).
           NVIC_SetPriority (PendSV_IRQn, (1UL << __NVIC_PRIO_BITS) - 1UL);

@@ -99,7 +99,7 @@ namespace os
         OS_INTEGER_RTOS_DEFAULT_STACK_SIZE_BYTES;
 
         // Used to fill in the stack.
-        constexpr element_t magic = 0xEFBEADDE; // DEADBEEF
+        constexpr element_t magic = OS_INTEGER_RTOS_STACK_FILL_MAGIC; // DEADBEEF
 
       } /* namespace stack */
 
