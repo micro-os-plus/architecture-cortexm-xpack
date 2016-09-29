@@ -116,7 +116,7 @@ namespace os
           // The DSB is recommended by ARM before WFI.
           __DSB ();
           __WFI ();
-#endif
+#endif /* !defined(OS_EXCLUDE_RTOS_IDLE_SLEEP) */
         }
 
       } /* namespace scheduler */
@@ -237,14 +237,13 @@ namespace os
 
 #endif
 
-#if 0
           // Apparently not required by architecture, but used by
           // FreeRTOS, with an unconvincing motivation ("...  ensure
           // the code is completely within the specified behaviour
           // for the architecture").
-          __DSB ();
-          __ISB ();
-#endif
+          // __DSB ();
+          // __ISB ();
+
           return pri;
         }
 
@@ -274,10 +273,8 @@ namespace os
 
 #endif
 
-#if 0
-          __DSB ();
-          __ISB ();
-#endif
+          // __DSB ();
+          // __ISB ();
         }
 
         // ====================================================================
@@ -317,10 +314,8 @@ namespace os
 
 #endif
 
-#if 0
-          __DSB ();
-          __ISB ();
-#endif
+          // __DSB ();
+          // __ISB ();
 
           return pri;
         }
@@ -351,10 +346,8 @@ namespace os
 
 #endif
 
-#if 0
-          __DSB ();
-          __ISB ();
-#endif
+          // __DSB ();
+          // __ISB ();
         }
 
       } /* namespace interrupts */
