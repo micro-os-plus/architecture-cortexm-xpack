@@ -11,15 +11,23 @@
 		"xpack",
 		"xcdl"
 	],
+
 	"author": "Liviu Ionescu <ilg@livius.net>",
 	"homepage": "https://github.com/micro-os-plus/micro-os-plus-iii",
-	"repository": {
+	"repository": 
+	{
 		"type": "git",
 		"url": "https://github.com/micro-os-plus/micro-os-plus-iii.git"
 	},
-	"bugs": {
+
+	"bugs": 
+	{
 		"url": "http://www.element14.com/community/groups/gnu-arm-eclipse"
 	},
-	"license": "LGPL-3.0",
-	"dependencies": {}
+
+	"license": "MIT",
+	"dependencies": 
+	{
+		
+	}
 }
