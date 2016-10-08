@@ -11,7 +11,6 @@ do_add_micro_os_plus_iii_cortexm_xpack() {
   do_tell_xpack "${pack_name}-xpack"
 
   do_select_pack_folder "ilg/${pack_name}.git"
-  do_check_micro_os_plus "${pack_name}"
 
   # Exception, folder with diferent name;
   # Package to be renamed.
