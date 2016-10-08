@@ -66,7 +66,7 @@ namespace os
         __attribute__((always_inline))
         greeting (void)
         {
-          trace::printf ("µOS++ Cortex-M");
+          trace::printf ("Scheduler: µOS++ Cortex-M");
 #if defined(__ARM_ARCH_7EM__)
           trace::putchar ('0'+__CORTEX_M); // M4/M7
 #if defined(__VFP_FP__) && !defined(__SOFTFP__)
@@ -77,7 +77,18 @@ namespace os
 #elif defined(__ARM_ARCH_6M__)
           trace::printf ("0/0+");
 #endif
-          trace::printf (" scheduler; preemptive.\n");
+          trace::printf (", preemptive");
+#if (defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)) && defined(OS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY)
+          trace::printf (", BASEPRI(%u)", OS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY);
+#else
+          trace::printf(", DI/EI");
+#endif
+#if defined(OS_EXCLUDE_RTOS_IDLE_SLEEP)
+          trace::printf(", no WFI");
+#else
+          trace::printf(", WFI");
+#endif
+          trace::puts (".");
 
           // At this stage the system clock should have already been configured
           // at high speed by __initialise_hardware().
