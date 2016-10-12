@@ -12,8 +12,6 @@ do_add_micro_os_plus_iii_cortexm_xpack() {
 
   do_select_pack_folder "ilg/${pack_name}.git"
 
-  # Exception, folder with diferent name;
-  # Package to be renamed.
   do_prepare_dest "${pack_name}/include"
   do_add_content "${pack_folder}/include"/* 
 
