@@ -1,14 +1,15 @@
 {
 	"$schema": "http://xcdl.github.io/schemas/xpack-1-1.json",
-	"name": "ilg-micro-os-plus-iii",
+	"group": "ilg",
+	"name": "micro-os-plus-iii-cortexm",
 	"title": "µOS++ IIIe",
-	"description": "An xPack with the µOS++ IIIe scheduler code.",
+	"description": "An xPack with the µOS++ Cortex-M scheduler code.",
 	"xcdlFile": ".xcdl.json",
 	"repository": 
 	{
 		"type": "git",
-		"url": "https://github.com/micro-os-plus/micro-os-plus-iii.git",
-		"archive": "https://github.com/micro-os-plus/micro-os-plus-iii/archive/xpack.zip"
+		"url": "https://github.com/micro-os-plus/micro-os-plus-iii-cortexm.git",
+		"archive": "https://github.com/micro-os-plus/micro-os-plus-iii-cortexm/archive/xpack.zip"
 	},
 
 	"version": "0.1.1",
@@ -24,7 +25,7 @@
 		"portable"
 	],
 
-	"homepage": "https://github.com/micro-os-plus/micro-os-plus-iii",
+	"homepage": "https://github.com/micro-os-plus/micro-os-plus-iii-cortexm",
 	"support": [
 		{
 			"description": "forum",
@@ -33,7 +34,7 @@
 
 		{
 			"description": "bugs & enhancements",
-			"url": "https://github.com/micro-os-plus/micro-os-plus-iii/issues"
+			"url": "https://github.com/micro-os-plus/micro-os-plus-iii-cortexm/issues"
 		}
 	],
 

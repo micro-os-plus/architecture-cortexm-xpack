@@ -1,17 +1,16 @@
 # µOS++ IIIe
 
-An xPack with the µOS++ IIIe scheduler code.
+An xPack with the µOS++ Cortex-M scheduler code.
 
 ## Package
 
-[µOS++ IIIe](https://github.com/micro-os-plus/micro-os-plus-iii) package details:
+[µOS++ IIIe](https://github.com/micro-os-plus/micro-os-plus-iii-cortexm) package details:
 
 * type: [xcdl](http://xcdl.github.io)
-* yotta name: `ilg-micro-os-plus-iii`
-* yotta repo: http://yotta.mbed.com/#/module/ilg-micro-os-plus-iii/0.1.1
-* git repo: https://github.com/micro-os-plus/micro-os-plus-iii.git
-* homepage: https://github.com/micro-os-plus/micro-os-plus-iii
-* latest archive: https://github.com/micro-os-plus/micro-os-plus-iii/archive/xpack.zip
+* name: `ilg/micro-os-plus-iii-cortexm`
+* git repo: https://github.com/micro-os-plus/micro-os-plus-iii-cortexm.git
+* homepage: https://github.com/micro-os-plus/micro-os-plus-iii-cortexm
+* latest archive: https://github.com/micro-os-plus/micro-os-plus-iii-cortexm/archive/xpack.zip
 
 ## Version
 
@@ -32,7 +31,7 @@ An xPack with the µOS++ IIIe scheduler code.
 ## Support
 
 * [forum](http://www.element14.com/community/groups/gnu-arm-eclipse)
-* [bugs & enhancements](https://github.com/micro-os-plus/micro-os-plus-iii/issues)
+* [bugs & enhancements](https://github.com/micro-os-plus/micro-os-plus-iii-cortexm/issues)
 
 ## Dependencies
 
@@ -48,29 +47,39 @@ An xPack with the µOS++ IIIe scheduler code.
 
 ## License
 
-* [spdx](http://spdx.org/licenses/): LGPL-3.0
+* [spdx](http://spdx.org/licenses/): MIT
 
 --- 
 ## Purpose
 
-The µOS++ IIIe _(micro oh ɛs plus plus third edition)_ project is the third 
-iteration of **µOS++**, an open source, royalty-free, multi-tasking 
-operating system intended for embedded systems, focused on Cortex-M device.
-
-The core component of µOS++ is CMSIS++, a proposal for the next generation CMSIS.
-
-µOS++ provides a reference implementation for the CMSIS++ RTOS scheduler. 
+This xPack provides the implementation for the µOS++ scheduler, running on **ARM Cortex-M** devices. 
 
 ## Status
 
-The CMSIS++ RTOS scheduler port is fully functional.
+The µOS++ Cortex-M scheduler port is fully functional.
 
-## Documentation
+## Build Configuration
 
-TBD
+To include this µOS++ port in a project, consider the following details.
+
+### Include folders
+
+- `include` 
+ 
+### Source folders
+
+- `src` 
+
+### Symbols
+
+None.
+
+## Future enhancements
+
+None.
 
 ## Tests
 
-TBD
+None.
 
 --- 
