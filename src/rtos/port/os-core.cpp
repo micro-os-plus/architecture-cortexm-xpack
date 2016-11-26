@@ -113,9 +113,7 @@ namespace os
           stack::element_t r9;
           stack::element_t r10_sl;
           stack::element_t r11_fp;
-#if defined (__VFP_FP__) && !defined (__SOFTFP__)
           stack::element_t r14_exec_return;
-#endif
           // Restored automatically by exception return.
           stack::element_t r0;
           stack::element_t r1;
@@ -198,7 +196,6 @@ namespace os
         f->r1 = 0x11111111; // R1 +9*4=40
         f->r0 = (rtos::thread::stack::element_t) args; // R0 +8*4=36
 
-#if defined (__VFP_FP__) && !defined (__SOFTFP__)
         // This frame does not include initial FPU registers.
         // bit 4: 1 (8 words), 0 (26 words)
         // bit 3: 1 (return to thread), 0 (return to handler)
@@ -206,7 +203,6 @@ namespace os
         // bit 1 = 0
         // bit 0 = 1
         f->r14_exec_return = 0xFFFFFFFD;
-#endif
 
         f->r11_fp = 0xBBBBBBBB; // R11 +7*4=32
         f->r10_sl = 0xAAAAAAAA; // R10 +6*4=28
@@ -279,16 +275,20 @@ namespace os
          * "Running a system with two stacks" in "The Definitive
          * Guide to ARM Cortex!-M3 and Cortex-M4 Processors" by
          * Joseph Yiu, provides a simpler solution.
+         *
+         * The `optimize("1")` is used because for ARMv6 the setMSP()
+         * generates wrong code with higher optimisation levels.
          */
 
         void
+        __attribute__ ((optimize("1")))
         start (void)
         {
 #if defined(OS_TRACE_RTOS_SCHEDULER)
           trace::printf ("port::scheduler::%s() \n", __func__);
 #endif
 
-#if defined (__VFP_FP__) && !defined (__SOFTFP__)
+#if defined (__ARM_FP)
           // The FPU should have been enabled by
           // os_startup_initialize_hardware_early().
 #endif
@@ -332,7 +332,7 @@ namespace os
 #endif
 
           // Set the beginning address and size of the interrupt stack.
-          rtos::interrupts::stack()->set (
+          rtos::interrupts::stack ()->set (
               reinterpret_cast<stack::element_t*> (&_Heap_Limit),
               (&__stack - &_Heap_Limit) * sizeof(__stack));
 
@@ -476,44 +476,41 @@ namespace os
 
 #if defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
 
-#if defined (__VFP_FP__) && !defined (__SOFTFP__)
+#if defined (__ARM_FP)
 
               // Is the thread using the FPU context?
               " tst lr, #0x10                       \n"
               " it eq                               \n"
               // If so, push high vfp registers.
               " vstmdbeq %[r]!, {s16-s31}           \n"
-              // Save the core registers r4-r11,r14.
-              // Also save EXC_RETURN to be able to test
-              // again this condition in the restore sequence.
-              " stmdb %[r]!, {r4-r9,sl,fp,lr}       \n"
-
-#else
-
-              // Save the core registers r4-r11. Decrement [r].
-              " stmdb %[r]!, {r4-r9,sl,fp}          \n"
 
 #endif
+
+              // Save the core registers r4-r11,r14. Decrement [r].
+              // The EXC_RETURN may be tested again for FP
+              // in the restore sequence.
+              " stmdb %[r]!, {r4-r9,sl,fp,lr}       \n"
 
 #elif defined(__ARM_ARCH_6M__)
 
               // With decrement not available, manually
-              // move the pointer 8 words below.
-              " sub %[r], %[r], #32                 \n"
+              // move the pointer 9 words below.
+              " sub %[r], %[r], #36                 \n"
 
               // Save the core registers r4-r7. Increment [r].
               " stmia %[r]!, {r4-r7}                \n"
 
               // Move the core registers r8-r11 to lower registers.
-              " mov r4, r8                          \n"
-              " mov r5, r9                          \n"
-              " mov r6, sl                          \n"
-              " mov r7, fp                          \n"
-              // Save the core registers r8-r11. Increment [r].
-              " stmia %[r]!, {r4-r7}                \n"
+              " mov r3, r8                          \n"
+              " mov r4, r9                          \n"
+              " mov r5, sl                          \n"
+              " mov r6, fp                          \n"
+              " mov r7, lr                          \n"
+              // Save the core registers r8-r11,lr. Increment [r].
+              " stmia %[r]!, {r3-r7}                \n"
 
               // Move [r] down, to cancel increment.
-              " sub %[r], %[r], #32                 \n"
+              " sub %[r], %[r], #36                 \n"
 
 #else
 
@@ -557,48 +554,45 @@ namespace os
 
 #if defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
 
-#if defined (__VFP_FP__) && !defined (__SOFTFP__)
-
-              // Pop the core registers r4-r11,r14.
+              // Restore the core registers r4-r11,r14. Increment [r].
               // R14 contains the EXC_RETURN value
-              // and is restored for the next test.
+              // and may be used in the FP test.
               " ldmia %[r]!, {r4-r9,sl,fp,lr}       \n"
+
+#if defined (__ARM_FP)
+
               // Is the thread using the FPU context?
               " tst lr, #0x10                       \n"
               " it eq                               \n"
               // If so, pop the high vfp registers too.
               " vldmiaeq %[r]!, {s16-s31}           \n"
 
-#else
-
-              // Restore the core registers r4-r11. Increment [r].
-              " ldmia %[r]!, {r4-r9,sl,fp}          \n"
-
 #endif
 
 #elif defined(__ARM_ARCH_6M__)
 
-              // Move [r] to upper registers location.
+              // Move [r] to upper registers location (4*4).
               " add %[r], %[r], #16                 \n"
 
-              // Restore the core registers r8-r11 to lower registers.
+              // Restore the core registers r8-r11,lr to lower registers.
               // Increment [r].
-              " ldmia %[r]!, {r4-r7}                \n"
+              " ldmia %[r]!, {r3-r7}                \n"
 
               // Move lower registers to upper registers r8-r11.
-              " mov r8, r4                          \n"
-              " mov r9, r5                          \n"
-              " mov sl, r6                          \n"
-              " mov fp, r7                          \n"
+              " mov r8, r3                          \n"
+              " mov r9, r4                          \n"
+              " mov sl, r5                          \n"
+              " mov fp, r6                          \n"
+              " mov lr, r7                          \n"
 
-              // Move [r] down, to lower registers location.
-              " sub %[r], %[r], #32                 \n"
+              // Move [r] down, to lower registers location (9*4).
+              " sub %[r], %[r], #36                 \n"
 
               // Restore the core registers r4-r7. Increment [r].
               " ldmia %[r]!, {r4-r7}                \n"
 
-              // Move [r] up, after upper registers.
-              " add %[r], %[r], #16                 \n"
+              // Move [r] up, after upper registers (5*4).
+              " add %[r], %[r], #20                 \n"
 
 #else
 
@@ -773,8 +767,7 @@ using namespace os::rtos;
 /*
  * An actual version of the Cortex-M3 handler looks pretty cool:
  *
- * 08000198 <PendSV_Handler>:
- * 8000198: b500        push  {lr}
+ * 800019a <PendSV_Handler>:
  * 800019a: f3ef 8009   mrs r0, PSP
  * 800019e: f3bf 8f6f   isb sy
  * 80001a2: e920 0ff0   stmdb r0!, {r4, r5, r6, r7, r8, r9, sl, fp}
@@ -782,11 +775,11 @@ using namespace os::rtos;
  * 80001aa: e8b0 0ff0   ldmia.w r0!, {r4, r5, r6, r7, r8, r9, sl, fp}
  * 80001ae: f380 8809   msr PSP, r0
  * 80001b2: f3bf 8f6f   isb sy
- * 80001b6: bd00        pop {pc}
+ * 80001b6: 4770        bx  lr
  *
  * The switch_stack() function (using BASEPRI) doesn't look bad either:
  *
- * 08000d88 <os::rtos::port::scheduler::switch_stacks(unsigned long*)>:
+ * 8000d88 <os::rtos::port::scheduler::switch_stacks(unsigned long*)>:
  * 8000d88: b538        push  {r3, r4, r5, lr}
  * 8000d8a: f3ef 8511   mrs r5, BASEPRI
  * 8000d8e: 2340        movs  r3, #64 ; 0x40
@@ -825,16 +818,15 @@ void
 __attribute__ ((section(".after_vectors"), naked, used, optimize("s")))
 PendSV_Handler (void)
 {
-  // The naked attribute and the push/pop are used to fully control
-  // the function entry/exit code; be sure other registers are not
-  // used in the assembly parts.
-  asm volatile ("push {lr}");
+  // The naked attribute is used to fully control the function entry/exit
+  // code; be sure other registers are not used in the assembly parts.
+  // Do NOT use push/pop, since the LR is from a different context.
 
   // The whole mystery of context switching, in one sentence. :-)
   port::scheduler::restore_from_stack (
       port::scheduler::switch_stacks (port::scheduler::save_on_stack ()));
 
-  asm volatile ("pop {pc}");
+  asm volatile ("bx lr");
 }
 
 // ----------------------------------------------------------------------------

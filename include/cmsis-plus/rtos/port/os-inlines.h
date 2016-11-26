@@ -69,7 +69,7 @@ namespace os
           trace::printf ("Scheduler: µOS++ Cortex-M");
 #if defined(__ARM_ARCH_7EM__)
           trace::putchar ('0'+__CORTEX_M); // M4/M7
-#if defined(__VFP_FP__) && !defined(__SOFTFP__)
+#if defined (__ARM_FP)
           trace::printf (" FP");
 #endif
 #elif defined(__ARM_ARCH_7M__)
