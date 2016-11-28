@@ -281,7 +281,6 @@ namespace os
          */
 
         void
-        __attribute__ ((optimize("1")))
         start (void)
         {
 #if defined(OS_TRACE_RTOS_SCHEDULER)
@@ -320,10 +319,13 @@ namespace os
 
 #elif defined(__ARM_ARCH_6M__)
 
-          // VTOR not available on this architecture.
+          // VTOR in not available on this architecture.
           // Read the stack pointer from the first word
-          // stored in the vectors table.
-          __set_MSP (*((uint32_t*) (0x00000000)));
+          // stored in the vectors table. Since GCC detects
+          // accesses that dereference the NULL pointer,
+          // try to fool it with a volatile pointer.
+          uint32_t* volatile vectors_addr = 0x00000000;
+          __set_MSP (*vectors_addr);
 
 #else
 
