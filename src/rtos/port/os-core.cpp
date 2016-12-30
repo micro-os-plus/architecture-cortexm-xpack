@@ -157,8 +157,11 @@ namespace os
 
         p -= (sizeof(stack::frame_t) / sizeof(rtos::thread::stack::element_t));
 
-        // Align the frame to 8 bytes.
-        if (((int) p & 7) != 0)
+        // Align the frame to 8 bytes than leave one more word for the extra
+        // stack element, r14_exec_return, which is the 9th.
+        // Note: if the thread stack is not aligned at an 8 byte boundary,
+        // var_args() will fail (for example printf() does not floats/doubles).
+        if (((int) p & 7) == 0)
           {
             --p;
           }
