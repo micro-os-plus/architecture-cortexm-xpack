@@ -218,6 +218,9 @@ namespace os
 
         // Store the current stack pointer in the context.
         th_ctx->port_.stack_ptr = p;
+
+        // Guarantee that the stack is properly aligned.
+        assert((((int )(&f->r0)) & 7) == 0);
       }
 
       /**
@@ -335,6 +338,9 @@ namespace os
 #error Implement __set_MSP() on this architecture.
 
 #endif
+
+          // Guarantee that the interrupt stack is properly aligned.
+          assert((((int )(__get_MSP ())) & 7) == 0);
 
           // Set the beginning address and size of the interrupt stack.
           rtos::interrupts::stack ()->set (
