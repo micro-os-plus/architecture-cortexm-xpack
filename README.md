@@ -1,5 +1,7 @@
 # µOS++ IIIe
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/bfe33c7001b84fe396427ccf89ba4a64)](https://www.codacy.com/app/ilg-ul/micro-os-plus-iii-cortexm?utm_source=github.com&utm_medium=referral&utm_content=micro-os-plus/micro-os-plus-iii-cortexm&utm_campaign=badger)
+
 An xPack with the µOS++ Cortex-M scheduler code.
 
 ## Package
