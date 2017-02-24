@@ -772,7 +772,7 @@ using namespace os::rtos;
  * - restore all registers from the new stack
  * - resume execution of the new thread
  *
- * The `optimize("s")` is needed to avoid the nightmarish code
+ * The `optimize("1")` is needed to avoid the nightmarish code
  * generated with `-O0`.
  *
  * Without it, this function would have been naked and LR have been
@@ -839,7 +839,7 @@ using namespace os::rtos;
  */
 
 void
-__attribute__ ((section(".after_vectors"), naked, used, optimize("s")))
+__attribute__ ((section(".after_vectors"), naked, used, optimize("1")))
 PendSV_Handler (void)
 {
   // The naked attribute is used to fully control the function entry/exit
