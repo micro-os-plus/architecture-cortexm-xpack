@@ -282,11 +282,15 @@ namespace os
          * Guide to ARM Cortex!-M3 and Cortex-M4 Processors" by
          * Joseph Yiu, provides a simpler solution.
          *
-         * The `optimize("1")` is used because for ARMv6 the setMSP()
-         * generates wrong code with higher optimisation levels.
+         * The optimization attribute is required for ARM-v6M
+         * where instead of reading VTOR, the stack address is
+         * fetched from the first flash word, and reading from
+         * 0x0 is usually considered undefined behaviour.
          */
-
         void
+#if defined(__ARM_ARCH_6M__)
+        __attribute__((optimize("no-delete-null-pointer-checks")))
+#endif
         start (void)
         {
 #if defined(OS_TRACE_RTOS_SCHEDULER)
@@ -327,11 +331,20 @@ namespace os
 
           // VTOR in not available on this architecture.
           // Read the stack pointer from the first word
-          // stored in the vectors table. Since GCC detects
+          // stored in the vectors table. Since normally
           // accesses that dereference the NULL pointer,
-          // try to fool it with a volatile pointer.
+          // are undefined, the function needs to be marked
+          // as -fno-delete-null-pointer-checks.
+
+#if 0
+          // An alternate way would try to fool the comiler
+          // with a volatile pointer, but this is not
+          // guaranteed to work in future versions.
           uint32_t* volatile vectors_addr = 0x00000000;
           __set_MSP (*vectors_addr);
+#else
+          __set_MSP (*((uint32_t*) 0x00000000));
+#endif
 
 #else
 
