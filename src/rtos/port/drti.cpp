@@ -63,7 +63,10 @@ namespace os
       typedef __attribute__ ((packed, aligned((4))))
       struct drti_s
       {
+        // 0x00, 4 bytes
         uint8_t magic[4];
+
+        // 0x04, 4 bytes
         struct
         {
           uint8_t v;
@@ -72,18 +75,38 @@ namespace os
           uint8_t patch;
         } version;
 
+        // 0x08, 32-bits pointer
         void* scheduler_is_started_addr;
+
+        // 0x0C, 32-bits pointer
         void* scheduler_top_threads_list_addr;
+
+        // 0x10, 32-bits pointer
         volatile void* scheduler_current_thread_addr;
 
+        // 0x14, 16-bits unsigned int
         uint16_t thread_name_offset;
+
+        // 0x16, 16-bits unsigned int
         uint16_t thread_parent_offset;
 
+        // 0x18, 16-bits unsigned int
         uint16_t thread_list_node_offset;
+
+        // 0x1A, 16-bits unsigned int
         uint16_t thread_children_node_offset;
 
+        // 0x1C, 16-bits unsigned int
         uint16_t thread_state_offset;
+
+        // 0x1E, 16-bits unsigned int
         uint16_t thread_stack_offset;
+
+        // 0x20, 16-bits unsigned int
+        uint16_t thread_prio_assigned;
+
+        // 0x22, 16-bits unsigned int
+        uint16_t thread_prio_inherited;
 
       } drti_t;
 #pragma GCC diagnostic pop
@@ -112,7 +135,9 @@ struct os::rtos::port::drti_s os_rtos_drti =
     offsetof(os::rtos::thread, child_links_), /**/
     offsetof(os::rtos::thread, children_), /**/
     offsetof(os::rtos::thread, state_), /**/
-    offsetof(os::rtos::thread, context_.port_.stack_ptr)
+    offsetof(os::rtos::thread, context_.port_.stack_ptr),  /**/
+    offsetof(os::rtos::thread, prio_assigned_),  /**/
+    offsetof(os::rtos::thread, prio_inherited_)
   };
 
 #pragma GCC diagnostic pop
