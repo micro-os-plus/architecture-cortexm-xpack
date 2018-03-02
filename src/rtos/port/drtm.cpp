@@ -25,7 +25,7 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include <cmsis-plus/rtos/port/diag/drti.h>
+#include <cmsis-plus/rtos/port/diag/drtm.h>
 
 #include <cmsis-plus/rtos/os.h>
 #include <cstdint>
@@ -33,7 +33,7 @@
 // ----------------------------------------------------------------------------
 
 /*
- * Debug Run Time Information.
+ * Debug Run Time Metadata.
  *
  * This is custom metadata stored in program flash space, intended to help
  * debuggers access internal RTOS objects.
@@ -42,15 +42,15 @@
  * might consider more metadata and a more elaborate structure, like
  * a compile time binary JSON.
  *
- * To include DRTI support in an application:
- * - define `OS_INCLUDE_RTOS_DRTI`
- * - preferably add `KEEP(*(.drti))` to the `.isr_vector` section
- * of the linker script; this will ensure the DRTI data is
+ * To include DRTM support in an application:
+ * - define `OS_INCLUDE_RTOS_DRTM`
+ * - preferably add `KEEP(*(.drtm))` to the `.isr_vector` section
+ * of the linker script; this will ensure the DRTM data is
  * allocated right after the vectors;
- * - alternatively add `-u os_rtos_drti` to the linker command line.
+ * - alternatively add `-u os_rtos_drtm` to the linker command line.
  */
 
-#if defined(OS_INCLUDE_RTOS_DRTI)
+#if defined(OS_INCLUDE_RTOS_DRTM)
 
 namespace os
 {
@@ -61,7 +61,7 @@ namespace os
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wattributes"
       typedef __attribute__ ((packed, aligned((4))))
-      struct drti_s
+      struct drtm_s
       {
         // 0x00, 4 bytes
         uint8_t magic[4];
@@ -108,23 +108,23 @@ namespace os
         // 0x22, 16-bits unsigned int
         uint16_t thread_prio_inherited;
 
-      } drti_t;
+      } drtm_t;
 #pragma GCC diagnostic pop
     }
   }
 }
 
-extern "C" const os::rtos::port::drti_t os_rtos_drti;
+extern "C" const os::rtos::port::drtm_t os_rtos_drtm;
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Winvalid-offsetof"
 
-const __attribute__ ((section(".drti")))
-struct os::rtos::port::drti_s os_rtos_drti =
+const __attribute__ ((section(".drtm")))
+struct os::rtos::port::drtm_s os_rtos_drtm =
   {
-      { 'D', 'R', 'T', 'I'},
-      { 'v', OS_RTOS_DRTI_VERSION_MAJOR, OS_RTOS_DRTI_VERSION_MINOR,
-        OS_RTOS_DRTI_VERSION_PATCH}, /**/
+      { 'D', 'R', 'T', 'M'},
+      { 'v', OS_RTOS_DRTM_VERSION_MAJOR, OS_RTOS_DRTM_VERSION_MINOR,
+        OS_RTOS_DRTM_VERSION_PATCH}, /**/
 
     &os::rtos::scheduler::is_started_, /**/
     &os::rtos::scheduler::top_threads_list_, /**/
@@ -142,6 +142,6 @@ struct os::rtos::port::drti_s os_rtos_drti =
 
 #pragma GCC diagnostic pop
 
-#endif /* defined(OS_INCLUDE_RTOS_DRTI) */
+#endif /* defined(OS_INCLUDE_RTOS_DRTM) */
 
 // ----------------------------------------------------------------------------
