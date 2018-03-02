@@ -100,6 +100,112 @@ namespace os
       namespace stack
       {
         // Stack frame, as used by PendSV.
+
+        // Offsets in words, from SP up
+
+        // Saved always by ARM
+        // (17 optional padding/aligner)
+        // 16 xPSR (xPSR bit 9 = 1 if padded)
+        // 15 return address (PC, R15)
+        // 14 LR (R14)
+        // 13 R12
+        // 12 R3
+        // 11 R2
+        // 10 R1
+        //  9 R0
+
+        // Saved always by context switch handler.
+        // "stmdb %[r]!, {r4-r9,sl,fp,lr}"
+        //  8 EXC_RETURN (R14)
+        //  7 FP (R11)
+        //  6 SL (R10)
+        //  5 R9
+        //  4 R8
+        //  3 R7
+        //  2 R6
+        //  1 R5
+        //  0 R4 <-- new SP value
+
+        // Valid Values for EXC_RETURN
+        // 0xFFFFFFFD/0xFFFFFFED - Return to Thread mode and use the
+        // Process Stack for return
+        // 0xFFFFFFF9/0xFFFFFFE9 - Return to Thread mode and use the
+        // Main Stack for return
+        // 0xFFFFFFF1/0xFFFFFFE1 - Return to Handler mode
+        // (always use Main Stack)
+        // (Joseph Yiu, Table 8.2, pag 279)
+        //
+        // Bit Fields of the EXC_RETURN
+        // - bits 31:28 EXC_RETURN indicator, 0xF
+        // - bits 27:5 Reserved, all 1
+        // - bit 4 (0x10) Stack Frame type
+        // 1 (8 words) or 0 (26 words).
+        // Always 1 when the floating unit is unavailable.
+        // This value is set to the inverted value of FPCA bit in the
+        // CONTROL register when entering an exception handler.
+        // - bit 3 (0x08) Return mode
+        // 1 (Return to Thread) or 0 (Return to Handler)
+        // - bit 2 (0x04) Return stack
+        // 1 (Return with Process Stack) or 0 (Return with Main Stack)
+        // - bit 1 (0x02) Reserved, 0
+        // - bit 0 (0x01) Reserved, 1
+        // (Joseph Yiu, Table 8.1, pag 278)
+
+        // CONTROL.FPCA (bit 2, 0x04)
+        // Floating Point Context Active – This bit is only available
+        // in Cortex-M4 with floating point unit implemented. The
+        // exception handling mechanism uses this bit to determine if
+        // registers in the floating point unit need to be saved when
+        // an exception has occurred.
+        // When this bit is 0 (default), the floating point unit has
+        // not been used in the current context and therefore there
+        // is no need to save floating point registers.
+        // When this bit is 1, the current context has used floating
+        // point instructions and therefore need to save floating
+        // point registers.
+        // The FPCA bit is set automatically when a floating point
+        // instruction is executed. This bit is clear by hardware
+        // on exception entry.
+        // There are several options for handling saving of floating
+        // point registers.
+        // (Joseph Yiu, Table 4.3, pag. 87)
+
+        // Saved always by ARM.
+        // (50 optional padding/aligner)
+        // 49 FPSCR
+        // 48 S15
+        // ...
+        // 34 S1
+        // 33 S0
+        // 32 xPSR (xPSR bit 9 = 1 if padded)
+        // 31 return address (PC, R15)
+        // 30 LR (R14)
+        // 29 R12
+        // 28 R3
+        // 27 R2
+        // 26 R1
+        // 25 R0
+
+        // Saved conditionally if EXC_RETURN, bit 4 is 0 (zero).
+        // "vldmiaeq %[r]!, {s16-s31}"
+        // 24 S31
+        // 23 S30
+        // ...
+        // 10 S17
+        //  9 S16
+
+        // Saved always by context switch handler.
+        // "stmdb %[r]!, {r4-r9,sl,fp,lr}"
+        //  8 EXC_RETURN (R14)
+        //  7 FP (R11)
+        //  6 SL (R10)
+        //  5 R9
+        //  4 R8
+        //  3 R7
+        //  2 R6
+        //  1 R5
+        //  0 R4 <-- new SP value
+
         typedef struct frame_s
         {
           // Restored manually by ldmia %[r]!, {r4-r9,sl,fp[,r14]}.
@@ -121,8 +227,8 @@ namespace os
           stack::element_t r3;
 
           stack::element_t r12;
-          stack::element_t r14_lr; // r14
-          stack::element_t r15_pc; // r15
+          stack::element_t r14_lr;
+          stack::element_t r15_pc;
           stack::element_t psr;
         } frame_t;
       } /* namespace stack */
@@ -190,13 +296,14 @@ namespace os
         // R13 is the SP; it is not present in the frame,
         // it is loaded separately as PSP.
 
-        f->r12 = 0xCCCCCCCC;  // R12 +12*4=52
+        // The 0x00010203 is added to spot possible endianness issues.
+        f->r12 = 0xCCCCCCCC+0x00010203;  // R12 +12*4=52
 
         // According to ARM ABI, the first 4 word parameters are
         // passed in R0-R3. Only 1 is used.
-        f->r3 = 0x33333333; // R3 +11*4=48
-        f->r2 = 0x22222222; // R2 +10*4=44
-        f->r1 = 0x11111111; // R1 +9*4=40
+        f->r3 = 0x33333333+0x00010203; // R3 +11*4=48
+        f->r2 = 0x22222222+0x00010203; // R2 +10*4=44
+        f->r1 = 0x11111111+0x00010203; // R1 +9*4=40
         f->r0 = (rtos::thread::stack::element_t) args; // R0 +8*4=36
 
         // This frame does not include initial FPU registers.
@@ -207,14 +314,14 @@ namespace os
         // bit 0 = 1
         f->r14_exec_return = 0xFFFFFFFD;
 
-        f->r11_fp = 0xBBBBBBBB; // R11 +7*4=32
-        f->r10_sl = 0xAAAAAAAA; // R10 +6*4=28
-        f->r9 = 0x99999999; // R9 +5*4=24
-        f->r8 = 0x88888888; // R8 +4*4=20
-        f->r7 = 0x77777777; // R7 +3*4=16
-        f->r6 = 0x66666666; // R6 +2*4=12
-        f->r5 = 0x55555555; // R5 +1*4=8
-        f->r4 = 0x44444444; // R4 +0*4=4
+        f->r11_fp = 0xBBBBBBBB+0x00010203; // R11 +7*4=32
+        f->r10_sl = 0xAAAAAAAA+0x00010203; // R10 +6*4=28
+        f->r9 = 0x99999999+0x00010203; // R9 +5*4=24
+        f->r8 = 0x88888888+0x00010203; // R8 +4*4=20
+        f->r7 = 0x77777777+0x00010203; // R7 +3*4=16
+        f->r6 = 0x66666666+0x00010203; // R6 +2*4=12
+        f->r5 = 0x55555555+0x00010203; // R5 +1*4=8
+        f->r4 = 0x44444444+0x00010203; // R4 +0*4=4
 
         // Store the current stack pointer in the context.
         th_ctx->port_.stack_ptr = p;
@@ -337,7 +444,7 @@ namespace os
           // as -fno-delete-null-pointer-checks.
 
 #if 0
-          // An alternate way would try to fool the comiler
+          // An alternate way would try to fool the compiler
           // with a volatile pointer, but this is not
           // guaranteed to work in future versions.
           uint32_t* volatile vectors_addr = 0x00000000;
