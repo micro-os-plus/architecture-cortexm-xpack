@@ -432,7 +432,9 @@ namespace os
 
 #if defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
 
+#if !defined(OS_DISABLE_CORTEXM_SET_MSP_VIA_VTOR)
           __set_MSP (*((uint32_t*) SCB->VTOR));
+#endif /* !defined(OS_DISABLE_CORTEXM_SET_MSP_VIA_VTOR) */
 
 #elif defined(__ARM_ARCH_6M__)
 
