@@ -267,7 +267,12 @@ namespace os
         // stack element, r14_exec_return, which is the 9th.
         // Note: if the thread stack is not aligned at an 8 byte boundary,
         // var_args() will fail (for example printf() does not floats/doubles).
-        if (((int) p & 7) == 0)
+        if ((reinterpret_cast<uintptr_t> (p) & 3) != 0)
+          {
+            p = (rtos::thread::stack::element_t*) (((int) p) & (~3));
+          }
+
+        if ((reinterpret_cast<uintptr_t> (p) & 7) == 0)
           {
             --p;
           }
