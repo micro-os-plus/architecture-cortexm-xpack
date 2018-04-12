@@ -302,13 +302,13 @@ namespace os
         // it is loaded separately as PSP.
 
         // The 0x00010203 is added to spot possible endianness issues.
-        f->r12 = 0xCCCCCCCC+0x00010203;  // R12 +12*4=52
+        f->r12 = 0xCCCCCCCC + 0x00010203;  // R12 +12*4=52
 
         // According to ARM ABI, the first 4 word parameters are
         // passed in R0-R3. Only 1 is used.
-        f->r3 = 0x33333333+0x00010203; // R3 +11*4=48
-        f->r2 = 0x22222222+0x00010203; // R2 +10*4=44
-        f->r1 = 0x11111111+0x00010203; // R1 +9*4=40
+        f->r3 = 0x33333333 + 0x00010203; // R3 +11*4=48
+        f->r2 = 0x22222222 + 0x00010203; // R2 +10*4=44
+        f->r1 = 0x11111111 + 0x00010203; // R1 +9*4=40
         f->r0 = (rtos::thread::stack::element_t) args; // R0 +8*4=36
 
         // This frame does not include initial FPU registers.
@@ -319,14 +319,14 @@ namespace os
         // bit 0 = 1
         f->r14_exec_return = 0xFFFFFFFD;
 
-        f->r11_fp = 0xBBBBBBBB+0x00010203; // R11 +7*4=32
-        f->r10_sl = 0xAAAAAAAA+0x00010203; // R10 +6*4=28
-        f->r9 = 0x99999999+0x00010203; // R9 +5*4=24
-        f->r8 = 0x88888888+0x00010203; // R8 +4*4=20
-        f->r7 = 0x77777777+0x00010203; // R7 +3*4=16
-        f->r6 = 0x66666666+0x00010203; // R6 +2*4=12
-        f->r5 = 0x55555555+0x00010203; // R5 +1*4=8
-        f->r4 = 0x44444444+0x00010203; // R4 +0*4=4
+        f->r11_fp = 0xBBBBBBBB + 0x00010203; // R11 +7*4=32
+        f->r10_sl = 0xAAAAAAAA + 0x00010203; // R10 +6*4=28
+        f->r9 = 0x99999999 + 0x00010203; // R9 +5*4=24
+        f->r8 = 0x88888888 + 0x00010203; // R8 +4*4=20
+        f->r7 = 0x77777777 + 0x00010203; // R7 +3*4=16
+        f->r6 = 0x66666666 + 0x00010203; // R6 +2*4=12
+        f->r5 = 0x55555555 + 0x00010203; // R5 +1*4=8
+        f->r4 = 0x44444444 + 0x00010203; // R4 +0*4=4
 
         // Store the current stack pointer in the context.
         th_ctx->port_.stack_ptr = p;
@@ -467,7 +467,7 @@ namespace os
 #endif
 
           // Guarantee that the interrupt stack is properly aligned.
-          assert((((int )(__get_MSP ())) & 7) == 0);
+          assert((__get_MSP () & 7) == 0);
 
           // Set the beginning address and size of the interrupt stack.
           rtos::interrupts::stack ()->set (
@@ -562,7 +562,7 @@ namespace os
             {
 #if defined(OS_TRACE_RTOS_THREAD_CONTEXT)
               trace::printf ("port::scheduler::%s() %s nop\n", __func__,
-                  rtos::scheduler::current_thread_->name ());
+                             rtos::scheduler::current_thread_->name ());
 #endif
               return;
             }
@@ -819,14 +819,15 @@ namespace os
           old_thread->context_.port_.stack_ptr = sp;
 
 #if defined(OS_TRACE_RTOS_THREAD_CONTEXT)
-          trace::printf ("port::scheduler::%s() leave %s\n", __func__, old_thread->name ());
+          trace::printf ("port::scheduler::%s() leave %s\n", __func__,
+                         old_thread->name ());
 #endif
 
           rtos::scheduler::internal_switch_threads ();
 
 #if defined(OS_TRACE_RTOS_THREAD_CONTEXT)
           trace::printf ("port::scheduler::%s() to %s\n", __func__,
-              rtos::scheduler::current_thread_->name ());
+                         rtos::scheduler::current_thread_->name ());
 #endif
 
           // Prepare a local copy of the new thread SP.
