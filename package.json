@@ -1,0 +1,34 @@
+{
+    "name": "@micro-os-plus/micro-os-plus-iii-cortexm",
+    "version": "0.0.1",
+    "description": "A source xPack with the µOS++ Arm Cortex-M architecture port",
+    "main": "",
+    "scripts": {
+      "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+      "type": "git",
+      "url": "git+https://github.com/micro-os-plus/cortexm-arch-xpack.git"
+    },
+    "keywords": [
+      "xpack",
+      "c++",
+      "posix",
+      "micro-os-plus",
+      "cortex-m"
+    ],
+    "homepage": "https://github.com/micro-os-plus/cortexm-arch-xpack",
+    "author": {
+      "name": "Liviu Ionescu",
+      "email": "ilg@livius.net",
+      "url": "https://github.com/ilg-ul"
+    },
+    "license": "MIT",
+    "bugs": {
+      "url": "https://github.com/micro-os-plus/cortexm-arch-xpack/issues"
+    },
+    "config": {},
+    "dependencies": {
+    },
+    "xpack": {}
+}

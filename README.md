@@ -1,58 +1,18 @@
-# µOS++ IIIe
+[![license](https://img.shields.io/github/license/micro-os-plus/cortexm-arch-xpack.svg)](https://github.com/micro-os-plus/cortexm-arch-xpack/blob/xpack/LICENSE)
+[![Travis](https://img.shields.io/travis/micro-os-plus/cortexm-arch-xpack.svg)](https://travis-ci.org/micro-os-plus/cortexm-arch-xpack)
+[![GitHub issues](https://img.shields.io/github/issues/micro-os-plus/cortexm-arch-xpack.svg)](https://github.com/micro-os-plus/cortexm-arch-xpack/issues)
+[![GitHub pulls](https://img.shields.io/github/issues-pr/micro-os-plus/cortexm-arch-xpack.svg)](https://github.com/micro-os-plus/cortexm-arch-xpack/pulls)
 
-An xPack with the µOS++ Cortex-M scheduler code.
+# µOS++ Arm Cortex-M architecture port
 
-## Package
+A source xPack with the **µOS++** files specific to the Arm Cortex-M port.
+The project is hosted on GitHub as
+[micro-os-plus/cortexm-arch-xpack](https://github.com/micro-os-plus/cortexm-arch-xpack).
 
-[µOS++ IIIe](https://github.com/micro-os-plus/micro-os-plus-iii-cortexm) package details:
-
-* type: [xcdl](http://xcdl.github.io)
-* name: `ilg/micro-os-plus-iii-cortexm`
-* git repo: https://github.com/micro-os-plus/micro-os-plus-iii-cortexm.git
-* homepage: https://github.com/micro-os-plus/micro-os-plus-iii-cortexm
-* latest archive: https://github.com/micro-os-plus/micro-os-plus-iii-cortexm/archive/xpack.zip
-
-## Version
-
-* 0.1.1
-
-## Releases
-
-* none
-
-## Package maintainers
-
-* [Liviu Ionescu](http://liviusdotnet.worldpress.com) [&lt;ilg@livius.net&gt;](mailto:ilg@livius.net)
-
-## Content contributors
-
-* [Liviu Ionescu](http://liviusdotnet.worldpress.com) [&lt;ilg@livius.net&gt;](mailto:ilg@livius.net)
-
-## Support
-
-* [forum](http://www.element14.com/community/groups/gnu-arm-eclipse)
-* [bugs & enhancements](https://github.com/micro-os-plus/micro-os-plus-iii-cortexm/issues)
-
-## Dependencies
-
-* none
-
-## Keywords
-
-* posix
-* µOS++
-* cmsis++
-* micro-os-plus
-* portable
-
-## License
-
-* [spdx](http://spdx.org/licenses/): MIT
-
---- 
 ## Purpose
 
-This xPack provides the implementation for the µOS++ scheduler, running on **ARM Cortex-M** devices. 
+This xPack provides the implementation for the µOS++ scheduler,
+running on **Arm Cortex-M** devices.
 
 ## Status
 
@@ -64,11 +24,11 @@ To include this µOS++ port in a project, consider the following details.
 
 ### Include folders
 
-- `include` 
- 
+- `include`
+
 ### Source folders
 
-- `src` 
+- `src`
 
 ### Symbols
 
@@ -82,4 +42,8 @@ None.
 
 None.
 
---- 
+## License
+
+µOS++ is provided free of charge under the terms of the
+[MIT License](https://opensource.org/licenses/MIT), with all rights
+reserved to [Liviu Ionescu](https://github.com/ilg-ul).
