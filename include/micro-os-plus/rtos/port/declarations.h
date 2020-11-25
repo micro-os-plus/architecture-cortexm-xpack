@@ -33,13 +33,13 @@
  * it with Cortex-M specific declarations.
  */
 
-#ifndef CMSIS_PLUS_RTOS_PORT_OS_DECLS_H_
-#define CMSIS_PLUS_RTOS_PORT_OS_DECLS_H_
+#ifndef MICRO_OS_PLUS_RTOS_PORT_DECLARATIONS_H_
+#define MICRO_OS_PLUS_RTOS_PORT_DECLARATIONS_H_
 
 // ----------------------------------------------------------------------------
 
-#include <cmsis-plus/os-app-config.h>
-#include <cmsis-plus/rtos/port/os-c-decls.h>
+#include <micro-os-plus/os-app-config.h>
+#include <micro-os-plus/rtos/port/os-c-decls.h>
 
 #if !defined(OS_INTEGER_SYSTICK_FREQUENCY_HZ)
 #define OS_INTEGER_SYSTICK_FREQUENCY_HZ (1000)
@@ -147,4 +147,4 @@ namespace os
 
 #endif /* __cplusplus */
 
-#endif /* CMSIS_PLUS_RTOS_PORT_OS_DECLS_H_ */
+#endif /* MICRO_OS_PLUS_RTOS_PORT_DECLARATIONS_H_ */

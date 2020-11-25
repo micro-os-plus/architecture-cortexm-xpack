@@ -42,8 +42,8 @@
  * when they are implemented using the port native objects.
  */
 
-#ifndef CMSIS_PLUS_RTOS_PORT_OS_C_DECLS_H_
-#define CMSIS_PLUS_RTOS_PORT_OS_C_DECLS_H_
+#ifndef MICRO_OS_PLUS_RTOS_PORT_DECLARATIONS_C_H_
+#define MICRO_OS_PLUS_RTOS_PORT_DECLARATIONS_C_H_
 
 #include <stdint.h>
 #include <stdbool.h>
@@ -68,4 +68,4 @@ typedef struct
 
 #define OS_HAS_INTERRUPTS_STACK
 
-#endif /* CMSIS_PLUS_RTOS_PORT_OS_C_DECLS_H_ */
+#endif /* MICRO_OS_PLUS_RTOS_PORT_DECLARATIONS_C_H_ */

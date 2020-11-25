@@ -35,21 +35,20 @@
  * This file is included in all src/os-*.cpp files.
  */
 
-#ifndef CMSIS_PLUS_RTOS_PORT_OS_INLINES_H_
-#define CMSIS_PLUS_RTOS_PORT_OS_INLINES_H_
+#ifndef MICRO_OS_PLUS_RTOS_PORT_INLINES_H_
+#define MICRO_OS_PLUS_RTOS_PORT_INLINES_H_
 
 // ----------------------------------------------------------------------------
 
-#include <cmsis-plus/os-app-config.h>
-#include <cmsis-plus/rtos/os-c-decls.h>
+#include <micro-os-plus/os-app-config.h>
+#include <micro-os-plus/rtos/declarations-c.h>
 
 // ----------------------------------------------------------------------------
 
 #ifdef  __cplusplus
 
-#include <cmsis_device.h>
-
-#include <cmsis-plus/diag/trace.h>
+#include <micro-os-plus/device.h>
+#include <micro-os-plus/diag/trace.h>
 
 namespace os
 {
@@ -446,4 +445,4 @@ namespace os
 
 #endif /* __cplusplus */
 
-#endif /* CMSIS_PLUS_RTOS_PORT_OS_INLINES_H_ */
+#endif /* MICRO_OS_PLUS_RTOS_PORT_INLINES_H_ */
