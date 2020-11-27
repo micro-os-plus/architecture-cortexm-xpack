@@ -25,8 +25,8 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef MICRO_OS_PLUS_ARCH_CORTEXM_SEMIHOSTING_INLINES_H_
-#define MICRO_OS_PLUS_ARCH_CORTEXM_SEMIHOSTING_INLINES_H_
+#ifndef MICRO_OS_PLUS_ARCHITECTURE_CORTEXM_SEMIHOSTING_INLINES_H_
+#define MICRO_OS_PLUS_ARCHITECTURE_CORTEXM_SEMIHOSTING_INLINES_H_
 
 #include <stdint.h>
 
@@ -107,4 +107,4 @@ os_semihosting_call_host (int reason, void* arg)
 
 // ----------------------------------------------------------------------------
 
-#endif /* MICRO_OS_PLUS_ARCH_CORTEXM_SEMIHOSTING_INLINES_H_ */
+#endif /* MICRO_OS_PLUS_ARCHITECTURE_CORTEXM_SEMIHOSTING_INLINES_H_ */

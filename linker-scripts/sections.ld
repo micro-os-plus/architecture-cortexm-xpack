@@ -18,6 +18,8 @@
 __stack = DEFINED(__stack) ? __stack : ORIGIN(RAM) + LENGTH(RAM);
 __stack_size = DEFINED(__stack_size) ? __stack_size : 2K;
 
+_initial_main_stack_pointer = __stack; /* µOS++ specific. */
+
 _estack = __stack; 	/* STM specific definition */
 
 /* 

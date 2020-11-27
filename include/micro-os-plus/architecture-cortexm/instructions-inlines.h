@@ -25,15 +25,13 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef MICRO_OS_PLUS_ARCH_CORTEXM_INSTRUCTIONS_H_
-#define MICRO_OS_PLUS_ARCH_CORTEXM_INSTRUCTIONS_H_
-
-#include <micro-os-plus/arch-cortexm/defines.h>
+#ifndef MICRO_OS_PLUS_ARCHITECTURE_CORTEXM_INSTRUCTIONS_INLINES_H_
+#define MICRO_OS_PLUS_ARCHITECTURE_CORTEXM_INSTRUCTIONS_INLINES_H_
 
 #include <stdint.h>
 
 /*
- * Declarations of RISC-V functions to wrap architecture instructions.
+ * Inline implementations for the Cortex-M architecture instructions.
  */
 
 #if defined(__cplusplus)
@@ -42,46 +40,72 @@ extern "C"
 #endif /* defined(__cplusplus) */
 
   // --------------------------------------------------------------------------
-  // Architecture assembly instructions in C.
 
-  /**
-   * `nop` instruction.
-   */
-  static void
-  cortexm_arch_nop (void);
+  static inline void
+  __attribute__((always_inline))
+  cortexm_arch_nop (void)
+  {
+    asm volatile(
+        " nop "
 
-  /**
-   * `bkpt` instruction.
-   */
-  static void
-  cortexm_arch_bkpt (void);
+        : /* Outputs */
+        : /* Inputs */
+        : /* Clobbers */
+    );
+  }
 
-  /**
-   * `wfi` instruction.
-   */
-  static void
-  cortexm_arch_wfi (void);
+  static inline void
+  __attribute__((always_inline))
+  cortexm_arch_bkpt (void)
+  {
+    asm volatile(
+        " bkpt 0 "
 
-  // --------------------------------------------------------------------------
-  // Portable architecture assembly instructions in C.
+        : /* Outputs */
+        : /* Inputs */
+        : /* Clobbers */
+    );
+  }
 
-  /**
-   * `nop` instruction.
-   */
-  static void
-  os_arch_nop (void);
+  static inline void
+  __attribute__((always_inline))
+  cortexm_arch_wfi (void)
+  {
+    asm volatile(
+        " wfi "
+
+        : /* Outputs */
+        : /* Inputs */
+        : /* Clobbers */
+    );
+  }
+
+  static inline void
+  __attribute__((always_inline))
+  os_arch_nop (void)
+  {
+    cortexm_arch_nop ();
+  }
 
   /**
    * `break` instruction.
    */
-  static void
-  os_arch_brk (void);
+  static inline void
+  __attribute__((always_inline))
+  os_arch_brk (void)
+  {
+    cortexm_arch_bkpt ();
+  }
 
   /**
    * `wfi` instruction.
    */
-  static void
-  os_arch_wfi (void);
+  static inline void
+  __attribute__((always_inline))
+  os_arch_wfi (void)
+  {
+    cortexm_arch_wfi ();
+  }
 
 // ----------------------------------------------------------------------------
 
@@ -98,58 +122,64 @@ namespace cortexm
   namespace arch
   {
     // ------------------------------------------------------------------------
-    // Architecture assembly instructions in C++.
 
-    /**
-     * The assembler `nop` instruction.
-     */
-    void
-    nop (void);
+    inline void
+    __attribute__((always_inline))
+    nop (void)
+    {
+      cortexm_arch_nop ();
+    }
 
-    /**
-     * The assembler `bkpt` instruction.
-     */
-    void
-    bkpt (void);
+    inline void
+    __attribute__((always_inline))
+    bkpt (void)
+    {
+      cortexm_arch_bkpt ();
+    }
 
-    /**
-     * The assembler `wfi` instruction.
-     */
-    void
-    wfi (void);
+    inline void
+    __attribute__((always_inline))
+    wfi (void)
+    {
+      cortexm_arch_wfi ();
+    }
 
   // --------------------------------------------------------------------------
   } /* namespace arch */
+
 // ----------------------------------------------------------------------------
-} /* namespace riscv */
+} /* namespace cortexm */
 
 namespace os
 {
   namespace arch
   {
     // ------------------------------------------------------------------------
-    // Portable architecture assembly instructions in C++.
 
-    /**
-     * The assembler `nop` instruction.
-     */
-    void
-    nop (void);
+    inline void
+    __attribute__((always_inline))
+    nop (void)
+    {
+      cortexm::arch::nop ();
+    }
 
-    /**
-     * The assembler `bkpt` instruction.
-     */
-    void
-    brk (void);
+    inline void
+    __attribute__((always_inline))
+    brk (void)
+    {
+      cortexm::arch::bkpt ();
+    }
 
-    /**
-     * The assembler `wfi` instruction.
-     */
-    void
-    wfi (void);
+    inline void
+    __attribute__((always_inline))
+    wfi (void)
+    {
+      cortexm::arch::wfi ();
+    }
 
   // --------------------------------------------------------------------------
   } /* namespace arch */
+
 // ----------------------------------------------------------------------------
 } /* namespace os */
 
@@ -157,4 +187,4 @@ namespace os
 
 // ----------------------------------------------------------------------------
 
-#endif /* MICRO_OS_PLUS_ARCH_CORTEXM_INSTRUCTIONS_H_ */
+#endif /* MICRO_OS_PLUS_ARCHITECTURE_CORTEXM_INSTRUCTIONS_INLINES_H_ */

@@ -28,14 +28,14 @@
 #ifndef MICRO_OS_PLUS_ARCHITECTURE_H_
 #define MICRO_OS_PLUS_ARCHITECTURE_H_
 
-#include <micro-os-plus/arch-cortexm/defines.h>
+#include <micro-os-plus/architecture-cortexm/defines.h>
 
-// #include <micro-os-plus/arch-cortexm/types.h>
-// #include <micro-os-plus/arch-cortexm/declarations.h>
+// #include <micro-os-plus/architecture-cortexm/types.h>
+// #include <micro-os-plus/architecture-cortexm/declarations.h>
 
-#include <micro-os-plus/arch-cortexm/instructions.h>
-#include <micro-os-plus/arch-cortexm/instructions-inlines.h>
+#include <micro-os-plus/architecture-cortexm/instructions.h>
+#include <micro-os-plus/architecture-cortexm/instructions-inlines.h>
 
-#include <micro-os-plus/arch-cortexm/semihosting-inlines.h>
+#include <micro-os-plus/architecture-cortexm/semihosting-inlines.h>
 
 #endif /* MICRO_OS_PLUS_ARCHITECTURE_H_ */

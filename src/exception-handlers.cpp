@@ -28,7 +28,7 @@
 // ----------------------------------------------------------------------------
 
 #include <micro-os-plus/device.h>
-#include <micro-os-plus/arch-cortexm/exception-handlers.h>
+#include <micro-os-plus/architecture-cortexm/exception-handlers.h>
 
 #include <micro-os-plus/semihosting.h>
 #include <micro-os-plus/diag/trace.h>
