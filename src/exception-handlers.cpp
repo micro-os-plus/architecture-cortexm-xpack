@@ -29,6 +29,7 @@
 
 #include <micro-os-plus/device.h>
 #include <micro-os-plus/architecture-cortexm/exception-handlers.h>
+#include <micro-os-plus/rtos/port/declarations.h>
 
 #include <micro-os-plus/semihosting.h>
 #include <micro-os-plus/diag/trace.h>
@@ -37,22 +38,35 @@
 
 // ----------------------------------------------------------------------------
 
-extern "C" void
-__attribute__((noreturn,weak))
-_start (void);
+extern "C"
+{
+  extern unsigned int __heap_end__;
+  extern unsigned int __stack;
+
+  void
+  __attribute__((noreturn,weak))
+  _start (void);
+}
 
 // ----------------------------------------------------------------------------
 // Default exception handlers. Override the ones here by defining your own
 // handler routines in your application code.
 // ----------------------------------------------------------------------------
 
-// It is a call, not a jump, since it must have a proper stack frame,
-// to allow setting breakpoints at Reset_Handler.
-// This requires the stack to be functional at this point and the pointer
+// The stack must be functional at this point and the pointer
 // to it correctly set at 0x00000004.
+// For debugging purposes, it is possible to set a breakpoint here.
+// To create a proper stack frame, do not jump, but call `_start()`.
+
 void __attribute__ ((section(".after_vectors"),noreturn))
 Reset_Handler (void)
 {
+	// Fill the main stack with a pattern, to detect usage and underflow.
+	for (unsigned int *p = &__heap_end__; p < &__stack;)
+	  {
+		*p++ = OS_INTEGER_RTOS_STACK_FILL_MAGIC; // DEADBEEF
+	  }
+
   _start ();
 }
 
