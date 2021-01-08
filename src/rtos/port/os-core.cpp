@@ -41,7 +41,7 @@
 
 #include <cmsis-plus/cortexm/exception-handlers.h>
 
-#include <cmsis_device.h>
+#include <micro-os-plus/device.h>
 
 // ----------------------------------------------------------------------------
 
@@ -83,7 +83,7 @@ extern uint32_t __vectors_start;
 
 extern "C"
 {
-  extern unsigned int _Heap_Limit;
+  extern unsigned int __heap_end__;
   extern unsigned int __stack;
 }
 
@@ -471,8 +471,8 @@ namespace os
 
           // Set the beginning address and size of the interrupt stack.
           rtos::interrupts::stack ()->set (
-              reinterpret_cast<stack::element_t*> (&_Heap_Limit),
-              (&__stack - &_Heap_Limit) * sizeof(__stack));
+              reinterpret_cast<stack::element_t*> (&__heap_end__),
+              (&__stack - &__heap_end__) * sizeof(__stack));
 
           // Set PendSV interrupt priority to the lowest level (highest value).
           NVIC_SetPriority (PendSV_IRQn, (1UL << __NVIC_PRIO_BITS) - 1UL);
@@ -583,6 +583,10 @@ namespace os
         }
 
         // --------------------------------------------------------------------
+
+// warning: ISO C++17 does not allow 'register' storage class specifier [-Wregister]
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wregister"
 
         /**
          * @brief Save the current thread context on stack.
@@ -747,6 +751,8 @@ namespace os
               : /* clobber. DO NOT add anything here! */
           );
         }
+
+#pragma GCC diagnostic pop
 
         /**
          * @brief Switch stacks to perform the rescheduling.

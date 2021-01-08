@@ -40,8 +40,8 @@
 
 // ----------------------------------------------------------------------------
 
-#include <micro-os-plus/os-app-config.h>
-#include <micro-os-plus/rtos/declarations-c.h>
+#include <micro-os-plus/config.h>
+#include <micro-os-plus/rtos/port/declarations-c.h>
 
 // ----------------------------------------------------------------------------
 

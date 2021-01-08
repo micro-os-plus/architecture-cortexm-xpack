@@ -44,6 +44,6 @@ None.
 
 ## License
 
-µOS++ is provided free of charge under the terms of the
-[MIT License](https://opensource.org/licenses/MIT), with all rights
-reserved to [Liviu Ionescu](https://github.com/ilg-ul).
+The original content is released under the
+[MIT License](https://opensource.org/licenses/MIT), with all rights reserved to
+[Liviu Ionescu](https://github.com/ilg-ul).

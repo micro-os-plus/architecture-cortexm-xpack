@@ -38,8 +38,8 @@
 
 // ----------------------------------------------------------------------------
 
-#include <micro-os-plus/os-app-config.h>
-#include <micro-os-plus/rtos/port/os-c-decls.h>
+#include <micro-os-plus/config.h>
+#include <micro-os-plus/rtos/port/declarations-c.h>
 
 #if !defined(OS_INTEGER_SYSTICK_FREQUENCY_HZ)
 #define OS_INTEGER_SYSTICK_FREQUENCY_HZ (1000)

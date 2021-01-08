@@ -30,7 +30,7 @@
 #if defined(__ARM_EABI__)
 #if defined(TRACE)
 
-// #include <cmsis-plus/os-app-config.h>
+// #include <micro-os-plus/config.h>
 
 #if defined(OS_USE_TRACE_ITM)
 
