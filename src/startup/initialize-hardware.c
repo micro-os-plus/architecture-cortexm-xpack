@@ -1,7 +1,7 @@
 /*
  * This file is part of the µOS++ distribution.
  *   (https://github.com/micro-os-plus)
- * Copyright (c) 2017 Liviu Ionescu.
+ * Copyright (c) 2015 Liviu Ionescu.
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -25,17 +25,37 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef MICRO_OS_PLUS_ARCHITECTURE_CORTEXM_ARCHITECTURE_H_
-#define MICRO_OS_PLUS_ARCHITECTURE_CORTEXM_ARCHITECTURE_H_
+#if defined(__ARM_EABI__)
 
-#include <micro-os-plus/architecture-cortexm/defines.h>
+// ----------------------------------------------------------------------------
 
-// #include <micro-os-plus/architecture-cortexm/types.h>
-// #include <micro-os-plus/architecture-cortexm/declarations.h>
+#include <micro-os-plus/rtos/os-hooks.h>
+#include <micro-os-plus/device.h>
 
-#include <micro-os-plus/architecture-cortexm/instructions.h>
-#include <micro-os-plus/architecture-cortexm/instructions-inlines.h>
+// ----------------------------------------------------------------------------
 
-#include <micro-os-plus/architecture-cortexm/semihosting-inlines.h>
+/**
+ * @details
+ * This is the default implementation for the second hardware
+ * initialisation routine.
+ *
+ * It is called from `_start()`, right after DATA & BSS init, before
+ * the static constructors.
+ *
+ * The application can and should
+ * redefine it for more complex cases that
+ * require custom inits (before constructors), otherwise these inits can
+ * be done in main().
+ */
+void __attribute__((weak))
+os_startup_initialize_hardware (void)
+{
+  // Call the CSMSIS system clock routine to store the clock frequency
+  // in the SystemCoreClock global RAM location.
+  SystemCoreClockUpdate ();
+}
 
-#endif /* MICRO_OS_PLUS_ARCHITECTURE_CORTEXM_ARCHITECTURE_H_ */
+// ----------------------------------------------------------------------------
+
+#endif /* defined(__ARM_EABI__) */
+

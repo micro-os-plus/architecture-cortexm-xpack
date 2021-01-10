@@ -37,9 +37,9 @@
 #include <string.h>
 #include <cassert>
 
-#include <cmsis-plus/rtos/os.h>
+#include <micro-os-plus/rtos/os.h>
 
-#include <cmsis-plus/cortexm/exception-handlers.h>
+#include <micro-os-plus/architecture-cortexm/exception-handlers.h>
 
 #include <micro-os-plus/device.h>
 

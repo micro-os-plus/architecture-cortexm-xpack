@@ -33,8 +33,8 @@
  * it with Cortex-M specific declarations.
  */
 
-#ifndef MICRO_OS_PLUS_RTOS_PORT_DECLARATIONS_H_
-#define MICRO_OS_PLUS_RTOS_PORT_DECLARATIONS_H_
+#ifndef MICRO_OS_PLUS_ARCHITECTURE_CORTEXM_RTOS_PORT_DECLARATIONS_H_
+#define MICRO_OS_PLUS_ARCHITECTURE_CORTEXM_RTOS_PORT_DECLARATIONS_H_
 
 // ----------------------------------------------------------------------------
 
@@ -147,4 +147,4 @@ namespace os
 
 #endif /* __cplusplus */
 
-#endif /* MICRO_OS_PLUS_RTOS_PORT_DECLARATIONS_H_ */
+#endif /* MICRO_OS_PLUS_ARCHITECTURE_CORTEXM_RTOS_PORT_DECLARATIONS_H_ */

@@ -35,8 +35,8 @@
  * This file is included in all src/os-*.cpp files.
  */
 
-#ifndef MICRO_OS_PLUS_RTOS_PORT_INLINES_H_
-#define MICRO_OS_PLUS_RTOS_PORT_INLINES_H_
+#ifndef MICRO_OS_PLUS_ARCHITECTURE_CORTEXM_RTOS_PORT_INLINES_H_
+#define MICRO_OS_PLUS_ARCHITECTURE_CORTEXM_RTOS_PORT_INLINES_H_
 
 // ----------------------------------------------------------------------------
 
@@ -445,4 +445,4 @@ namespace os
 
 #endif /* __cplusplus */
 
-#endif /* MICRO_OS_PLUS_RTOS_PORT_INLINES_H_ */
+#endif /* MICRO_OS_PLUS_ARCHITECTURE_CORTEXM_RTOS_PORT_INLINES_H_ */

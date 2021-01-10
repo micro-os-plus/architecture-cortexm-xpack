@@ -51,6 +51,25 @@ extern "C"
 // ----------------------------------------------------------------------------
 // Default exception handlers. Override the ones here by defining your own
 // handler routines in your application code.
+
+// The ARCH_7M exception handlers are:
+// 0x00 stack
+// 0x04 Reset
+// 0x08 NMI
+// 0x0C HardFault
+// 0x10 MemManage
+// 0x14 BusFault
+// 0x18 UsageFault
+// 0x1C 0
+// 0x20 0
+// 0x24 0
+// 0x28 0
+// 0x2C SVC
+// 0x30 DebugMon
+// 0x34 0
+// 0x38 PendSV
+// 0x3C SysTick
+
 // ----------------------------------------------------------------------------
 
 // The stack must be functional at this point and the pointer
@@ -74,8 +93,16 @@ void __attribute__ ((section(".after_vectors"),weak))
 NMI_Handler (void)
 {
 #if defined(DEBUG)
+#if defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
+  if ((CoreDebug->DHCSR & CoreDebug_DHCSR_C_DEBUGEN_Msk) != 0)
+    {
+      cortexm::arch::bkpt();
+    }
+#else
   cortexm::arch::bkpt();
-#endif
+#endif /* defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__) */
+#endif /* defined(DEBUG) */
+
   while (1)
     {
       cortexm::arch::wfi();
@@ -159,13 +186,16 @@ dump_exception_stack (exception_stack_frame_s* frame, uint32_t lr)
 
 #if defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
 
-#if defined(OS_USE_SEMIHOSTING_SYSCALLS) || defined(OS_USE_TRACE_SEMIHOSTING_STDOUT) || defined(OS_USE_TRACE_SEMIHOSTING_DEBUG)
+#if defined(OS_USE_SEMIHOSTING_SYSCALLS) \
+ || defined(OS_USE_TRACE_SEMIHOSTING_STDOUT) \
+ || defined(OS_USE_TRACE_SEMIHOSTING_DEBUG)
 
 int
 is_semihosting_call (exception_stack_frame_s* frame, uint16_t opCode);
 
 /**
- * This function provides the minimum functionality to make a semihosting program execute even without the debugger present.
+ * This function provides the minimum functionality to make a
+ * semihosting program execute even without the debugger present.
  * @param frame pointer to an exception stack frame.
  * @param opCode the 16-bin word of the BKPT instruction.
  * @return 1 if the instruction was a valid semihosting call; 0 otherwise.
@@ -177,10 +207,13 @@ is_semihosting_call (exception_stack_frame_s* frame, uint16_t opCode)
   if (*pw == opCode)
     {
       uint32_t r0 = frame->r0;
-#if defined(OS_DEBUG_SEMIHOSTING_FAULTS) || defined(OS_USE_SEMIHOSTING_SYSCALLS) || defined(OS_USE_TRACE_SEMIHOSTING_STDOUT)
+#if defined(OS_DEBUG_SEMIHOSTING_FAULTS) \
+ || defined(OS_USE_SEMIHOSTING_SYSCALLS) \
+ || defined(OS_USE_TRACE_SEMIHOSTING_STDOUT)
       uint32_t r1 = frame->r1;
 #endif
-#if defined(OS_USE_SEMIHOSTING_SYSCALLS) || defined(OS_USE_TRACE_SEMIHOSTING_STDOUT)
+#if defined(OS_USE_SEMIHOSTING_SYSCALLS) \
+ || defined(OS_USE_TRACE_SEMIHOSTING_STDOUT)
       uint32_t* blk = (uint32_t*) r1;
 #endif
 
@@ -298,7 +331,9 @@ is_semihosting_call (exception_stack_frame_s* frame, uint16_t opCode)
 
 #endif // defined(OS_USE_SEMIHOSTING_SYSCALLS) || defined(OS_USE_TRACE_SEMIHOSTING_STDOUT)
 
-#if defined(OS_USE_SEMIHOSTING_SYSCALLS) || defined(OS_USE_TRACE_SEMIHOSTING_STDOUT) || defined(OS_USE_TRACE_SEMIHOSTING_DEBUG)
+#if defined(OS_USE_SEMIHOSTING_SYSCALLS) \
+ || defined(OS_USE_TRACE_SEMIHOSTING_STDOUT) \
+ || defined(OS_USE_TRACE_SEMIHOSTING_DEBUG)
 
         case SEMIHOSTING_SYS_WRITEC:
 #if defined(OS_DEBUG_SEMIHOSTING_FAULTS)
@@ -391,7 +426,7 @@ hard_fault_handler_c (exception_stack_frame_s* frame __attribute__((unused)),
         }
     }
 
-#endif
+#endif /* semihosting */
 
 #if defined(TRACE)
   os::trace::printf ("[HardFault]\n");
@@ -399,8 +434,16 @@ hard_fault_handler_c (exception_stack_frame_s* frame __attribute__((unused)),
 #endif // defined(TRACE)
 
 #if defined(DEBUG)
+#if defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
+  if ((CoreDebug->DHCSR & CoreDebug_DHCSR_C_DEBUGEN_Msk) != 0)
+    {
+      cortexm::arch::bkpt();
+    }
+#else
   cortexm::arch::bkpt();
-#endif
+#endif /* defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__) */
+#endif /* defined(DEBUG) */
+
   while (1)
     {
       cortexm::arch::wfi();
@@ -455,8 +498,16 @@ hard_fault_handler_c (exception_stack_frame_s* frame __attribute__((unused)),
 #endif // defined(TRACE)
 
 #if defined(DEBUG)
+#if defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
+  if ((CoreDebug->DHCSR & CoreDebug_DHCSR_C_DEBUGEN_Msk) != 0)
+    {
+      cortexm::arch::bkpt();
+    }
+#else
   cortexm::arch::bkpt();
-#endif
+#endif /* defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__) */
+#endif /* defined(DEBUG) */
+
   while (1)
     {
       cortexm::arch::wfi();
@@ -472,8 +523,16 @@ void __attribute__ ((section(".after_vectors"),weak))
 MemManage_Handler (void)
 {
 #if defined(DEBUG)
+#if defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
+  if ((CoreDebug->DHCSR & CoreDebug_DHCSR_C_DEBUGEN_Msk) != 0)
+    {
+      cortexm::arch::bkpt();
+    }
+#else
   cortexm::arch::bkpt();
-#endif
+#endif /* defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__) */
+#endif /* defined(DEBUG) */
+
   while (1)
     {
       cortexm::arch::wfi();
@@ -512,8 +571,16 @@ bus_fault_handler_c (exception_stack_frame_s* frame __attribute__((unused)),
 #endif // defined(TRACE)
 
 #if defined(DEBUG)
-  cortexm::arch::bkpt();;
-#endif
+#if defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
+  if ((CoreDebug->DHCSR & CoreDebug_DHCSR_C_DEBUGEN_Msk) != 0)
+    {
+      cortexm::arch::bkpt();
+    }
+#else
+  cortexm::arch::bkpt();
+#endif /* defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__) */
+#endif /* defined(DEBUG) */
+
   while (1)
     {
       cortexm::arch::wfi();
@@ -567,8 +634,16 @@ usage_fault_handler_c (exception_stack_frame_s* frame __attribute__((unused)),
 #endif // defined(TRACE)
 
 #if defined(DEBUG)
+#if defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
+  if ((CoreDebug->DHCSR & CoreDebug_DHCSR_C_DEBUGEN_Msk) != 0)
+    {
+      cortexm::arch::bkpt();
+    }
+#else
   cortexm::arch::bkpt();
-#endif
+#endif /* defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__) */
+#endif /* defined(DEBUG) */
+
   while (1)
     {
       cortexm::arch::wfi();
@@ -581,8 +656,16 @@ void __attribute__ ((section(".after_vectors"),weak))
 SVC_Handler (void)
 {
 #if defined(DEBUG)
+#if defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
+  if ((CoreDebug->DHCSR & CoreDebug_DHCSR_C_DEBUGEN_Msk) != 0)
+    {
+      cortexm::arch::bkpt();
+    }
+#else
   cortexm::arch::bkpt();
-#endif
+#endif /* defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__) */
+#endif /* defined(DEBUG) */
+
   while (1)
     {
       cortexm::arch::wfi();
@@ -595,8 +678,12 @@ void __attribute__ ((section(".after_vectors"),weak))
 DebugMon_Handler (void)
 {
 #if defined(DEBUG)
-  cortexm::arch::bkpt();
-#endif
+  if ((CoreDebug->DHCSR & CoreDebug_DHCSR_C_DEBUGEN_Msk) != 0)
+    {
+      cortexm::arch::bkpt();
+    }
+#endif /* defined(DEBUG) */
+
   while (1)
     {
       cortexm::arch::wfi();
@@ -609,8 +696,16 @@ void __attribute__ ((section(".after_vectors"),weak))
 PendSV_Handler (void)
 {
 #if defined(DEBUG)
+#if defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
+  if ((CoreDebug->DHCSR & CoreDebug_DHCSR_C_DEBUGEN_Msk) != 0)
+    {
+      cortexm::arch::bkpt();
+    }
+#else
   cortexm::arch::bkpt();
-#endif
+#endif /* defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__) */
+#endif /* defined(DEBUG) */
+
   while (1)
     {
       cortexm::arch::wfi();
