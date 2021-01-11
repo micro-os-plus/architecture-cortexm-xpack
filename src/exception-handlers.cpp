@@ -25,11 +25,13 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-// ----------------------------------------------------------------------------
+#if defined(__ARM_EABI__)
+
+/// ----------------------------------------------------------------------------
 
 #include <micro-os-plus/device.h>
 #include <micro-os-plus/architecture-cortexm/exception-handlers.h>
-#include <micro-os-plus/rtos/port/declarations.h>
+#include <micro-os-plus/startup/defines.h>
 
 #include <micro-os-plus/semihosting.h>
 #include <micro-os-plus/diag/trace.h>
@@ -83,7 +85,7 @@ Reset_Handler (void)
 	// Fill the main stack with a pattern, to detect usage and underflow.
 	for (unsigned int *p = &__heap_end__; p < &__stack;)
 	  {
-		*p++ = OS_INTEGER_RTOS_STACK_FILL_MAGIC; // DEADBEEF
+		*p++ = OS_INTEGER_STARTUP_STACK_FILL_MAGIC; // DEADBEEF
 	  }
 
   _start ();
@@ -721,3 +723,5 @@ SysTick_Handler (void)
 }
 
 // ----------------------------------------------------------------------------
+
+#endif /* defined(__ARM_EABI__) */

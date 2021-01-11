@@ -39,27 +39,9 @@
 // ----------------------------------------------------------------------------
 
 #include <micro-os-plus/config.h>
+#include <micro-os-plus/rtos/port/defines.h>
 #include <micro-os-plus/rtos/port/declarations-c.h>
-
-#if !defined(OS_INTEGER_SYSTICK_FREQUENCY_HZ)
-#define OS_INTEGER_SYSTICK_FREQUENCY_HZ (1000)
-#endif
-
-#if !defined(OS_INTEGER_RTOS_MIN_STACK_SIZE_BYTES)
-#define OS_INTEGER_RTOS_MIN_STACK_SIZE_BYTES (256)
-#endif
-
-#if !defined(OS_INTEGER_RTOS_DEFAULT_STACK_SIZE_BYTES)
-#define OS_INTEGER_RTOS_DEFAULT_STACK_SIZE_BYTES (2048)
-#endif
-
-#if !defined(OS_INTEGER_RTOS_MAIN_STACK_SIZE_BYTES)
-#define OS_INTEGER_RTOS_MAIN_STACK_SIZE_BYTES (OS_INTEGER_RTOS_DEFAULT_STACK_SIZE_BYTES)
-#endif
-
-#if !defined(OS_INTEGER_RTOS_IDLE_STACK_SIZE_BYTES)
-#define OS_INTEGER_RTOS_IDLE_STACK_SIZE_BYTES (OS_INTEGER_RTOS_DEFAULT_STACK_SIZE_BYTES)
-#endif
+#include <micro-os-plus/startup/defines.h>
 
 // ----------------------------------------------------------------------------
 
@@ -99,7 +81,7 @@ namespace os
         OS_INTEGER_RTOS_DEFAULT_STACK_SIZE_BYTES;
 
         // Used to fill in the stack.
-        constexpr element_t magic = OS_INTEGER_RTOS_STACK_FILL_MAGIC; // DEADBEEF
+        constexpr element_t magic = OS_INTEGER_STARTUP_STACK_FILL_MAGIC; // DEADBEEF
 
       } /* namespace stack */
 
