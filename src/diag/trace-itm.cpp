@@ -28,9 +28,14 @@
 // ----------------------------------------------------------------------------
 
 #if defined(__ARM_EABI__)
+
+// ----------------------------------------------------------------------------
+
 #if defined(TRACE)
 
-// #include <micro-os-plus/config.h>
+#if defined(HAVE_MICRO_OS_PLUS_CONFIG_H)
+#include <micro-os-plus/config.h>
+#endif // HAVE_MICRO_OS_PLUS_CONFIG_H
 
 #if defined(OS_USE_TRACE_ITM)
 
@@ -117,6 +122,9 @@ namespace os
 #endif /* defined(OS_USE_TRACE_ITM) */
 
 #endif /* defined(TRACE) */
+
+// ----------------------------------------------------------------------------
+
 #endif /* defined(__ARM_EABI__) */
 
 // ----------------------------------------------------------------------------
