@@ -29,7 +29,7 @@
 
 // ----------------------------------------------------------------------------
 
-#include <micro-os-plus/rtos/os-hooks.h>
+#include <micro-os-plus/startup/hooks.h>
 #include <micro-os-plus/device.h>
 
 // ----------------------------------------------------------------------------
