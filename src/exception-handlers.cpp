@@ -82,6 +82,8 @@ extern "C"
 void __attribute__ ((section(".after_vectors"),noreturn))
 Reset_Handler (void)
 {
+	// __disable_irq ();
+
 	// Fill the main stack with a pattern, to detect usage and underflow.
 	for (unsigned int *p = &__heap_end__; p < &__stack;)
 	  {
