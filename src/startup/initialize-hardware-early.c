@@ -105,3 +105,4 @@ os_startup_initialize_hardware_early (void)
 
 #endif /* defined(__ARM_EABI__) */
 
+// ----------------------------------------------------------------------------

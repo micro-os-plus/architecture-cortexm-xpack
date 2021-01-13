@@ -65,3 +65,5 @@ typedef struct
 } os_port_thread_context_t;
 
 #endif /* MICRO_OS_PLUS_ARCHITECTURE_CORTEXM_RTOS_PORT_DECLARATIONS_C_H_ */
+
+// ----------------------------------------------------------------------------

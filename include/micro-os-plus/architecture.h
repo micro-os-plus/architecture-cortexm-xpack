@@ -39,3 +39,5 @@
 #include <micro-os-plus/architecture-cortexm/semihosting-inlines.h>
 
 #endif /* MICRO_OS_PLUS_ARCHITECTURE_CORTEXM_ARCHITECTURE_H_ */
+
+// ----------------------------------------------------------------------------

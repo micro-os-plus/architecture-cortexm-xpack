@@ -108,3 +108,5 @@ os_semihosting_call_host (int reason, void* arg)
 // ----------------------------------------------------------------------------
 
 #endif /* MICRO_OS_PLUS_ARCHITECTURE_CORTEXM_SEMIHOSTING_INLINES_H_ */
+
+// ----------------------------------------------------------------------------

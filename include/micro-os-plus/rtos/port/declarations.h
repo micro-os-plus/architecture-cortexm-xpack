@@ -130,3 +130,5 @@ namespace os
 #endif /* __cplusplus */
 
 #endif /* MICRO_OS_PLUS_ARCHITECTURE_CORTEXM_RTOS_PORT_DECLARATIONS_H_ */
+
+// ----------------------------------------------------------------------------
