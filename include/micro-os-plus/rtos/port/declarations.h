@@ -39,8 +39,8 @@
 // ----------------------------------------------------------------------------
 
 #include <micro-os-plus/config.h>
-#include <micro-os-plus/rtos/port/defines.h>
 #include <micro-os-plus/rtos/port/declarations-c.h>
+#include <micro-os-plus/rtos/port/defines.h>
 #include <micro-os-plus/startup/defines.h>
 
 // ----------------------------------------------------------------------------
@@ -51,78 +51,77 @@
 
 // ----------------------------------------------------------------------------
 
-#ifdef  __cplusplus
+#ifdef __cplusplus
 
-#include <cstdint>
 #include <cstddef>
+#include <cstdint>
 
 namespace os
 {
-  namespace rtos
-  {
-    namespace port
-    {
-      // ----------------------------------------------------------------------
+namespace rtos
+{
+namespace port
+{
+// ----------------------------------------------------------------------------
 
-      namespace stack
-      {
-        // Stack word.
-        using element_t = os_port_thread_stack_element_t;
+namespace stack
+{
+// Stack word.
+using element_t = os_port_thread_stack_element_t;
 
-        // Align stack to 8 bytes.
-        using allocation_element_t = os_port_thread_stack_allocation_element_t;
+// Align stack to 8 bytes.
+using allocation_element_t = os_port_thread_stack_allocation_element_t;
 
-        // Initial value for the minimum stack size in bytes.
-        constexpr std::size_t min_size_bytes =
-        OS_INTEGER_RTOS_MIN_STACK_SIZE_BYTES;
+// Initial value for the minimum stack size in bytes.
+constexpr std::size_t min_size_bytes = OS_INTEGER_RTOS_MIN_STACK_SIZE_BYTES;
 
-        // Initial value for the default stack size in bytes.
-        constexpr std::size_t default_size_bytes =
-        OS_INTEGER_RTOS_DEFAULT_STACK_SIZE_BYTES;
+// Initial value for the default stack size in bytes.
+constexpr std::size_t default_size_bytes
+    = OS_INTEGER_RTOS_DEFAULT_STACK_SIZE_BYTES;
 
-        // Used to fill in the stack.
-        constexpr element_t magic = OS_INTEGER_STARTUP_STACK_FILL_MAGIC; // DEADBEEF
+// Used to fill in the stack.
+constexpr element_t magic = OS_INTEGER_STARTUP_STACK_FILL_MAGIC; // DEADBEEF
 
-      } /* namespace stack */
+} /* namespace stack */
 
-      namespace interrupts
-      {
-        // Type to store the entire processor interrupts mask.
-        using state_t = os_port_irq_state_t;
+namespace interrupts
+{
+// Type to store the entire processor interrupts mask.
+using state_t = os_port_irq_state_t;
 
-        namespace state
-        {
-          constexpr state_t init = 0;
-        } /* namespace state */
+namespace state
+{
+constexpr state_t init = 0;
+} /* namespace state */
 
-      } /* namespace interrupts */
+} /* namespace interrupts */
 
-      namespace scheduler
-      {
-        using state_t = os_port_scheduler_state_t;
+namespace scheduler
+{
+using state_t = os_port_scheduler_state_t;
 
-        namespace state
-        {
-          constexpr state_t locked = true;
-          constexpr state_t unlocked = false;
-          constexpr state_t init = unlocked;
-        } /* namespace state */
+namespace state
+{
+constexpr state_t locked = true;
+constexpr state_t unlocked = false;
+constexpr state_t init = unlocked;
+} /* namespace state */
 
-        extern state_t lock_state;
+extern state_t lock_state;
 
-      } /* namespace scheduler */
+} /* namespace scheduler */
 
-      using thread_context_t = struct context_s
-        {
-          // On Cortex-M cores the context itself is stored on the stack,
-          // only the stack pointer needs to be preserved.
-          stack::element_t* stack_ptr;
-        };
+using thread_context_t = struct context_s
+{
+  // On Cortex-M cores the context itself is stored on the stack,
+  // only the stack pointer needs to be preserved.
+  stack::element_t* stack_ptr;
+};
 
-    // ----------------------------------------------------------------------
+// ----------------------------------------------------------------------------
 
-    } /* namespace port */
-  } /* namespace rtos */
+} /* namespace port */
+} /* namespace rtos */
 } /* namespace os */
 
 // ----------------------------------------------------------------------------

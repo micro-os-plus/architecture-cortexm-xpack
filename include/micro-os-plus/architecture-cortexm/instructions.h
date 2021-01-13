@@ -47,20 +47,17 @@ extern "C"
   /**
    * `nop` instruction.
    */
-  static void
-  cortexm_arch_nop (void);
+  static void cortexm_arch_nop (void);
 
   /**
    * `bkpt` instruction.
    */
-  static void
-  cortexm_arch_bkpt (void);
+  static void cortexm_arch_bkpt (void);
 
   /**
    * `wfi` instruction.
    */
-  static void
-  cortexm_arch_wfi (void);
+  static void cortexm_arch_wfi (void);
 
   // --------------------------------------------------------------------------
   // Portable architecture assembly instructions in C.
@@ -68,22 +65,19 @@ extern "C"
   /**
    * `nop` instruction.
    */
-  static void
-  os_arch_nop (void);
+  static void os_arch_nop (void);
 
   /**
    * `break` instruction.
    */
-  static void
-  os_arch_brk (void);
+  static void os_arch_brk (void);
 
   /**
    * `wfi` instruction.
    */
-  static void
-  os_arch_wfi (void);
+  static void os_arch_wfi (void);
 
-// ----------------------------------------------------------------------------
+  // --------------------------------------------------------------------------
 
 #if defined(__cplusplus)
 }
@@ -95,61 +89,55 @@ extern "C"
 
 namespace cortexm
 {
-  namespace arch
-  {
-    // ------------------------------------------------------------------------
-    // Architecture assembly instructions in C++.
+namespace arch
+{
+// ----------------------------------------------------------------------------
+// Architecture assembly instructions in C++.
 
-    /**
-     * The assembler `nop` instruction.
-     */
-    void
-    nop (void);
+/**
+ * The assembler `nop` instruction.
+ */
+void nop (void);
 
-    /**
-     * The assembler `bkpt` instruction.
-     */
-    void
-    bkpt (void);
+/**
+ * The assembler `bkpt` instruction.
+ */
+void bkpt (void);
 
-    /**
-     * The assembler `wfi` instruction.
-     */
-    void
-    wfi (void);
+/**
+ * The assembler `wfi` instruction.
+ */
+void wfi (void);
 
-  // --------------------------------------------------------------------------
-  } /* namespace arch */
+// ----------------------------------------------------------------------------
+} /* namespace arch */
 // ----------------------------------------------------------------------------
 } /* namespace riscv */
 
 namespace os
 {
-  namespace arch
-  {
-    // ------------------------------------------------------------------------
-    // Portable architecture assembly instructions in C++.
+namespace arch
+{
+// ----------------------------------------------------------------------------
+// Portable architecture assembly instructions in C++.
 
-    /**
-     * The assembler `nop` instruction.
-     */
-    void
-    nop (void);
+/**
+ * The assembler `nop` instruction.
+ */
+void nop (void);
 
-    /**
-     * The assembler `bkpt` instruction.
-     */
-    void
-    brk (void);
+/**
+ * The assembler `bkpt` instruction.
+ */
+void brk (void);
 
-    /**
-     * The assembler `wfi` instruction.
-     */
-    void
-    wfi (void);
+/**
+ * The assembler `wfi` instruction.
+ */
+void wfi (void);
 
-  // --------------------------------------------------------------------------
-  } /* namespace arch */
+// ----------------------------------------------------------------------------
+} /* namespace arch */
 // ----------------------------------------------------------------------------
 } /* namespace os */
 

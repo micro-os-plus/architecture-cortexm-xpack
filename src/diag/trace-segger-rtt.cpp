@@ -37,8 +37,8 @@
 
 #if defined(OS_USE_TRACE_SEGGER_RTT)
 
-#include <micro-os-plus/rtos/os.h>
 #include <micro-os-plus/diag/trace.h>
+#include <micro-os-plus/rtos/os.h>
 
 #include <micro-os-plus/device.h>
 
@@ -48,55 +48,55 @@
 
 namespace os
 {
-  namespace trace
-  {
-    // --------------------------------------------------------------------
+namespace trace
+{
+// ----------------------------------------------------------------------------
 
-    void
-    initialize (void)
+void
+initialize (void)
+{
+  SEGGER_RTT_Init ();
+
+  // Clear the SLEEPDEEP.
+  // This does not guarantee that the WFI will not prevent
+  // the J-Link to read the RTT buffer, but it is the best it
+  // can be done at this level.
+  SCB->SCR &= ~SCB_SCR_SLEEPDEEP_Msk;
+}
+
+// ----------------------------------------------------------------------------
+
+ssize_t
+write (const void* buf, std::size_t nbyte)
+{
+  if (buf == nullptr || nbyte == 0)
     {
-      SEGGER_RTT_Init ();
-
-      // Clear the SLEEPDEEP.
-      // This does not guarantee that the WFI will not prevent
-      // the J-Link to read the RTT buffer, but it is the best it
-      // can be done at this level.
-      SCB->SCR &= ~SCB_SCR_SLEEPDEEP_Msk;
+      return 0;
     }
 
-    // --------------------------------------------------------------------
-
-    ssize_t
-    write (const void* buf, std::size_t nbyte)
+  if (nbyte > BUFFER_SIZE_UP)
     {
-      if (buf == nullptr || nbyte == 0)
-        {
-          return 0;
-        }
-
-      if (nbyte > BUFFER_SIZE_UP)
-        {
-          return 0;
-        }
-
-      ssize_t ret;
-
-      rtos::interrupts::critical_section ics;
-      ret = (ssize_t) SEGGER_RTT_WriteNoLock (0, buf, nbyte);
-
-      return ret;
+      return 0;
     }
 
-    void
-    flush (void)
-    {
-      while (_SEGGER_RTT.aUp[0].WrOff != _SEGGER_RTT.aUp[0].RdOff)
-        {
-          __NOP ();
-        }
-    }
+  ssize_t ret;
 
-  } /* namespace trace */
+  rtos::interrupts::critical_section ics;
+  ret = (ssize_t)SEGGER_RTT_WriteNoLock (0, buf, nbyte);
+
+  return ret;
+}
+
+void
+flush (void)
+{
+  while (_SEGGER_RTT.aUp[0].WrOff != _SEGGER_RTT.aUp[0].RdOff)
+    {
+      __NOP ();
+    }
+}
+
+} /* namespace trace */
 } /* namespace os */
 
 #endif /* defined(OS_USE_TRACE_SEGGER_RTT) */

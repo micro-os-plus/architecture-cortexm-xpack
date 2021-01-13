@@ -33,8 +33,8 @@
 // #include <micro-os-plus/architecture-cortexm/types.h>
 // #include <micro-os-plus/architecture-cortexm/declarations.h>
 
-#include <micro-os-plus/architecture-cortexm/instructions.h>
 #include <micro-os-plus/architecture-cortexm/instructions-inlines.h>
+#include <micro-os-plus/architecture-cortexm/instructions.h>
 
 #include <micro-os-plus/architecture-cortexm/semihosting-inlines.h>
 

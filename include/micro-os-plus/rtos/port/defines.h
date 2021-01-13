@@ -43,11 +43,13 @@
 #endif
 
 #if !defined(OS_INTEGER_RTOS_MAIN_STACK_SIZE_BYTES)
-#define OS_INTEGER_RTOS_MAIN_STACK_SIZE_BYTES (OS_INTEGER_RTOS_DEFAULT_STACK_SIZE_BYTES)
+#define OS_INTEGER_RTOS_MAIN_STACK_SIZE_BYTES                                 \
+  (OS_INTEGER_RTOS_DEFAULT_STACK_SIZE_BYTES)
 #endif
 
 #if !defined(OS_INTEGER_RTOS_IDLE_STACK_SIZE_BYTES)
-#define OS_INTEGER_RTOS_IDLE_STACK_SIZE_BYTES (OS_INTEGER_RTOS_DEFAULT_STACK_SIZE_BYTES)
+#define OS_INTEGER_RTOS_IDLE_STACK_SIZE_BYTES                                 \
+  (OS_INTEGER_RTOS_DEFAULT_STACK_SIZE_BYTES)
 #endif
 
 // ----------------------------------------------------------------------------
