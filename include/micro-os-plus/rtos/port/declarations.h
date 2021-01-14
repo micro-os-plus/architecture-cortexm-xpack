@@ -51,7 +51,7 @@
 
 // ----------------------------------------------------------------------------
 
-#ifdef  __cplusplus
+#ifdef __cplusplus
 
 #include <cstdint>
 #include <cstddef>
@@ -73,17 +73,18 @@ namespace os
         using allocation_element_t = os_port_thread_stack_allocation_element_t;
 
         // Initial value for the minimum stack size in bytes.
-        constexpr std::size_t min_size_bytes =
-        OS_INTEGER_RTOS_MIN_STACK_SIZE_BYTES;
+        constexpr std::size_t min_size_bytes
+            = OS_INTEGER_RTOS_MIN_STACK_SIZE_BYTES;
 
         // Initial value for the default stack size in bytes.
-        constexpr std::size_t default_size_bytes =
-        OS_INTEGER_RTOS_DEFAULT_STACK_SIZE_BYTES;
+        constexpr std::size_t default_size_bytes
+            = OS_INTEGER_RTOS_DEFAULT_STACK_SIZE_BYTES;
 
         // Used to fill in the stack.
-        constexpr element_t magic = OS_INTEGER_STARTUP_STACK_FILL_MAGIC; // DEADBEEF
+        constexpr element_t magic
+            = OS_INTEGER_STARTUP_STACK_FILL_MAGIC; // DEADBEEF
 
-      } /* namespace stack */
+      } // namespace stack
 
       namespace interrupts
       {
@@ -93,9 +94,9 @@ namespace os
         namespace state
         {
           constexpr state_t init = 0;
-        } /* namespace state */
+        } // namespace state
 
-      } /* namespace interrupts */
+      } // namespace interrupts
 
       namespace scheduler
       {
@@ -106,28 +107,29 @@ namespace os
           constexpr state_t locked = true;
           constexpr state_t unlocked = false;
           constexpr state_t init = unlocked;
-        } /* namespace state */
+        } // namespace state
 
         extern state_t lock_state;
 
-      } /* namespace scheduler */
+      } // namespace scheduler
 
       using thread_context_t = struct context_s
-        {
-          // On Cortex-M cores the context itself is stored on the stack,
-          // only the stack pointer needs to be preserved.
-          stack::element_t* stack_ptr;
-        };
+      {
+        // On Cortex-M cores the context itself is stored on the stack,
+        // only the stack pointer needs to be preserved.
+        stack::element_t* stack_ptr;
+      };
 
-    // ----------------------------------------------------------------------
-
-    } /* namespace port */
-  } /* namespace rtos */
-} /* namespace os */
+      // ----------------------------------------------------------------------
+    } // namespace port
+  } // namespace rtos
+} // namespace os
 
 // ----------------------------------------------------------------------------
 
 #endif /* __cplusplus */
+
+// ----------------------------------------------------------------------------
 
 #endif /* MICRO_OS_PLUS_ARCHITECTURE_CORTEXM_RTOS_PORT_DECLARATIONS_H_ */
 

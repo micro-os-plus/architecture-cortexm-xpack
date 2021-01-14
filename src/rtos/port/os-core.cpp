@@ -45,14 +45,16 @@
 
 // ----------------------------------------------------------------------------
 
-#if !defined(__ARM_ARCH_7M__) && !defined(__ARM_ARCH_7EM__) && !defined(__ARM_ARCH_6M__)
+#if !defined(__ARM_ARCH_7M__) && !defined(__ARM_ARCH_7EM__) \
+    && !defined(__ARM_ARCH_6M__)
 #error "Architecture not supported."
 #endif
 
 #if defined(__ARM_ARCH_6M__)
 
 #if defined(OS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY)
-#error "OS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY should not be used with Cortex-M0/M0+ devices."
+#error \
+    "OS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY should not be used with Cortex-M0/M0+ devices."
 #endif
 
 #endif /* defined(__ARM_ARCH_6M__) */
@@ -61,16 +63,18 @@
 
 #if defined(OS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY)
 
-#define __MAX_PRIO ((1 << __NVIC_PRIO_BITS) -1)
+#define __MAX_PRIO ((1 << __NVIC_PRIO_BITS) - 1)
 
-#define OS_MACRO_SHARP(x)               #x
-#define OS_MACRO_STRINGIFY(x)           OS_MACRO_SHARP(x)
+#define OS_MACRO_SHARP(x) #x
+#define OS_MACRO_STRINGIFY(x) OS_MACRO_SHARP (x)
 
-static_assert (OS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY != 0,
+static_assert (
+    OS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY != 0,
     "OS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY cannot be 0");
-static_assert (OS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY <= __MAX_PRIO,
-    "OS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY must be <= "
-    OS_MACRO_STRINGIFY(__MAX_PRIO));
+static_assert (OS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY
+                   <= __MAX_PRIO,
+               "OS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY must be "
+               "<= " OS_MACRO_STRINGIFY (__MAX_PRIO));
 
 #endif /* defined(OS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY) */
 
@@ -234,7 +238,7 @@ namespace os
           stack::element_t r15_pc;
           stack::element_t psr;
         } frame_t;
-      } /* namespace stack */
+      } // namespace stack
 
       /**
        * @brief Create a new thread context on the stack.
@@ -253,8 +257,8 @@ namespace os
 #if defined(OS_TRACE_RTOS_THREAD_CONTEXT)
         trace::printf ("port::context::%s(%p)\n", __func__, context);
 #endif
-        class rtos::thread::context* th_ctx =
-            static_cast<class rtos::thread::context*> (context);
+        class rtos::thread::context* th_ctx
+            = static_cast<class rtos::thread::context*> (context);
 
         class rtos::thread::stack& stack = th_ctx->stack ();
 
@@ -262,9 +266,10 @@ namespace os
 
         // Be sure the stack is large enough to hold at least
         // two exception frames.
-        assert((p - stack.bottom ()) > (int )(2 * sizeof(stack::frame_t)));
+        assert ((p - stack.bottom ()) > (int)(2 * sizeof (stack::frame_t)));
 
-        p -= (sizeof(stack::frame_t) / sizeof(rtos::thread::stack::element_t));
+        p -= (sizeof (stack::frame_t)
+              / sizeof (rtos::thread::stack::element_t));
 
         // Align the frame to 8 bytes than leave one more word for the extra
         // stack element, r14_exec_return, which is the 9th.
@@ -272,7 +277,7 @@ namespace os
         // var_args() will fail (for example printf() does not floats/doubles).
         if ((reinterpret_cast<uintptr_t> (p) & 3) != 0)
           {
-            p = (rtos::thread::stack::element_t*) (((int) p) & (~3));
+            p = (rtos::thread::stack::element_t*)(((int)p) & (~3));
           }
 
         if ((reinterpret_cast<uintptr_t> (p) & 7) == 0)
@@ -289,8 +294,8 @@ namespace os
         f->psr = 0x01000000; // xPSR +15*4=64
 
         // The address of the trampoline code. // PC/R15 +14*4=60
-        f->r15_pc =
-            (rtos::thread::stack::element_t) (((ptrdiff_t) func) & (~1));
+        f->r15_pc
+            = (rtos::thread::stack::element_t) (((ptrdiff_t)func) & (~1));
 
         // Link register // LR/R14 +13*4=56
 #if defined(OS_BOOL_RTOS_PORT_CONTEXT_CREATE_ZERO_LR)
@@ -299,20 +304,20 @@ namespace os
         // 0x0 looks odd in the debugger, so try to hide it.
         // In Eclipse using 'func+2' will make the stack trace
         // start with 'func' (don't ask why).
-        f->r14_lr = (rtos::thread::stack::element_t) (((ptrdiff_t) func + 2));
+        f->r14_lr = (rtos::thread::stack::element_t) (((ptrdiff_t)func + 2));
 #endif
         // R13 is the SP; it is not present in the frame,
         // it is loaded separately as PSP.
 
         // The 0x00010203 is added to spot possible endianness issues.
-        f->r12 = 0xCCCCCCCC + 0x00010203;  // R12 +12*4=52
+        f->r12 = 0xCCCCCCCC + 0x00010203; // R12 +12*4=52
 
         // According to ARM ABI, the first 4 word parameters are
         // passed in R0-R3. Only 1 is used.
         f->r3 = 0x33333333 + 0x00010203; // R3 +11*4=48
         f->r2 = 0x22222222 + 0x00010203; // R2 +10*4=44
         f->r1 = 0x11111111 + 0x00010203; // R1 +9*4=40
-        f->r0 = (rtos::thread::stack::element_t) args; // R0 +8*4=36
+        f->r0 = (rtos::thread::stack::element_t)args; // R0 +8*4=36
 
         // This frame does not include initial FPU registers.
         // bit 4: 1 (8 words), 0 (26 words)
@@ -335,7 +340,7 @@ namespace os
         th_ctx->port_.stack_ptr = p;
 
         // Guarantee that the stack is properly aligned.
-        assert((((int )(&f->r0)) & 7) == 0);
+        assert ((((int)(&f->r0)) & 7) == 0);
       }
 
       /**
@@ -354,8 +359,8 @@ namespace os
 #if defined(NDEBUG)
         SysTick_Config (SystemCoreClock / rtos::clock_systick::frequency_hz);
 #else
-        assert(
-            SysTick_Config (SystemCoreClock / rtos::clock_systick::frequency_hz)
+        assert (SysTick_Config (SystemCoreClock
+                                / rtos::clock_systick::frequency_hz)
                 == 0);
 #endif
 
@@ -404,15 +409,15 @@ namespace os
          */
         void
 #if defined(__ARM_ARCH_6M__)
-        __attribute__((optimize("no-delete-null-pointer-checks")))
+            __attribute__ ((optimize ("no-delete-null-pointer-checks")))
 #endif
-        start (void)
+            start (void)
         {
 #if defined(OS_TRACE_RTOS_SCHEDULER)
           trace::printf ("port::scheduler::%s() \n", __func__);
 #endif
 
-#if defined (__ARM_FP)
+#if defined(__ARM_FP)
           // The FPU should have been enabled by
           // os_startup_initialize_hardware_early().
 #endif
@@ -441,7 +446,7 @@ namespace os
 #if defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
 
 #if !defined(OS_DISABLE_CORTEXM_SET_MSP_VIA_VTOR)
-          __set_MSP (*((uint32_t*) SCB->VTOR));
+          __set_MSP (*((uint32_t*)SCB->VTOR));
 #endif /* !defined(OS_DISABLE_CORTEXM_SET_MSP_VIA_VTOR) */
 
 #elif defined(__ARM_ARCH_6M__)
@@ -460,7 +465,7 @@ namespace os
           uint32_t* volatile vectors_addr = 0x00000000;
           __set_MSP (*vectors_addr);
 #else
-          __set_MSP (*((uint32_t*) 0x00000000));
+          __set_MSP (*((uint32_t*)0x00000000));
 #endif
 
 #else
@@ -470,12 +475,12 @@ namespace os
 #endif
 
           // Guarantee that the interrupt stack is properly aligned.
-          assert((__get_MSP () & 7) == 0);
+          assert ((__get_MSP () & 7) == 0);
 
           // Set the beginning address and size of the interrupt stack.
           rtos::interrupts::stack ()->set (
               reinterpret_cast<stack::element_t*> (&__heap_end__),
-              (&__stack - &__heap_end__) * sizeof(__stack));
+              (&__stack - &__heap_end__) * sizeof (__stack));
 
           // Set PendSV interrupt priority to the lowest level (highest value).
           NVIC_SetPriority (PendSV_IRQn, (1UL << __NVIC_PRIO_BITS) - 1UL);
@@ -486,10 +491,10 @@ namespace os
           // Don't worry for being on the stack, this is used
           // only once and can be overridden later.
           os_thread_t fake_thread;
-          memset (&fake_thread, 0, sizeof(os_thread_t));
+          memset (&fake_thread, 0, sizeof (os_thread_t));
 
           fake_thread.name = "fake_thread";
-          rtos::thread* pth = (rtos::thread*) &fake_thread;
+          rtos::thread* pth = (rtos::thread*)&fake_thread;
 
           // Make the fake thread look like the current thread.
           rtos::scheduler::current_thread_ = pth;
@@ -522,16 +527,16 @@ namespace os
         state_t
         locked (state_t state)
         {
-          os_assert_throw(!interrupts::in_handler_mode (), EPERM);
+          os_assert_throw (!interrupts::in_handler_mode (), EPERM);
 
           state_t tmp;
 
-            {
-              rtos::interrupts::critical_section ics;
+          {
+            rtos::interrupts::critical_section ics;
 
-              tmp = lock_state;
-              lock_state = state;
-            }
+            tmp = lock_state;
+            lock_state = state;
+          }
 
           return tmp;
         }
@@ -587,7 +592,8 @@ namespace os
 
         // --------------------------------------------------------------------
 
-// warning: ISO C++17 does not allow 'register' storage class specifier [-Wregister]
+// warning: ISO C++17 does not allow 'register' storage class specifier
+// [-Wregister]
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wregister"
 
@@ -607,21 +613,19 @@ namespace os
          * adding clobber registers that added more initial pushes.
          */
 
-        inline stack::element_t*
-        __attribute__((always_inline))
+        inline __attribute__ ((always_inline)) stack::element_t*
         save_on_stack (void)
         {
           register stack::element_t* sp_;
 
-          asm volatile
-          (
+          asm volatile(
               // Get the thread stack
               " mrs %[r], PSP                       \n"
               " isb                                 \n"
 
 #if defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
 
-#if defined (__ARM_FP)
+#if defined(__ARM_FP)
 
               // Is the thread using the FPU context?
               " tst lr, #0x10                       \n"
@@ -663,7 +667,7 @@ namespace os
 
 #endif
 
-              : [r] "=r" (sp_) /* out */
+              : [r] "=r"(sp_) /* out */
               : /* in */
               : /* clobber. DO NOT add anything here! */
           );
@@ -684,8 +688,7 @@ namespace os
          * adding clobber registers that added more initial pushes.
          */
 
-        inline void
-        __attribute__((always_inline))
+        inline __attribute__ ((always_inline)) void
         restore_from_stack (stack::element_t* sp)
         {
           // Without enforcing optimisations, an intermediate variable
@@ -694,8 +697,7 @@ namespace os
 
           // register stack::element_t* sp_ asm ("r0") = sp;
 
-          asm volatile
-          (
+          asm volatile(
 
 #if defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
 
@@ -704,7 +706,7 @@ namespace os
               // and may be used in the FP test.
               " ldmia %[r]!, {r4-r9,sl,fp,lr}       \n"
 
-#if defined (__ARM_FP)
+#if defined(__ARM_FP)
 
               // Is the thread using the FPU context?
               " tst lr, #0x10                       \n"
@@ -750,7 +752,7 @@ namespace os
               " isb                                 \n"
 
               : /* out */
-              : [r] "r" (sp) /* in */
+              : [r] "r"(sp) /* in */
               : /* clobber. DO NOT add anything here! */
           );
         }
@@ -790,7 +792,7 @@ namespace os
           pri = __get_BASEPRI ();
           __set_BASEPRI_MAX (
               OS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY
-                  << ((8 - __NVIC_PRIO_BITS)));
+              << ((8 - __NVIC_PRIO_BITS)));
 
 #else
 
@@ -840,8 +842,8 @@ namespace os
 #endif
 
           // Prepare a local copy of the new thread SP.
-          stack::element_t* out_sp =
-              rtos::scheduler::current_thread_->context_.port_.stack_ptr;
+          stack::element_t* out_sp
+              = rtos::scheduler::current_thread_->context_.port_.stack_ptr;
 
 #if defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
 
@@ -869,12 +871,11 @@ namespace os
           return out_sp;
         }
 
-      // ----------------------------------------------------------------------
-
-      } /* namespace scheduler */
-    } /* namespace port */
-  } /* namespace rtos */
-} /* namespace os */
+        // --------------------------------------------------------------------
+      } // namespace scheduler
+    } // namespace port
+  } // namespace rtos
+} // namespace os
 
 // ----------------------------------------------------------------------------
 
@@ -912,6 +913,7 @@ using namespace os::rtos;
  * manually saved/restored.
  */
 
+// clang-format off
 /*
  * An actual version of the Cortex-M3 handler looks pretty cool:
  *
@@ -961,9 +963,9 @@ using namespace os::rtos;
  * relatively simple, with link() slightly more complicated, since
  * it needs to preserve the ready list order.
  */
+// clang-format on
 
-void
-__attribute__ ((section(".after_vectors"), naked, used, optimize("1")))
+void __attribute__ ((section (".after_vectors"), naked, used, optimize ("1")))
 PendSV_Handler (void)
 {
   // The naked attribute is used to fully control the function entry/exit
@@ -974,7 +976,7 @@ PendSV_Handler (void)
   port::scheduler::restore_from_stack (
       port::scheduler::switch_stacks (port::scheduler::save_on_stack ()));
 
-  asm volatile ("bx lr");
+  asm volatile("bx lr");
 }
 
 // ----------------------------------------------------------------------------

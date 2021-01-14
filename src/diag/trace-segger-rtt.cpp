@@ -50,7 +50,7 @@ namespace os
 {
   namespace trace
   {
-    // --------------------------------------------------------------------
+    // ------------------------------------------------------------------------
 
     void
     initialize (void)
@@ -64,7 +64,7 @@ namespace os
       SCB->SCR &= ~SCB_SCR_SLEEPDEEP_Msk;
     }
 
-    // --------------------------------------------------------------------
+    // ------------------------------------------------------------------------
 
     ssize_t
     write (const void* buf, std::size_t nbyte)
@@ -82,7 +82,7 @@ namespace os
       ssize_t ret;
 
       rtos::interrupts::critical_section ics;
-      ret = (ssize_t) SEGGER_RTT_WriteNoLock (0, buf, nbyte);
+      ret = (ssize_t)SEGGER_RTT_WriteNoLock (0, buf, nbyte);
 
       return ret;
     }
@@ -96,8 +96,9 @@ namespace os
         }
     }
 
-  } /* namespace trace */
-} /* namespace os */
+    // ------------------------------------------------------------------------
+  } // namespace trace
+} // namespace os
 
 #endif /* defined(OS_USE_TRACE_SEGGER_RTT) */
 #endif /* defined(TRACE) */

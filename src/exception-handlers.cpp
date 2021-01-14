@@ -45,9 +45,7 @@ extern "C"
   extern unsigned int __heap_end__;
   extern unsigned int __stack;
 
-  void
-  __attribute__((noreturn,weak))
-  _start (void);
+  void __attribute__ ((noreturn, weak)) _start (void);
 }
 
 // ----------------------------------------------------------------------------
@@ -79,37 +77,36 @@ extern "C"
 // For debugging purposes, it is possible to set a breakpoint here.
 // To create a proper stack frame, do not jump, but call `_start()`.
 
-void __attribute__ ((section(".after_vectors"),noreturn))
+void __attribute__ ((section (".after_vectors"), noreturn))
 Reset_Handler (void)
 {
-	// __disable_irq ();
+  // __disable_irq ();
 
-	// Fill the main stack with a pattern, to detect usage and underflow.
-	for (unsigned int *p = &__heap_end__; p < &__stack;)
-	  {
-		*p++ = OS_INTEGER_STARTUP_STACK_FILL_MAGIC; // DEADBEEF
-	  }
+  // Fill the main stack with a pattern, to detect usage and underflow.
+  for (unsigned int* p = &__heap_end__; p < &__stack;)
+    {
+      *p++ = OS_INTEGER_STARTUP_STACK_FILL_MAGIC; // DEADBEEF
+    }
 
   _start ();
 }
 
-void __attribute__ ((section(".after_vectors"),weak))
-NMI_Handler (void)
+void __attribute__ ((section (".after_vectors"), weak)) NMI_Handler (void)
 {
 #if defined(DEBUG)
 #if defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
   if ((CoreDebug->DHCSR & CoreDebug_DHCSR_C_DEBUGEN_Msk) != 0)
     {
-      cortexm::arch::bkpt();
+      cortexm::arch::bkpt ();
     }
 #else
-  cortexm::arch::bkpt();
+  cortexm::arch::bkpt ();
 #endif /* defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__) */
 #endif /* defined(DEBUG) */
 
   while (1)
     {
-      cortexm::arch::wfi();
+      cortexm::arch::wfi ();
     }
 }
 
@@ -131,9 +128,8 @@ NMI_Handler (void)
 // (See Joseph Yiu's book).
 
 void
-dump_exception_stack (exception_stack_frame_s* frame,
-                uint32_t cfsr, uint32_t mmfar, uint32_t bfar,
-                                        uint32_t lr)
+dump_exception_stack (exception_stack_frame_s* frame, uint32_t cfsr,
+                      uint32_t mmfar, uint32_t bfar, uint32_t lr)
 {
   os::trace::printf ("Stack frame:\n");
   os::trace::printf (" R0 =  %08X\n", frame->r0);
@@ -191,8 +187,8 @@ dump_exception_stack (exception_stack_frame_s* frame, uint32_t lr)
 #if defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
 
 #if defined(OS_USE_SEMIHOSTING_SYSCALLS) \
- || defined(OS_USE_TRACE_SEMIHOSTING_STDOUT) \
- || defined(OS_USE_TRACE_SEMIHOSTING_DEBUG)
+    || defined(OS_USE_TRACE_SEMIHOSTING_STDOUT) \
+    || defined(OS_USE_TRACE_SEMIHOSTING_DEBUG)
 
 int
 is_semihosting_call (exception_stack_frame_s* frame, uint16_t opCode);
@@ -207,18 +203,18 @@ is_semihosting_call (exception_stack_frame_s* frame, uint16_t opCode);
 int
 is_semihosting_call (exception_stack_frame_s* frame, uint16_t opCode)
 {
-  uint16_t* pw = (uint16_t*) frame->pc;
+  uint16_t* pw = (uint16_t*)frame->pc;
   if (*pw == opCode)
     {
       uint32_t r0 = frame->r0;
 #if defined(OS_DEBUG_SEMIHOSTING_FAULTS) \
- || defined(OS_USE_SEMIHOSTING_SYSCALLS) \
- || defined(OS_USE_TRACE_SEMIHOSTING_STDOUT)
+    || defined(OS_USE_SEMIHOSTING_SYSCALLS) \
+    || defined(OS_USE_TRACE_SEMIHOSTING_STDOUT)
       uint32_t r1 = frame->r1;
 #endif
 #if defined(OS_USE_SEMIHOSTING_SYSCALLS) \
- || defined(OS_USE_TRACE_SEMIHOSTING_STDOUT)
-      uint32_t* blk = (uint32_t*) r1;
+    || defined(OS_USE_TRACE_SEMIHOSTING_STDOUT)
+      uint32_t* blk = (uint32_t*)r1;
 #endif
 
 #if defined(OS_DEBUG_SEMIHOSTING_FAULTS)
@@ -241,7 +237,8 @@ is_semihosting_call (exception_stack_frame_s* frame, uint16_t opCode)
         case SEMIHOSTING_SYS_TICKFREQ:
         case SEMIHOSTING_SYS_TMPNAM:
         case SEMIHOSTING_SYS_ISTTY:
-          frame->r0 = (uint32_t)-1; // the call is not successful or not supported
+          frame->r0
+              = (uint32_t)-1; // the call is not successful or not supported
           break;
 
         case SEMIHOSTING_SYS_CLOSE:
@@ -285,15 +282,16 @@ is_semihosting_call (exception_stack_frame_s* frame, uint16_t opCode)
 
 #endif // defined(OS_USE_SEMIHOSTING_SYSCALLS)
 
-#if defined(OS_USE_SEMIHOSTING_SYSCALLS) || defined(OS_USE_TRACE_SEMIHOSTING_STDOUT)
+#if defined(OS_USE_SEMIHOSTING_SYSCALLS) \
+    || defined(OS_USE_TRACE_SEMIHOSTING_STDOUT)
 
-#define HANDLER_STDIN   (1)
-#define HANDLER_STDOUT  (2)
-#define HANDLER_STDERR  (3)
+#define HANDLER_STDIN (1)
+#define HANDLER_STDOUT (2)
+#define HANDLER_STDERR (3)
 
         case SEMIHOSTING_SYS_OPEN:
           // Process only standard io/out/err and return 1/2/3
-          if (strcmp ((char*) blk[0], ":tt") == 0)
+          if (strcmp ((char*)blk[0], ":tt") == 0)
             {
               if ((blk[1] == 0))
                 {
@@ -311,16 +309,18 @@ is_semihosting_call (exception_stack_frame_s* frame, uint16_t opCode)
                   break;
                 }
             }
-          frame->r0 = (uint32_t)-1; // the call is not successful or not supported
+          frame->r0
+              = (uint32_t)-1; // the call is not successful or not supported
           break;
 
         case SEMIHOSTING_SYS_WRITE:
-          // Silently ignore writes to stdout/stderr, fail on all other handler.
+          // Silently ignore writes to stdout/stderr, fail on all other
+          // handler.
           if ((blk[0] == HANDLER_STDOUT) || (blk[0] == HANDLER_STDERR))
             {
 #if defined(OS_DEBUG_SEMIHOSTING_FAULTS)
-              frame->r0 = (uint32_t) blk[2]
-                  - trace_write ((char*) blk[1], blk[2]);
+              frame->r0
+                  = (uint32_t)blk[2] - trace_write ((char*)blk[1], blk[2]);
 #else
               frame->r0 = 0; // all sent, no more.
 #endif // defined(OS_DEBUG_SEMIHOSTING_FAULTS)
@@ -333,16 +333,17 @@ is_semihosting_call (exception_stack_frame_s* frame, uint16_t opCode)
             }
           break;
 
-#endif // defined(OS_USE_SEMIHOSTING_SYSCALLS) || defined(OS_USE_TRACE_SEMIHOSTING_STDOUT)
+#endif // defined(OS_USE_SEMIHOSTING_SYSCALLS) ||
+       // defined(OS_USE_TRACE_SEMIHOSTING_STDOUT)
 
 #if defined(OS_USE_SEMIHOSTING_SYSCALLS) \
- || defined(OS_USE_TRACE_SEMIHOSTING_STDOUT) \
- || defined(OS_USE_TRACE_SEMIHOSTING_DEBUG)
+    || defined(OS_USE_TRACE_SEMIHOSTING_STDOUT) \
+    || defined(OS_USE_TRACE_SEMIHOSTING_DEBUG)
 
         case SEMIHOSTING_SYS_WRITEC:
 #if defined(OS_DEBUG_SEMIHOSTING_FAULTS)
           {
-            char ch = *((char*) r1);
+            char ch = *((char*)r1);
             trace_write (&ch, 1);
           }
 #endif
@@ -352,7 +353,7 @@ is_semihosting_call (exception_stack_frame_s* frame, uint16_t opCode)
         case SEMIHOSTING_SYS_WRITE0:
 #if defined(OS_DEBUG_SEMIHOSTING_FAULTS)
           {
-            char* p = ((char*) r1);
+            char* p = ((char*)r1);
             trace_write (p, strlen (p));
           }
 #endif
@@ -382,10 +383,11 @@ is_semihosting_call (exception_stack_frame_s* frame, uint16_t opCode)
 // (Based on Joseph Yiu's, The Definitive Guide to ARM Cortex-M3 and
 // Cortex-M4 Processors, Third Edition, Chap. 12.8, page 402).
 
-void __attribute__ ((section(".after_vectors"),weak,naked))
+void __attribute__ ((section (".after_vectors"), weak, naked))
 HardFault_Handler (void)
 {
   asm volatile(
+
       " tst lr,#4       \n"
       " ite eq          \n"
       " mrseq r0,msp    \n"
@@ -400,9 +402,9 @@ HardFault_Handler (void)
   );
 }
 
-void __attribute__ ((section(".after_vectors"),weak,used))
-hard_fault_handler_c (exception_stack_frame_s* frame __attribute__((unused)),
-                     uint32_t lr __attribute__((unused)))
+void __attribute__ ((section (".after_vectors"), weak, used))
+hard_fault_handler_c (exception_stack_frame_s* frame __attribute__ ((unused)),
+                      uint32_t lr __attribute__ ((unused)))
 {
 #if defined(TRACE)
   uint32_t mmfar = SCB->MMFAR; // MemManage Fault Address
@@ -410,7 +412,9 @@ hard_fault_handler_c (exception_stack_frame_s* frame __attribute__((unused)),
   uint32_t cfsr = SCB->CFSR; // Configurable Fault Status Registers
 #endif
 
-#if defined(OS_USE_SEMIHOSTING_SYSCALLS) || defined(OS_USE_TRACE_SEMIHOSTING_STDOUT) || defined(OS_USE_TRACE_SEMIHOSTING_DEBUG)
+#if defined(OS_USE_SEMIHOSTING_SYSCALLS) \
+    || defined(OS_USE_TRACE_SEMIHOSTING_STDOUT) \
+    || defined(OS_USE_TRACE_SEMIHOSTING_DEBUG)
 
   // If the BKPT instruction is executed with C_DEBUGEN == 0 and MON_EN == 0,
   // it will cause the processor to enter a HardFault exception, with DEBUGEVT
@@ -441,21 +445,20 @@ hard_fault_handler_c (exception_stack_frame_s* frame __attribute__((unused)),
 #if defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
   if ((CoreDebug->DHCSR & CoreDebug_DHCSR_C_DEBUGEN_Msk) != 0)
     {
-      cortexm::arch::bkpt();
+      cortexm::arch::bkpt ();
     }
 #else
-  cortexm::arch::bkpt();
+  cortexm::arch::bkpt ();
 #endif /* defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__) */
 #endif /* defined(DEBUG) */
 
   while (1)
     {
-      cortexm::arch::wfi();
+      cortexm::arch::wfi ();
     }
 }
 
 #endif // defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
-
 
 #if defined(__ARM_ARCH_6M__)
 
@@ -466,10 +469,11 @@ hard_fault_handler_c (exception_stack_frame_s* frame __attribute__((unused)),
 // (Based on Joseph Yiu's, The Definitive Guide to ARM Cortex-M0
 // First Edition, Chap. 12.8, page 402).
 
-void __attribute__ ((section(".after_vectors"),weak,naked))
+void __attribute__ ((section (".after_vectors"), weak, naked))
 HardFault_Handler (void)
 {
   asm volatile(
+
       " movs r0,#4      \n"
       " mov r1,lr       \n"
       " tst r0,r1       \n"
@@ -489,9 +493,9 @@ HardFault_Handler (void)
   );
 }
 
-void __attribute__ ((section(".after_vectors"),weak,used))
-hard_fault_handler_c (exception_stack_frame_s* frame __attribute__((unused)),
-                     uint32_t lr __attribute__((unused)))
+void __attribute__ ((section (".after_vectors"), weak, used))
+hard_fault_handler_c (exception_stack_frame_s* frame __attribute__ ((unused)),
+                      uint32_t lr __attribute__ ((unused)))
 {
   // There is no semihosting support for Cortex-M0, since on ARMv6-M
   // faults are fatal and it is not possible to return from the handler.
@@ -505,48 +509,48 @@ hard_fault_handler_c (exception_stack_frame_s* frame __attribute__((unused)),
 #if defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
   if ((CoreDebug->DHCSR & CoreDebug_DHCSR_C_DEBUGEN_Msk) != 0)
     {
-      cortexm::arch::bkpt();
+      cortexm::arch::bkpt ();
     }
 #else
-  cortexm::arch::bkpt();
+  cortexm::arch::bkpt ();
 #endif /* defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__) */
 #endif /* defined(DEBUG) */
 
   while (1)
     {
-      cortexm::arch::wfi();
+      cortexm::arch::wfi ();
     }
 }
 
 #endif // defined(__ARM_ARCH_6M__)
 
-
 #if defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
 
-void __attribute__ ((section(".after_vectors"),weak))
+void __attribute__ ((section (".after_vectors"), weak))
 MemManage_Handler (void)
 {
 #if defined(DEBUG)
 #if defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
   if ((CoreDebug->DHCSR & CoreDebug_DHCSR_C_DEBUGEN_Msk) != 0)
     {
-      cortexm::arch::bkpt();
+      cortexm::arch::bkpt ();
     }
 #else
-  cortexm::arch::bkpt();
+  cortexm::arch::bkpt ();
 #endif /* defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__) */
 #endif /* defined(DEBUG) */
 
   while (1)
     {
-      cortexm::arch::wfi();
+      cortexm::arch::wfi ();
     }
 }
 
-void __attribute__ ((section(".after_vectors"),weak,naked))
+void __attribute__ ((section (".after_vectors"), weak, naked))
 BusFault_Handler (void)
 {
   asm volatile(
+
       " tst lr,#4       \n"
       " ite eq          \n"
       " mrseq r0,msp    \n"
@@ -561,9 +565,9 @@ BusFault_Handler (void)
   );
 }
 
-void __attribute__ ((section(".after_vectors"),weak,used))
-bus_fault_handler_c (exception_stack_frame_s* frame __attribute__((unused)),
-                    uint32_t lr __attribute__((unused)))
+void __attribute__ ((section (".after_vectors"), weak, used))
+bus_fault_handler_c (exception_stack_frame_s* frame __attribute__ ((unused)),
+                     uint32_t lr __attribute__ ((unused)))
 {
 #if defined(TRACE)
   uint32_t mmfar = SCB->MMFAR; // MemManage Fault Address
@@ -578,23 +582,24 @@ bus_fault_handler_c (exception_stack_frame_s* frame __attribute__((unused)),
 #if defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
   if ((CoreDebug->DHCSR & CoreDebug_DHCSR_C_DEBUGEN_Msk) != 0)
     {
-      cortexm::arch::bkpt();
+      cortexm::arch::bkpt ();
     }
 #else
-  cortexm::arch::bkpt();
+  cortexm::arch::bkpt ();
 #endif /* defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__) */
 #endif /* defined(DEBUG) */
 
   while (1)
     {
-      cortexm::arch::wfi();
+      cortexm::arch::wfi ();
     }
 }
 
-void __attribute__ ((section(".after_vectors"),weak,naked))
+void __attribute__ ((section (".after_vectors"), weak, naked))
 UsageFault_Handler (void)
 {
   asm volatile(
+
       " tst lr,#4       \n"
       " ite eq          \n"
       " mrseq r0,msp    \n"
@@ -609,9 +614,9 @@ UsageFault_Handler (void)
   );
 }
 
-void __attribute__ ((section(".after_vectors"),weak,used))
-usage_fault_handler_c (exception_stack_frame_s* frame __attribute__((unused)),
-                      uint32_t lr __attribute__((unused)))
+void __attribute__ ((section (".after_vectors"), weak, used))
+usage_fault_handler_c (exception_stack_frame_s* frame __attribute__ ((unused)),
+                       uint32_t lr __attribute__ ((unused)))
 {
 #if defined(TRACE)
   uint32_t mmfar = SCB->MMFAR; // MemManage Fault Address
@@ -641,83 +646,79 @@ usage_fault_handler_c (exception_stack_frame_s* frame __attribute__((unused)),
 #if defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
   if ((CoreDebug->DHCSR & CoreDebug_DHCSR_C_DEBUGEN_Msk) != 0)
     {
-      cortexm::arch::bkpt();
+      cortexm::arch::bkpt ();
     }
 #else
-  cortexm::arch::bkpt();
+  cortexm::arch::bkpt ();
 #endif /* defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__) */
 #endif /* defined(DEBUG) */
 
   while (1)
     {
-      cortexm::arch::wfi();
+      cortexm::arch::wfi ();
     }
 }
 
 #endif
 
-void __attribute__ ((section(".after_vectors"),weak))
-SVC_Handler (void)
+void __attribute__ ((section (".after_vectors"), weak)) SVC_Handler (void)
 {
 #if defined(DEBUG)
 #if defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
   if ((CoreDebug->DHCSR & CoreDebug_DHCSR_C_DEBUGEN_Msk) != 0)
     {
-      cortexm::arch::bkpt();
+      cortexm::arch::bkpt ();
     }
 #else
-  cortexm::arch::bkpt();
+  cortexm::arch::bkpt ();
 #endif /* defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__) */
 #endif /* defined(DEBUG) */
 
   while (1)
     {
-      cortexm::arch::wfi();
+      cortexm::arch::wfi ();
     }
 }
 
 #if defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
 
-void __attribute__ ((section(".after_vectors"),weak))
-DebugMon_Handler (void)
+void __attribute__ ((section (".after_vectors"), weak)) DebugMon_Handler (void)
 {
 #if defined(DEBUG)
   if ((CoreDebug->DHCSR & CoreDebug_DHCSR_C_DEBUGEN_Msk) != 0)
     {
-      cortexm::arch::bkpt();
+      cortexm::arch::bkpt ();
     }
 #endif /* defined(DEBUG) */
 
   while (1)
     {
-      cortexm::arch::wfi();
+      cortexm::arch::wfi ();
     }
 }
 
 #endif
 
-void __attribute__ ((section(".after_vectors"),weak))
-PendSV_Handler (void)
+void __attribute__ ((section (".after_vectors"), weak)) PendSV_Handler (void)
 {
 #if defined(DEBUG)
 #if defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
   if ((CoreDebug->DHCSR & CoreDebug_DHCSR_C_DEBUGEN_Msk) != 0)
     {
-      cortexm::arch::bkpt();
+      cortexm::arch::bkpt ();
     }
 #else
-  cortexm::arch::bkpt();
+  cortexm::arch::bkpt ();
 #endif /* defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__) */
 #endif /* defined(DEBUG) */
 
   while (1)
     {
-      cortexm::arch::wfi();
+      cortexm::arch::wfi ();
     }
 }
 
-void __attribute__ ((section(".after_vectors"),weak))
-SysTick_Handler (void)
+void __attribute__ ((section (".after_vectors"), weak)) SysTick_Handler (void)
 {
   // DO NOT loop, just return.
   // Useful in case someone (like STM HAL) inadvertently enables SysTick.

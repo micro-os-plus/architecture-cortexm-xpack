@@ -28,6 +28,8 @@
 #ifndef MICRO_OS_PLUS_ARCHITECTURE_CORTEXM_EXCEPTION_HANDLERS_H_
 #define MICRO_OS_PLUS_ARCHITECTURE_CORTEXM_EXCEPTION_HANDLERS_H_
 
+// ----------------------------------------------------------------------------
+
 #include <stdint.h>
 
 // ----------------------------------------------------------------------------
@@ -76,7 +78,7 @@ extern "C"
     uint32_t lr;
     uint32_t pc;
     uint32_t psr;
-#if  defined(__ARM_ARCH_7EM__)
+#if defined(__ARM_ARCH_7EM__)
     uint32_t s[16];
 #endif
   } exception_stack_frame_s;
@@ -84,8 +86,8 @@ extern "C"
 #if defined(TRACE)
 #if defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
   void
-  dump_exception_stack (exception_stack_frame_s* frame, uint32_t cfsr, uint32_t mmfar,
-                      uint32_t bfar, uint32_t lr);
+  dump_exception_stack (exception_stack_frame_s* frame, uint32_t cfsr,
+                        uint32_t mmfar, uint32_t bfar, uint32_t lr);
 #endif // defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
 #if defined(__ARM_ARCH_6M__)
   void

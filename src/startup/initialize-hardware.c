@@ -47,8 +47,7 @@
  * require custom inits (before constructors), otherwise these inits can
  * be done in main().
  */
-void __attribute__((weak))
-os_startup_initialize_hardware (void)
+void __attribute__ ((weak)) os_startup_initialize_hardware (void)
 {
   // Call the CSMSIS system clock routine to store the clock frequency
   // in the SystemCoreClock global RAM location.

@@ -28,7 +28,11 @@
 #ifndef MICRO_OS_PLUS_ARCHITECTURE_CORTEXM_INSTRUCTIONS_INLINES_H_
 #define MICRO_OS_PLUS_ARCHITECTURE_CORTEXM_INSTRUCTIONS_INLINES_H_
 
+// ----------------------------------------------------------------------------
+
 #include <stdint.h>
+
+// ----------------------------------------------------------------------------
 
 /*
  * Inline implementations for the Cortex-M architecture instructions.
@@ -41,11 +45,11 @@ extern "C"
 
   // --------------------------------------------------------------------------
 
-  static inline void
-  __attribute__((always_inline))
+  static inline __attribute__ ((always_inline)) void
   cortexm_arch_nop (void)
   {
     asm volatile(
+
         " nop "
 
         : /* Outputs */
@@ -54,11 +58,11 @@ extern "C"
     );
   }
 
-  static inline void
-  __attribute__((always_inline))
+  static inline __attribute__ ((always_inline)) void
   cortexm_arch_bkpt (void)
   {
     asm volatile(
+
         " bkpt 0 "
 
         : /* Outputs */
@@ -67,11 +71,11 @@ extern "C"
     );
   }
 
-  static inline void
-  __attribute__((always_inline))
+  static inline __attribute__ ((always_inline)) void
   cortexm_arch_wfi (void)
   {
     asm volatile(
+
         " wfi "
 
         : /* Outputs */
@@ -80,8 +84,7 @@ extern "C"
     );
   }
 
-  static inline void
-  __attribute__((always_inline))
+  static inline __attribute__ ((always_inline)) void
   os_arch_nop (void)
   {
     cortexm_arch_nop ();
@@ -90,8 +93,7 @@ extern "C"
   /**
    * `break` instruction.
    */
-  static inline void
-  __attribute__((always_inline))
+  static inline __attribute__ ((always_inline)) void
   os_arch_brk (void)
   {
     cortexm_arch_bkpt ();
@@ -100,14 +102,13 @@ extern "C"
   /**
    * `wfi` instruction.
    */
-  static inline void
-  __attribute__((always_inline))
+  static inline __attribute__ ((always_inline)) void
   os_arch_wfi (void)
   {
     cortexm_arch_wfi ();
   }
 
-// ----------------------------------------------------------------------------
+  // --------------------------------------------------------------------------
 
 #if defined(__cplusplus)
 }
@@ -123,32 +124,27 @@ namespace cortexm
   {
     // ------------------------------------------------------------------------
 
-    inline void
-    __attribute__((always_inline))
+    inline __attribute__ ((always_inline)) void
     nop (void)
     {
       cortexm_arch_nop ();
     }
 
-    inline void
-    __attribute__((always_inline))
+    inline __attribute__ ((always_inline)) void
     bkpt (void)
     {
       cortexm_arch_bkpt ();
     }
 
-    inline void
-    __attribute__((always_inline))
+    inline __attribute__ ((always_inline)) void
     wfi (void)
     {
       cortexm_arch_wfi ();
     }
 
-  // --------------------------------------------------------------------------
-  } /* namespace arch */
-
-// ----------------------------------------------------------------------------
-} /* namespace cortexm */
+    // ------------------------------------------------------------------------
+  } // namespace arch
+} // namespace cortexm
 
 namespace os
 {
@@ -156,32 +152,27 @@ namespace os
   {
     // ------------------------------------------------------------------------
 
-    inline void
-    __attribute__((always_inline))
+    inline __attribute__ ((always_inline)) void
     nop (void)
     {
       cortexm::arch::nop ();
     }
 
-    inline void
-    __attribute__((always_inline))
+    inline __attribute__ ((always_inline)) void
     brk (void)
     {
       cortexm::arch::bkpt ();
     }
 
-    inline void
-    __attribute__((always_inline))
+    inline __attribute__ ((always_inline)) void
     wfi (void)
     {
       cortexm::arch::wfi ();
     }
 
-  // --------------------------------------------------------------------------
-  } /* namespace arch */
-
-// ----------------------------------------------------------------------------
-} /* namespace os */
+    // ------------------------------------------------------------------------
+  } // namespace arch
+} // namespace os
 
 #endif /* defined(__cplusplus) */
 

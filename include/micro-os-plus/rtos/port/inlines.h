@@ -45,7 +45,7 @@
 
 // ----------------------------------------------------------------------------
 
-#ifdef  __cplusplus
+#ifdef __cplusplus
 
 #include <micro-os-plus/device.h>
 #include <micro-os-plus/diag/trace.h>
@@ -61,14 +61,13 @@ namespace os
       namespace scheduler
       {
 
-        inline void
-        __attribute__((always_inline))
+        inline __attribute__ ((always_inline)) void
         greeting (void)
         {
           trace::printf ("Scheduler: µOS++ Cortex-M");
 #if defined(__ARM_ARCH_7EM__)
-          trace::putchar ('0'+__CORTEX_M); // M4/M7
-#if defined (__ARM_FP)
+          trace::putchar ('0' + __CORTEX_M); // M4/M7
+#if defined(__ARM_FP)
           trace::printf (" FP");
 #endif
 #elif defined(__ARM_ARCH_7M__)
@@ -77,15 +76,17 @@ namespace os
           trace::printf ("0/0+");
 #endif
           trace::printf (", preemptive");
-#if (defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)) && defined(OS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY)
-          trace::printf (", BASEPRI(%u)", OS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY);
+#if (defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)) \
+    && defined(OS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY)
+          trace::printf (", BASEPRI(%u)",
+                         OS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY);
 #else
-          trace::printf(", DI/EI");
+          trace::printf (", DI/EI");
 #endif
 #if defined(OS_EXCLUDE_RTOS_IDLE_SLEEP)
-          trace::printf(", no WFI");
+          trace::printf (", no WFI");
 #else
-          trace::printf(", WFI");
+          trace::printf (", WFI");
 #endif
           trace::puts (".");
 
@@ -94,29 +95,25 @@ namespace os
           trace::printf ("System clock: %u Hz.\n", SystemCoreClock);
         }
 
-        inline port::scheduler::state_t
-        __attribute__((always_inline))
+        inline __attribute__ ((always_inline)) port::scheduler::state_t
         lock (void)
         {
           return locked (state::locked);
         }
 
-        inline port::scheduler::state_t
-        __attribute__((always_inline))
+        inline __attribute__ ((always_inline)) port::scheduler::state_t
         unlock (void)
         {
           return locked (state::unlocked);
         }
 
-        inline bool
-        __attribute__((always_inline))
+        inline __attribute__ ((always_inline)) bool
         locked (void)
         {
           return lock_state != state::unlocked;
         }
 
-        inline void
-        __attribute__((always_inline))
+        inline __attribute__ ((always_inline)) void
         wait_for_interrupt (void)
         {
 #if !defined(OS_EXCLUDE_RTOS_IDLE_SLEEP)
@@ -129,7 +126,7 @@ namespace os
 #endif /* !defined(OS_EXCLUDE_RTOS_IDLE_SLEEP) */
         }
 
-      } /* namespace scheduler */
+      } // namespace scheduler
 
       // The DSB/ISB are recommended by ARM after priority level changes.
       // (Application Note 321: ARM Cortex-M Programming Guide to
@@ -138,8 +135,7 @@ namespace os
 
       namespace interrupts
       {
-        inline bool
-        __attribute__((always_inline))
+        inline __attribute__ ((always_inline)) bool
         in_handler_mode (void)
         {
           // In Handler mode, IPSR holds the exception number.
@@ -179,10 +175,10 @@ namespace os
           uint32_t exception_number = __get_IPSR ();
           if (exception_number > 0)
             {
-              uint32_t prio = NVIC_GetPriority (
-                  (IRQn_Type) (exception_number - 16));
+              uint32_t prio
+                  = NVIC_GetPriority ((IRQn_Type) (exception_number - 16));
               return (prio
-                  >= OS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY);
+                      >= OS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY);
             }
           else
             {
@@ -199,14 +195,13 @@ namespace os
 #elif defined(__ARM_ARCH_6M__)
 
           // When using DI/EI, all priority levels are valid.
-           return true;
+          return true;
 
 #endif /* architecture */
         }
 
         // Enter an IRQ critical section
-        inline rtos::interrupts::state_t
-        __attribute__((always_inline))
+        inline __attribute__ ((always_inline)) rtos::interrupts::state_t
         critical_section::enter (void)
         {
           uint32_t pri;
@@ -258,8 +253,7 @@ namespace os
         }
 
         // Exit an IRQ critical section
-        inline void
-        __attribute__((always_inline))
+        inline __attribute__ ((always_inline)) void
         critical_section::exit (rtos::interrupts::state_t state)
         {
 #if defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
@@ -290,8 +284,7 @@ namespace os
         // ====================================================================
 
         // Enter an IRQ uncritical section
-        inline rtos::interrupts::state_t
-        __attribute__((always_inline))
+        inline __attribute__ ((always_inline)) rtos::interrupts::state_t
         uncritical_section::enter (void)
         {
           uint32_t pri;
@@ -331,8 +324,7 @@ namespace os
         }
 
         // Exit an IRQ critical section
-        inline void
-        __attribute__((always_inline))
+        inline __attribute__ ((always_inline)) void
         uncritical_section::exit (rtos::interrupts::state_t state)
         {
 #if defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
@@ -360,47 +352,42 @@ namespace os
           // __ISB ();
         }
 
-      } /* namespace interrupts */
+      } // namespace interrupts
 
       // ======================================================================
 
       namespace this_thread
       {
-        inline void
-        __attribute__((always_inline))
+        inline __attribute__ ((always_inline)) void
         prepare_suspend (void)
         {
           ;
         }
 
-      } /* namespace this_thread */
+      } // namespace this_thread
 
       // ======================================================================
 
-      inline void
-      __attribute__((always_inline))
+      inline __attribute__ ((always_inline)) void
       clock_highres::start (void)
       {
         ;
       }
 
-      inline uint32_t
-      __attribute__((always_inline))
+      inline __attribute__ ((always_inline)) uint32_t
       clock_highres::input_clock_frequency_hz (void)
       {
         // The SysTick is clocked with the CPU clock.
         return SystemCoreClock;
       }
 
-      inline uint32_t
-      __attribute__((always_inline))
+      inline __attribute__ ((always_inline)) uint32_t
       clock_highres::cycles_per_tick (void)
       {
         return SysTick->LOAD + 1;
       }
 
-      inline uint32_t
-      __attribute__((always_inline))
+      inline __attribute__ ((always_inline)) uint32_t
       clock_highres::cycles_since_tick (void)
       {
         uint32_t load_value = SysTick->LOAD;
@@ -433,17 +420,19 @@ namespace os
         return load_value - val;
       }
 
-    // ======================================================================
+      // ======================================================================
 
-    } /* namespace port */
-  } /* namespace rtos */
-} /* namespace os */
+    } // namespace port
+  } // namespace rtos
+} // namespace os
 
 #pragma GCC diagnostic pop
 
 // ----------------------------------------------------------------------------
 
 #endif /* __cplusplus */
+
+// ----------------------------------------------------------------------------
 
 #endif /* MICRO_OS_PLUS_ARCHITECTURE_CORTEXM_RTOS_PORT_INLINES_H_ */
 

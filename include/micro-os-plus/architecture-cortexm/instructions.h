@@ -28,9 +28,13 @@
 #ifndef MICRO_OS_PLUS_ARCHITECTURE_CORTEXM_INSTRUCTIONS_H_
 #define MICRO_OS_PLUS_ARCHITECTURE_CORTEXM_INSTRUCTIONS_H_
 
+// ----------------------------------------------------------------------------
+
 #include <micro-os-plus/architecture-cortexm/defines.h>
 
 #include <stdint.h>
+
+// ----------------------------------------------------------------------------
 
 /*
  * Declarations of RISC-V functions to wrap architecture instructions.
@@ -83,7 +87,7 @@ extern "C"
   static void
   os_arch_wfi (void);
 
-// ----------------------------------------------------------------------------
+  // --------------------------------------------------------------------------
 
 #if defined(__cplusplus)
 }
@@ -118,10 +122,9 @@ namespace cortexm
     void
     wfi (void);
 
-  // --------------------------------------------------------------------------
-  } /* namespace arch */
-// ----------------------------------------------------------------------------
-} /* namespace riscv */
+    // ------------------------------------------------------------------------
+  } // namespace arch
+} // namespace cortexm
 
 namespace os
 {
@@ -148,10 +151,9 @@ namespace os
     void
     wfi (void);
 
-  // --------------------------------------------------------------------------
-  } /* namespace arch */
-// ----------------------------------------------------------------------------
-} /* namespace os */
+    // ------------------------------------------------------------------------
+  } // namespace arch
+} // namespace os
 
 #endif /* defined(__cplusplus) */
 
