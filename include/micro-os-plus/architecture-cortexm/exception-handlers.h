@@ -39,21 +39,31 @@ extern "C"
 
   // External references to Cortex-M exception_handlers.c
 
-  extern void Reset_Handler (void);
-  extern void NMI_Handler (void);
-  extern void HardFault_Handler (void);
+  extern void
+  Reset_Handler (void);
+  extern void
+  NMI_Handler (void);
+  extern void
+  HardFault_Handler (void);
 
 #if defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
-  extern void MemManage_Handler (void);
-  extern void BusFault_Handler (void);
-  extern void UsageFault_Handler (void);
-  extern void DebugMon_Handler (void);
+  extern void
+  MemManage_Handler (void);
+  extern void
+  BusFault_Handler (void);
+  extern void
+  UsageFault_Handler (void);
+  extern void
+  DebugMon_Handler (void);
 #endif
 
-  extern void SVC_Handler (void);
+  extern void
+  SVC_Handler (void);
 
-  extern void PendSV_Handler (void);
-  extern void SysTick_Handler (void);
+  extern void
+  PendSV_Handler (void);
+  extern void
+  SysTick_Handler (void);
 
   // Exception Stack Frame of the Cortex-M3 or Cortex-M4 processors.
   typedef struct
@@ -66,26 +76,31 @@ extern "C"
     uint32_t lr;
     uint32_t pc;
     uint32_t psr;
-#if defined(__ARM_ARCH_7EM__)
+#if  defined(__ARM_ARCH_7EM__)
     uint32_t s[16];
 #endif
   } exception_stack_frame_s;
 
 #if defined(TRACE)
 #if defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
-  void dump_exception_stack (exception_stack_frame_s* frame, uint32_t cfsr,
-                             uint32_t mmfar, uint32_t bfar, uint32_t lr);
+  void
+  dump_exception_stack (exception_stack_frame_s* frame, uint32_t cfsr, uint32_t mmfar,
+                      uint32_t bfar, uint32_t lr);
 #endif // defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
 #if defined(__ARM_ARCH_6M__)
-  void dump_exception_stack (exception_stack_frame_s* frame, uint32_t lr);
+  void
+  dump_exception_stack (exception_stack_frame_s* frame, uint32_t lr);
 #endif // defined(__ARM_ARCH_6M__)
 #endif // defined(TRACE)
 
-  void hard_fault_handler_c (exception_stack_frame_s* frame, uint32_t lr);
+  void
+  hard_fault_handler_c (exception_stack_frame_s* frame, uint32_t lr);
 
 #if defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
-  void usage_fault_handler_c (exception_stack_frame_s* frame, uint32_t lr);
-  void bus_fault_handler_c (exception_stack_frame_s* frame, uint32_t lr);
+  void
+  usage_fault_handler_c (exception_stack_frame_s* frame, uint32_t lr);
+  void
+  bus_fault_handler_c (exception_stack_frame_s* frame, uint32_t lr);
 #endif // defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
 
 #if defined(__cplusplus)

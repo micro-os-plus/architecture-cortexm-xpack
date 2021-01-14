@@ -42,20 +42,21 @@ extern "C"
 // ----------------------------------------------------------------------------
 
 // SWI numbers and reason codes for RDI (Angel) monitors.
-#define AngelSWI_ARM 0x123456
+#define AngelSWI_ARM                    0x123456
 #ifdef __thumb__
-#define AngelSWI 0xAB
+#define AngelSWI                        0xAB
 #else
-#define AngelSWI AngelSWI_ARM
+#define AngelSWI                        AngelSWI_ARM
 #endif
 // For thumb only architectures use the BKPT instruction instead of SWI.
-#if defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)                     \
+#if defined(__ARM_ARCH_7M__)     \
+    || defined(__ARM_ARCH_7EM__) \
     || defined(__ARM_ARCH_6M__)
-#define AngelSWIInsn "bkpt"
-#define AngelSWIAsm bkpt
+#define AngelSWIInsn                    "bkpt"
+#define AngelSWIAsm                     bkpt
 #else
-#define AngelSWIInsn "swi"
-#define AngelSWIAsm swi
+#define AngelSWIInsn                    "swi"
+#define AngelSWIAsm                     swi
 #endif
 
 #if defined(OS_DEBUG_SEMIHOSTING_FAULTS)
@@ -63,40 +64,42 @@ extern "C"
 // configuration cannot trigger HaedFault exceptions while the debugger is
 // connected, so we use an illegal op code, that will trigger an
 // UsageFault exception.
-#define AngelSWITestFault "setend be"
+#define AngelSWITestFault       "setend be"
 #define AngelSWITestFaultOpCode (0xB658)
 #endif
 
-  static inline int __attribute__ ((always_inline))
-  os_semihosting_call_host (int reason, void* arg)
-  {
-    int value;
-    asm volatile(
+static inline int
+__attribute__ ((always_inline))
+os_semihosting_call_host (int reason, void* arg)
+{
+  int value;
+  asm volatile (
 
-        " mov r0, %[rsn]  \n"
-        " mov r1, %[arg]  \n"
+      " mov r0, %[rsn]  \n"
+      " mov r1, %[arg]  \n"
 #if defined(OS_DEBUG_SEMIHOSTING_FAULTS)
-        " " AngelSWITestFault " \n"
+      " " AngelSWITestFault " \n"
 #else
       " " AngelSWIInsn " %[swi] \n"
 #endif
-        " mov %[val], r0"
+      " mov %[val], r0"
 
-        : [val] "=r"(value)                                      /* Outputs */
-        : [rsn] "r"(reason), [arg] "r"(arg), [swi] "i"(AngelSWI) /* Inputs */
-        : "r0", "r1", "r2", "r3", "ip", "lr", "memory", "cc"
-        // Clobbers r0 and r1, and lr if in supervisor mode
-    );
+      : [val] "=r" (value) /* Outputs */
+      : [rsn] "r" (reason), [arg] "r" (arg), [swi] "i" (AngelSWI) /* Inputs */
+      : "r0", "r1", "r2", "r3", "ip", "lr", "memory", "cc"
+      // Clobbers r0 and r1, and lr if in supervisor mode
+  );
 
-    // Accordingly to page 13-77 of ARM DUI 0040D other registers
-    // can also be clobbered. Some memory positions may also be
-    // changed by a system call, so they should not be kept in
-    // registers. Note: we are assuming the manual is right and
-    // Angel is respecting the APCS.
-    return value;
-  }
+  // Accordingly to page 13-77 of ARM DUI 0040D other registers
+  // can also be clobbered. Some memory positions may also be
+  // changed by a system call, so they should not be kept in
+  // registers. Note: we are assuming the manual is right and
+  // Angel is respecting the APCS.
+  return value;
+}
 
-  // --------------------------------------------------------------------------
+
+// ----------------------------------------------------------------------------
 
 #if defined(__cplusplus)
 }

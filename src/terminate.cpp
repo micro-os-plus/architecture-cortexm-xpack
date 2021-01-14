@@ -40,10 +40,11 @@
  * Redefine it in your application if you need to do more,
  * like powering down devices, saving state, etc.
  */
-void __attribute__ ((noreturn, weak))
-os_terminate (int code __attribute__ ((unused)))
+void
+__attribute__ ((noreturn,weak))
+os_terminate (int code __attribute__((unused)))
 {
-  NVIC_SystemReset ();
+  NVIC_SystemReset();
 
   /* NOTREACHED */
 }

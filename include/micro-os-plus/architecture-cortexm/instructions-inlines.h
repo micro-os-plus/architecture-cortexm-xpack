@@ -41,37 +41,48 @@ extern "C"
 
   // --------------------------------------------------------------------------
 
-  static inline void __attribute__ ((always_inline)) cortexm_arch_nop (void)
+  static inline void
+  __attribute__((always_inline))
+  cortexm_arch_nop (void)
   {
-    asm volatile(" nop "
+    asm volatile(
+        " nop "
 
-                 : /* Outputs */
-                 : /* Inputs */
-                 : /* Clobbers */
+        : /* Outputs */
+        : /* Inputs */
+        : /* Clobbers */
     );
   }
 
-  static inline void __attribute__ ((always_inline)) cortexm_arch_bkpt (void)
+  static inline void
+  __attribute__((always_inline))
+  cortexm_arch_bkpt (void)
   {
-    asm volatile(" bkpt 0 "
+    asm volatile(
+        " bkpt 0 "
 
-                 : /* Outputs */
-                 : /* Inputs */
-                 : /* Clobbers */
+        : /* Outputs */
+        : /* Inputs */
+        : /* Clobbers */
     );
   }
 
-  static inline void __attribute__ ((always_inline)) cortexm_arch_wfi (void)
+  static inline void
+  __attribute__((always_inline))
+  cortexm_arch_wfi (void)
   {
-    asm volatile(" wfi "
+    asm volatile(
+        " wfi "
 
-                 : /* Outputs */
-                 : /* Inputs */
-                 : /* Clobbers */
+        : /* Outputs */
+        : /* Inputs */
+        : /* Clobbers */
     );
   }
 
-  static inline void __attribute__ ((always_inline)) os_arch_nop (void)
+  static inline void
+  __attribute__((always_inline))
+  os_arch_nop (void)
   {
     cortexm_arch_nop ();
   }
@@ -79,7 +90,9 @@ extern "C"
   /**
    * `break` instruction.
    */
-  static inline void __attribute__ ((always_inline)) os_arch_brk (void)
+  static inline void
+  __attribute__((always_inline))
+  os_arch_brk (void)
   {
     cortexm_arch_bkpt ();
   }
@@ -87,12 +100,14 @@ extern "C"
   /**
    * `wfi` instruction.
    */
-  static inline void __attribute__ ((always_inline)) os_arch_wfi (void)
+  static inline void
+  __attribute__((always_inline))
+  os_arch_wfi (void)
   {
     cortexm_arch_wfi ();
   }
 
-  // --------------------------------------------------------------------------
+// ----------------------------------------------------------------------------
 
 #if defined(__cplusplus)
 }
@@ -104,48 +119,66 @@ extern "C"
 
 namespace cortexm
 {
-namespace arch
-{
-// ----------------------------------------------------------------------------
+  namespace arch
+  {
+    // ------------------------------------------------------------------------
 
-inline void __attribute__ ((always_inline)) nop (void) { cortexm_arch_nop (); }
+    inline void
+    __attribute__((always_inline))
+    nop (void)
+    {
+      cortexm_arch_nop ();
+    }
 
-inline void __attribute__ ((always_inline)) bkpt (void)
-{
-  cortexm_arch_bkpt ();
-}
+    inline void
+    __attribute__((always_inline))
+    bkpt (void)
+    {
+      cortexm_arch_bkpt ();
+    }
 
-inline void __attribute__ ((always_inline)) wfi (void) { cortexm_arch_wfi (); }
+    inline void
+    __attribute__((always_inline))
+    wfi (void)
+    {
+      cortexm_arch_wfi ();
+    }
 
-// ----------------------------------------------------------------------------
-} /* namespace arch */
+  // --------------------------------------------------------------------------
+  } /* namespace arch */
 
 // ----------------------------------------------------------------------------
 } /* namespace cortexm */
 
 namespace os
 {
-namespace arch
-{
-// ----------------------------------------------------------------------------
+  namespace arch
+  {
+    // ------------------------------------------------------------------------
 
-inline void __attribute__ ((always_inline)) nop (void)
-{
-  cortexm::arch::nop ();
-}
+    inline void
+    __attribute__((always_inline))
+    nop (void)
+    {
+      cortexm::arch::nop ();
+    }
 
-inline void __attribute__ ((always_inline)) brk (void)
-{
-  cortexm::arch::bkpt ();
-}
+    inline void
+    __attribute__((always_inline))
+    brk (void)
+    {
+      cortexm::arch::bkpt ();
+    }
 
-inline void __attribute__ ((always_inline)) wfi (void)
-{
-  cortexm::arch::wfi ();
-}
+    inline void
+    __attribute__((always_inline))
+    wfi (void)
+    {
+      cortexm::arch::wfi ();
+    }
 
-// ----------------------------------------------------------------------------
-} /* namespace arch */
+  // --------------------------------------------------------------------------
+  } /* namespace arch */
 
 // ----------------------------------------------------------------------------
 } /* namespace os */
