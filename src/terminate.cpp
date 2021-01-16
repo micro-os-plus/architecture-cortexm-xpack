@@ -48,10 +48,10 @@ os_terminate (int code __attribute__ ((unused)))
   /* NOTREACHED */
 }
 
-#endif /* !defined(OS_USE_SEMIHOSTING_SYSCALLS) */
+#endif // !defined(OS_USE_SEMIHOSTING_SYSCALLS)
 
 // ----------------------------------------------------------------------------
 
-#endif /* defined(__ARM_EABI__) */
+#endif // defined(__ARM_EABI__)
 
 // ----------------------------------------------------------------------------

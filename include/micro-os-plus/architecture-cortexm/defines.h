@@ -34,6 +34,6 @@
 
 // ----------------------------------------------------------------------------
 
-#endif /* MICRO_OS_PLUS_ARCHITECTURE_CORTEXM_DEFINES_H_ */
+#endif // MICRO_OS_PLUS_ARCHITECTURE_CORTEXM_DEFINES_H_
 
 // ----------------------------------------------------------------------------

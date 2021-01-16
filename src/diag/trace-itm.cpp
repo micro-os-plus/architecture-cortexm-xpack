@@ -114,17 +114,17 @@ namespace os
 
 #error "ITM available only on ARCH 7M"
 
-#endif /* defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__) */
+#endif // defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
 
   } // namespace trace
 } // namespace os
 
-#endif /* defined(OS_USE_TRACE_ITM) */
+#endif // defined(OS_USE_TRACE_ITM)
 
-#endif /* defined(TRACE) */
+#endif // defined(TRACE)
 
 // ----------------------------------------------------------------------------
 
-#endif /* defined(__ARM_EABI__) */
+#endif // defined(__ARM_EABI__)
 
 // ----------------------------------------------------------------------------

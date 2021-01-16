@@ -57,7 +57,7 @@
     "OS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY should not be used with Cortex-M0/M0+ devices."
 #endif
 
-#endif /* defined(__ARM_ARCH_6M__) */
+#endif // defined(__ARM_ARCH_6M__)
 
 #if defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
 
@@ -76,9 +76,9 @@ static_assert (OS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY
                "OS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY must be "
                "<= " OS_MACRO_STRINGIFY (__MAX_PRIO));
 
-#endif /* defined(OS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY) */
+#endif // defined(OS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY)
 
-#endif /* defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__) */
+#endif // defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
 
 // ----------------------------------------------------------------------------
 
@@ -447,7 +447,7 @@ namespace os
 
 #if !defined(OS_DISABLE_CORTEXM_SET_MSP_VIA_VTOR)
           __set_MSP (*((uint32_t*)SCB->VTOR));
-#endif /* !defined(OS_DISABLE_CORTEXM_SET_MSP_VIA_VTOR) */
+#endif // !defined(OS_DISABLE_CORTEXM_SET_MSP_VIA_VTOR)
 
 #elif defined(__ARM_ARCH_6M__)
 
@@ -802,7 +802,7 @@ namespace os
           // Disable all interrupts.
           __disable_irq ();
 
-#endif /* defined(OS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY) */
+#endif // defined(OS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY)
 
 #elif defined(__ARM_ARCH_6M__)
 
@@ -857,7 +857,7 @@ namespace os
           // Restore PRIMASK to the value saved at the beginning.
           __set_PRIMASK (pri);
 
-#endif /* defined(OS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY) */
+#endif // defined(OS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY)
 
 #elif defined(__ARM_ARCH_6M__)
 
@@ -981,6 +981,6 @@ PendSV_Handler (void)
 
 // ----------------------------------------------------------------------------
 
-#endif /* defined(__ARM_EABI__) */
+#endif // defined(__ARM_EABI__)
 
 // ----------------------------------------------------------------------------

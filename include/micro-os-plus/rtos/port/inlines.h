@@ -123,7 +123,7 @@ namespace os
           // The DSB is recommended by ARM before WFI.
           __DSB ();
           __WFI ();
-#endif /* !defined(OS_EXCLUDE_RTOS_IDLE_SLEEP) */
+#endif // !defined(OS_EXCLUDE_RTOS_IDLE_SLEEP)
         }
 
       } // namespace scheduler
@@ -190,14 +190,14 @@ namespace os
           // When using DI/EI, all priority levels are valid.
           return true;
 
-#endif /* defined(OS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY) */
+#endif // defined(OS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY)
 
 #elif defined(__ARM_ARCH_6M__)
 
           // When using DI/EI, all priority levels are valid.
           return true;
 
-#endif /* architecture */
+#endif // architecture
         }
 
         // Enter an IRQ critical section
@@ -230,7 +230,7 @@ namespace os
           // Disable all interrupts.
           __disable_irq ();
 
-#endif /* defined(OS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY) */
+#endif // defined(OS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY)
 
 #elif defined(__ARM_ARCH_6M__)
 
@@ -268,7 +268,7 @@ namespace os
           // Restore PRIMASK to the value saved by enter().
           __set_PRIMASK (state);
 
-#endif /* defined(OS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY) */
+#endif // defined(OS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY)
 
 #elif defined(__ARM_ARCH_6M__)
 
@@ -306,7 +306,7 @@ namespace os
           // Enable all interrupts.
           __enable_irq ();
 
-#endif /* defined(OS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY) */
+#endif // defined(OS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY)
 
 #elif defined(__ARM_ARCH_6M__)
 
@@ -339,7 +339,7 @@ namespace os
           // Restore PRIMASK to the value saved by enter().
           __set_PRIMASK (state);
 
-#endif /* defined(OS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY) */
+#endif // defined(OS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY)
 
 #elif defined(__ARM_ARCH_6M__)
 
@@ -430,10 +430,10 @@ namespace os
 
 // ----------------------------------------------------------------------------
 
-#endif /* __cplusplus */
+#endif // __cplusplus
 
 // ----------------------------------------------------------------------------
 
-#endif /* MICRO_OS_PLUS_ARCHITECTURE_CORTEXM_RTOS_PORT_INLINES_H_ */
+#endif // MICRO_OS_PLUS_ARCHITECTURE_CORTEXM_RTOS_PORT_INLINES_H_
 
 // ----------------------------------------------------------------------------

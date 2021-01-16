@@ -101,8 +101,8 @@ void __attribute__ ((section (".after_vectors"), weak)) NMI_Handler (void)
     }
 #else
   cortexm::arch::bkpt ();
-#endif /* defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__) */
-#endif /* defined(DEBUG) */
+#endif // defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
+#endif // defined(DEBUG)
 
   while (1)
     {
@@ -434,7 +434,7 @@ hard_fault_handler_c (exception_stack_frame_s* frame __attribute__ ((unused)),
         }
     }
 
-#endif /* semihosting */
+#endif // semihosting
 
 #if defined(TRACE)
   os::trace::printf ("[HardFault]\n");
@@ -449,8 +449,8 @@ hard_fault_handler_c (exception_stack_frame_s* frame __attribute__ ((unused)),
     }
 #else
   cortexm::arch::bkpt ();
-#endif /* defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__) */
-#endif /* defined(DEBUG) */
+#endif // defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
+#endif // defined(DEBUG)
 
   while (1)
     {
@@ -513,8 +513,8 @@ hard_fault_handler_c (exception_stack_frame_s* frame __attribute__ ((unused)),
     }
 #else
   cortexm::arch::bkpt ();
-#endif /* defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__) */
-#endif /* defined(DEBUG) */
+#endif // defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
+#endif // defined(DEBUG)
 
   while (1)
     {
@@ -537,8 +537,8 @@ MemManage_Handler (void)
     }
 #else
   cortexm::arch::bkpt ();
-#endif /* defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__) */
-#endif /* defined(DEBUG) */
+#endif // defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
+#endif // defined(DEBUG)
 
   while (1)
     {
@@ -586,8 +586,8 @@ bus_fault_handler_c (exception_stack_frame_s* frame __attribute__ ((unused)),
     }
 #else
   cortexm::arch::bkpt ();
-#endif /* defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__) */
-#endif /* defined(DEBUG) */
+#endif // defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
+#endif // defined(DEBUG)
 
   while (1)
     {
@@ -650,8 +650,8 @@ usage_fault_handler_c (exception_stack_frame_s* frame __attribute__ ((unused)),
     }
 #else
   cortexm::arch::bkpt ();
-#endif /* defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__) */
-#endif /* defined(DEBUG) */
+#endif // defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
+#endif // defined(DEBUG)
 
   while (1)
     {
@@ -671,8 +671,8 @@ void __attribute__ ((section (".after_vectors"), weak)) SVC_Handler (void)
     }
 #else
   cortexm::arch::bkpt ();
-#endif /* defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__) */
-#endif /* defined(DEBUG) */
+#endif // defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
+#endif // defined(DEBUG)
 
   while (1)
     {
@@ -689,7 +689,7 @@ void __attribute__ ((section (".after_vectors"), weak)) DebugMon_Handler (void)
     {
       cortexm::arch::bkpt ();
     }
-#endif /* defined(DEBUG) */
+#endif // defined(DEBUG)
 
   while (1)
     {
@@ -709,8 +709,8 @@ void __attribute__ ((section (".after_vectors"), weak)) PendSV_Handler (void)
     }
 #else
   cortexm::arch::bkpt ();
-#endif /* defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__) */
-#endif /* defined(DEBUG) */
+#endif // defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
+#endif // defined(DEBUG)
 
   while (1)
     {
@@ -727,6 +727,6 @@ void __attribute__ ((section (".after_vectors"), weak)) SysTick_Handler (void)
 
 // ----------------------------------------------------------------------------
 
-#endif /* defined(__ARM_EABI__) */
+#endif // defined(__ARM_EABI__)
 
 // ----------------------------------------------------------------------------

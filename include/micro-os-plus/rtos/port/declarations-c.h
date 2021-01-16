@@ -70,6 +70,6 @@ typedef struct
 
 // ----------------------------------------------------------------------------
 
-#endif /* MICRO_OS_PLUS_ARCHITECTURE_CORTEXM_RTOS_PORT_DECLARATIONS_C_H_ */
+#endif // MICRO_OS_PLUS_ARCHITECTURE_CORTEXM_RTOS_PORT_DECLARATIONS_C_H_
 
 // ----------------------------------------------------------------------------

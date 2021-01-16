@@ -42,6 +42,6 @@
 
 // ----------------------------------------------------------------------------
 
-#endif /* MICRO_OS_PLUS_ARCHITECTURE_CORTEXM_ARCHITECTURE_H_ */
+#endif // MICRO_OS_PLUS_ARCHITECTURE_CORTEXM_ARCHITECTURE_H_
 
 // ----------------------------------------------------------------------------

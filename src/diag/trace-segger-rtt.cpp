@@ -100,11 +100,11 @@ namespace os
   } // namespace trace
 } // namespace os
 
-#endif /* defined(OS_USE_TRACE_SEGGER_RTT) */
-#endif /* defined(TRACE) */
+#endif // defined(OS_USE_TRACE_SEGGER_RTT)
+#endif // defined(TRACE)
 
 // ----------------------------------------------------------------------------
 
-#endif /* defined(__ARM_EABI__) */
+#endif // defined(__ARM_EABI__)
 
 // ----------------------------------------------------------------------------

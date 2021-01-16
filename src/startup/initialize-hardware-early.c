@@ -69,7 +69,7 @@ void __attribute__ ((weak)) os_startup_initialize_hardware_early (void)
   // Ensure all subsequence instructions use the new configuration.
   __DSB ();
 
-#endif /* defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__) */
+#endif // defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
 
   // The current version of SystemInit() leaves the value of the clock
   // in a RAM variable (SystemCoreClock), which will be cleared shortly,
@@ -91,7 +91,7 @@ void __attribute__ ((weak)) os_startup_initialize_hardware_early (void)
   // Lazy save.
   FPU->FPCCR |= FPU_FPCCR_ASPEN_Msk | FPU_FPCCR_LSPEN_Msk;
 
-#endif /* defined(OS_INCLUDE_STARTUP_INIT_FP) || defined (__ARM_FP) */
+#endif // defined(OS_INCLUDE_STARTUP_INIT_FP) || defined (__ARM_FP)
 
 #if defined(OS_DEBUG_SEMIHOSTING_FAULTS)
 
@@ -102,6 +102,6 @@ void __attribute__ ((weak)) os_startup_initialize_hardware_early (void)
 
 // ----------------------------------------------------------------------------
 
-#endif /* defined(__ARM_EABI__) */
+#endif // defined(__ARM_EABI__)
 
 // ----------------------------------------------------------------------------
