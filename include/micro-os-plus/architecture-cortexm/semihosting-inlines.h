@@ -75,7 +75,7 @@ extern "C"
   os_semihosting_call_host (int reason, void* arg)
   {
     int value;
-    asm volatile(
+    __asm__ volatile(
 
         " mov r0, %[rsn]  \n"
         " mov r1, %[arg]  \n"

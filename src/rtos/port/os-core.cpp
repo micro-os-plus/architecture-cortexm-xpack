@@ -618,7 +618,7 @@ namespace os
         {
           register stack::element_t* sp_;
 
-          asm volatile(
+          __asm__ volatile(
               // Get the thread stack
               " mrs %[r], PSP                       \n"
               " isb                                 \n"
@@ -697,7 +697,7 @@ namespace os
 
           // register stack::element_t* sp_ asm ("r0") = sp;
 
-          asm volatile(
+          __asm__ volatile(
 
 #if defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
 
@@ -976,7 +976,7 @@ PendSV_Handler (void)
   port::scheduler::restore_from_stack (
       port::scheduler::switch_stacks (port::scheduler::save_on_stack ()));
 
-  asm volatile("bx lr");
+  __asm__ volatile("bx lr");
 }
 
 // ----------------------------------------------------------------------------

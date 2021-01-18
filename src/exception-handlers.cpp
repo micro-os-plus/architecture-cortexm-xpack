@@ -386,7 +386,7 @@ is_semihosting_call (exception_stack_frame_s* frame, uint16_t opCode)
 void __attribute__ ((section (".after_vectors"), weak, naked))
 HardFault_Handler (void)
 {
-  asm volatile(
+  __asm__ volatile(
 
       " tst lr,#4       \n"
       " ite eq          \n"
@@ -472,7 +472,7 @@ hard_fault_handler_c (exception_stack_frame_s* frame __attribute__ ((unused)),
 void __attribute__ ((section (".after_vectors"), weak, naked))
 HardFault_Handler (void)
 {
-  asm volatile(
+  __asm__ volatile(
 
       " movs r0,#4      \n"
       " mov r1,lr       \n"
@@ -549,7 +549,7 @@ MemManage_Handler (void)
 void __attribute__ ((section (".after_vectors"), weak, naked))
 BusFault_Handler (void)
 {
-  asm volatile(
+  __asm__ volatile(
 
       " tst lr,#4       \n"
       " ite eq          \n"
@@ -598,7 +598,7 @@ bus_fault_handler_c (exception_stack_frame_s* frame __attribute__ ((unused)),
 void __attribute__ ((section (".after_vectors"), weak, naked))
 UsageFault_Handler (void)
 {
-  asm volatile(
+  __asm__ volatile(
 
       " tst lr,#4       \n"
       " ite eq          \n"

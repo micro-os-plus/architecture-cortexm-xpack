@@ -48,7 +48,7 @@ extern "C"
   static inline __attribute__ ((always_inline)) void
   cortexm_arch_nop (void)
   {
-    asm volatile(
+    __asm__ volatile(
 
         " nop "
 
@@ -61,7 +61,7 @@ extern "C"
   static inline __attribute__ ((always_inline)) void
   cortexm_arch_bkpt (void)
   {
-    asm volatile(
+    __asm__ volatile(
 
         " bkpt 0 "
 
@@ -74,7 +74,7 @@ extern "C"
   static inline __attribute__ ((always_inline)) void
   cortexm_arch_wfi (void)
   {
-    asm volatile(
+    __asm__ volatile(
 
         " wfi "
 
