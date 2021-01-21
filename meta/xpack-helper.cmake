@@ -11,34 +11,41 @@
 
 message(STATUS "Including micro-os-plus-architecture-cortexm...")
 
-function(target_sources_micro_os_plus_architecture_cortexm target)
+# -----------------------------------------------------------------------------
 
-  get_filename_component(PARENT_DIR ${CMAKE_CURRENT_FUNCTION_LIST_DIR} DIRECTORY)
+function(target_sources_micro_os_plus_architecture target)
+
+  get_filename_component(xpack_root_folder ${CMAKE_CURRENT_FUNCTION_LIST_DIR} DIRECTORY)
 
   target_sources(
     ${target}
 
     PRIVATE
-      ${PARENT_DIR}/src/diag/trace-itm.cpp
-      ${PARENT_DIR}/src/diag/trace-segger-rtt.cpp
-      ${PARENT_DIR}/src/rtos/port/os-core.cpp
-      ${PARENT_DIR}/src/startup/initialize-hardware-early.c
-      ${PARENT_DIR}/src/startup/initialize-hardware.c
-      ${PARENT_DIR}/src/exception-handlers.cpp
-      ${PARENT_DIR}/src/terminate.cpp
-    )
+      ${xpack_root_folder}/src/diag/trace-itm.cpp
+      ${xpack_root_folder}/src/diag/trace-segger-rtt.cpp
+      ${xpack_root_folder}/src/rtos/port/os-core.cpp
+      ${xpack_root_folder}/src/startup/initialize-hardware-early.c
+      ${xpack_root_folder}/src/startup/initialize-hardware.c
+      ${xpack_root_folder}/src/startup/initialise-interrupts-stack.cpp
+      ${xpack_root_folder}/src/exception-handlers.cpp
+      ${xpack_root_folder}/src/terminate.cpp
+  )
+
 endfunction()
 
-function(target_include_directories_micro_os_plus_architecture_cortexm target)
+# -----------------------------------------------------------------------------
 
-  get_filename_component(PARENT_DIR ${CMAKE_CURRENT_FUNCTION_LIST_DIR} DIRECTORY)
+function(target_include_directories_micro_os_plus_architecture target)
+
+  get_filename_component(xpack_root_folder ${CMAKE_CURRENT_FUNCTION_LIST_DIR} DIRECTORY)
 
   target_include_directories(
     ${target}
 
     PUBLIC
-      ${PARENT_DIR}/include
+      ${xpack_root_folder}/include
   )
+
 endfunction()
 
 # -----------------------------------------------------------------------------
