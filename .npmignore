@@ -42,5 +42,6 @@ README-*
 # LICENSE-*
 .appveyor.yml
 .travis.yml 
+.clang-format
 
 # End
