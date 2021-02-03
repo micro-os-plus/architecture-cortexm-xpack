@@ -26,11 +26,19 @@
  */
 
 /*
- * Implementation routines for the CMSIS++ reference scheduler, mainly
+ * Implementation routines for the µOS++ scheduler, mainly
  * the context switching and context creation.
  */
 
 #if defined(__ARM_EABI__)
+
+// ----------------------------------------------------------------------------
+
+#if defined(HAVE_MICRO_OS_PLUS_CONFIG_H)
+#include <micro-os-plus/config.h>
+#endif
+
+#if defined(OS_INCLUDE_RTOS)
 
 // ----------------------------------------------------------------------------
 
@@ -978,6 +986,10 @@ PendSV_Handler (void)
 
   __asm__ volatile("bx lr");
 }
+
+// ----------------------------------------------------------------------------
+
+#endif // defined(OS_INCLUDE_RTOS)
 
 // ----------------------------------------------------------------------------
 

@@ -30,6 +30,14 @@
 
 // ----------------------------------------------------------------------------
 
+#if defined(HAVE_MICRO_OS_PLUS_CONFIG_H)
+#include <micro-os-plus/config.h>
+#endif
+
+#if defined(OS_INCLUDE_RTOS)
+
+// ----------------------------------------------------------------------------
+
 #include <micro-os-plus/rtos/os.h>
 
 // ----------------------------------------------------------------------------
@@ -49,6 +57,10 @@ os_startup_initialize_interrupts_stack (void* stack_begin_address,
       (os::rtos::thread::stack::element_t*)stack_begin_address,
       stack_size_bytes);
 }
+
+// ----------------------------------------------------------------------------
+
+#endif // defined(OS_INCLUDE_RTOS)
 
 // ----------------------------------------------------------------------------
 
