@@ -1,6 +1,6 @@
 {
   "name": "@micro-os-plus/architecture-cortexm",
-  "version": "0.1.0",
+  "version": "1.1.0",
   "description": "A source xPack with the µOS++ Arm Cortex-M architecture port",
   "main": "",
   "scripts": {
