@@ -32,8 +32,8 @@
 #include <micro-os-plus/startup/hooks.h>
 #include <micro-os-plus/device.h>
 
-extern 
-void SystemCoreClockUpdate ();
+extern void
+SystemCoreClockUpdate ();
 
 // ----------------------------------------------------------------------------
 
