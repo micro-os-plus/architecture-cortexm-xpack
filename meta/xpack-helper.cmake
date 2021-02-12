@@ -9,26 +9,26 @@
 #
 # -----------------------------------------------------------------------------
 
+if(micro-os-plus-architecture-cortexm-included)
+  return()
+endif()
+
+set(micro-os-plus-architecture-cortexm-included TRUE)
+
 message(STATUS "Including micro-os-plus-architecture-cortexm...")
 
 # -----------------------------------------------------------------------------
 
+# Not used.
 function(target_sources_micro_os_plus_architecture_cortexm target)
 
-  get_filename_component(xpack_root_folder ${CMAKE_CURRENT_FUNCTION_LIST_DIR} DIRECTORY)
+  get_filename_component(xpack_current_folder ${CMAKE_CURRENT_FUNCTION_LIST_DIR} DIRECTORY)
 
   target_sources(
     ${target}
 
-    PRIVATE
-      ${xpack_root_folder}/src/diag/trace-itm.cpp
-      ${xpack_root_folder}/src/diag/trace-segger-rtt.cpp
-      ${xpack_root_folder}/src/rtos/port/os-core.cpp
-      ${xpack_root_folder}/src/startup/initialize-hardware-early.c
-      ${xpack_root_folder}/src/startup/initialize-hardware.c
-      ${xpack_root_folder}/src/startup/initialise-interrupts-stack.cpp
-      ${xpack_root_folder}/src/exception-handlers.cpp
-      ${xpack_root_folder}/src/terminate.cpp
+    PUBLIC
+      # None so far, all are device dependent.
   )
 
 endfunction()
@@ -37,13 +37,13 @@ endfunction()
 
 function(target_include_directories_micro_os_plus_architecture_cortexm target)
 
-  get_filename_component(xpack_root_folder ${CMAKE_CURRENT_FUNCTION_LIST_DIR} DIRECTORY)
+  get_filename_component(xpack_current_folder ${CMAKE_CURRENT_FUNCTION_LIST_DIR} DIRECTORY)
 
   target_include_directories(
     ${target}
 
-    PUBLIC
-      ${xpack_root_folder}/include
+    INTERFACE
+      ${xpack_current_folder}/include
   )
 
 endfunction()
@@ -53,6 +53,81 @@ endfunction()
 function(target_compile_definitions_micro_os_plus_architecture_cortexm target)
 
   # None
+
+endfunction()
+
+# =============================================================================
+
+function(target_sources_micro_os_plus_architecture_cortexm_device target)
+
+  get_filename_component(xpack_current_folder ${CMAKE_CURRENT_FUNCTION_LIST_DIR} DIRECTORY)
+
+  target_sources(
+    ${target}
+
+    PUBLIC
+      ${xpack_current_folder}/device/src/diag/trace-itm.cpp
+      ${xpack_current_folder}/device/src/diag/trace-segger-rtt.cpp
+      ${xpack_current_folder}/device/src/rtos/port/os-core.cpp
+      ${xpack_current_folder}/device/src/startup/initialize-hardware-early.c
+      ${xpack_current_folder}/device/src/startup/initialize-hardware.c
+      ${xpack_current_folder}/device/src/startup/initialise-interrupts-stack.cpp
+      ${xpack_current_folder}/device/src/exception-handlers.cpp
+  )
+
+endfunction()
+
+# -----------------------------------------------------------------------------
+
+function(target_include_directories_micro_os_plus_architecture_cortexm_device target)
+
+  get_filename_component(xpack_current_folder ${CMAKE_CURRENT_FUNCTION_LIST_DIR} DIRECTORY)
+
+  target_include_directories(
+    ${target}
+
+    PUBLIC
+      ${xpack_current_folder}/device/include
+  )
+
+endfunction()
+
+# -----------------------------------------------------------------------------
+
+function(target_compile_definitions_micro_os_plus_architecture_cortexm_device target)
+
+  # None
+
+endfunction()
+
+# =============================================================================
+
+function(add_libraries_micro_os_plus_architecture_cortexm)
+
+  # ---------------------------------------------------------------------------
+
+  if(NOT TARGET micro-os-plus-architecture-cortexm-interface)
+
+    add_library(micro-os-plus-architecture-cortexm-interface INTERFACE EXCLUDE_FROM_ALL)
+
+    # target_sources_micro_os_plus_architecture_cortexm(micro-os-plus-architecture-cortexm-object)
+    target_include_directories_micro_os_plus_architecture_cortexm(micro-os-plus-architecture-cortexm-interface)
+    target_compile_definitions_micro_os_plus_architecture_cortexm(micro-os-plus-architecture-cortexm-interface)
+
+    add_library(micro-os-plus::architecture-cortexm ALIAS micro-os-plus-architecture-cortexm-interface)
+    add_library(micro-os-plus::architecture ALIAS micro-os-plus-architecture-cortexm-interface)
+    message(STATUS "micro-os-plus::architecture")
+
+    target_link_libraries(
+      micro-os-plus-architecture-cortexm-interface
+
+      INTERFACE
+        micro-os-plus::common
+    )
+
+  endif()
+
+  # ---------------------------------------------------------------------------
 
 endfunction()
 
