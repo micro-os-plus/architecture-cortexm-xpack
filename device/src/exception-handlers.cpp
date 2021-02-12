@@ -40,18 +40,6 @@
 
 // ----------------------------------------------------------------------------
 
-#if defined(DEBUG)
-#if defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
-
-#define CoreDebug_DHCSR_C_DEBUGEN_Pos       0U                                            /*!< CoreDebug DHCSR: C_DEBUGEN Position */
-#define CoreDebug_DHCSR_C_DEBUGEN_Msk      (1UL /*<< CoreDebug_DHCSR_C_DEBUGEN_Pos*/)     /*!< CoreDebug DHCSR: C_DEBUGEN Mask */
-
-#endif // defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
-#endif // defined(DEBUG)
-
-
-// ----------------------------------------------------------------------------
-
 extern "C"
 {
   extern unsigned int __heap_end__;
