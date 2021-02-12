@@ -1,7 +1,7 @@
 /*
  * This file is part of the µOS++ distribution.
  *   (https://github.com/micro-os-plus)
- * Copyright (c) 2021 Liviu Ionescu.
+ * Copyright (c) 2015 Liviu Ionescu.
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -25,45 +25,40 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#if (!(defined(__APPLE__) || defined(__linux__) || defined(__unix__))) \
-    || defined(__DOXYGEN__)
+#if defined(__ARM_EABI__)
 
 // ----------------------------------------------------------------------------
 
-#if defined(HAVE_MICRO_OS_PLUS_CONFIG_H)
-#include <micro-os-plus/config.h>
-#endif
+#include <micro-os-plus/startup/hooks.h>
+#include <micro-os-plus/device.h>
 
-#if defined(OS_INCLUDE_RTOS)
-
-// ----------------------------------------------------------------------------
-
-#include <micro-os-plus/rtos/os.h>
+extern 
+void SystemCoreClockUpdate ();
 
 // ----------------------------------------------------------------------------
 
-using namespace os;
-
-// ----------------------------------------------------------------------------
-
-void
-os_startup_initialize_interrupts_stack (void* stack_begin_address,
-                                        size_t stack_size_bytes)
+/**
+ * @details
+ * This is the default implementation for the second hardware
+ * initialisation routine.
+ *
+ * It is called from `_start()`, right after DATA & BSS init, before
+ * the static constructors.
+ *
+ * The application can and should
+ * redefine it for more complex cases that
+ * require custom inits (before constructors), otherwise these inits can
+ * be done in main().
+ */
+void __attribute__ ((weak)) os_startup_initialize_hardware (void)
 {
-  trace::printf ("%s(%p,%u)\n", __func__, stack_begin_address,
-                 stack_size_bytes);
-
-  os::rtos::interrupts::stack ()->set (
-      (os::rtos::thread::stack::element_t*)stack_begin_address,
-      stack_size_bytes);
+  // Call the CSMSIS system clock routine to store the clock frequency
+  // in the SystemCoreClock global RAM location.
+  SystemCoreClockUpdate ();
 }
 
 // ----------------------------------------------------------------------------
 
-#endif // defined(OS_INCLUDE_RTOS)
-
-// ----------------------------------------------------------------------------
-
-#endif // ! Unix
+#endif // defined(__ARM_EABI__)
 
 // ----------------------------------------------------------------------------

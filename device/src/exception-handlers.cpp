@@ -31,12 +31,24 @@
 
 #include <micro-os-plus/device.h>
 #include <micro-os-plus/architecture-cortexm/exception-handlers.h>
-#include <micro-os-plus/startup/defines.h>
+// #include <micro-os-plus/startup/defines.h>
 
 #include <micro-os-plus/semihosting.h>
 #include <micro-os-plus/diag/trace.h>
 
 #include <string.h>
+
+// ----------------------------------------------------------------------------
+
+#if defined(DEBUG)
+#if defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
+
+#define CoreDebug_DHCSR_C_DEBUGEN_Pos       0U                                            /*!< CoreDebug DHCSR: C_DEBUGEN Position */
+#define CoreDebug_DHCSR_C_DEBUGEN_Msk      (1UL /*<< CoreDebug_DHCSR_C_DEBUGEN_Pos*/)     /*!< CoreDebug DHCSR: C_DEBUGEN Mask */
+
+#endif // defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
+#endif // defined(DEBUG)
+
 
 // ----------------------------------------------------------------------------
 
