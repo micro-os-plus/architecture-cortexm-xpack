@@ -67,7 +67,7 @@ function(target_sources_micro_os_plus_architecture_cortexm_device target)
   target_sources(
     ${target}
 
-    PUBLIC
+    PUBLIC # PRIVATE
       ${xpack_current_folder}/device/src/diag/trace-itm.cpp
       ${xpack_current_folder}/device/src/diag/trace-segger-rtt.cpp
       ${xpack_current_folder}/device/src/rtos/port/os-core.cpp
