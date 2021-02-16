@@ -28,7 +28,7 @@ function(_target_sources_micro_os_plus_architecture_cortexm target)
   target_sources(
     ${target}
 
-    PUBLIC
+    PRIVATE
       # None so far, all are device dependent.
   )
 
@@ -67,7 +67,7 @@ function(target_sources_micro_os_plus_architecture_cortexm_device target)
   target_sources(
     ${target}
 
-    PUBLIC # PRIVATE
+    PRIVATE
       ${xpack_current_folder}/device/src/diag/trace-itm.cpp
       ${xpack_current_folder}/device/src/diag/trace-segger-rtt.cpp
       ${xpack_current_folder}/device/src/rtos/port/os-core.cpp
