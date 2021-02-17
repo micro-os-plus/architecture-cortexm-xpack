@@ -19,9 +19,7 @@ message(STATUS "Including micro-os-plus-architecture-cortexm...")
 
 # -----------------------------------------------------------------------------
 
-# Not used.
-if(false)
-function(_target_sources_micro_os_plus_architecture_cortexm target)
+function(target_sources_micro_os_plus_architecture_cortexm target)
 
   get_filename_component(xpack_current_folder ${CMAKE_CURRENT_FUNCTION_LIST_DIR} DIRECTORY)
 
@@ -33,7 +31,6 @@ function(_target_sources_micro_os_plus_architecture_cortexm target)
   )
 
 endfunction()
-endif()
 
 # -----------------------------------------------------------------------------
 
@@ -112,7 +109,7 @@ function(add_libraries_micro_os_plus_architecture_cortexm)
 
     add_library(micro-os-plus-architecture-cortexm-interface INTERFACE EXCLUDE_FROM_ALL)
 
-    # target_sources_micro_os_plus_architecture_cortexm(micro-os-plus-architecture-cortexm-object)
+    target_sources_micro_os_plus_architecture_cortexm(micro-os-plus-architecture-cortexm-interface)
     target_include_directories_micro_os_plus_architecture_cortexm(micro-os-plus-architecture-cortexm-interface)
     target_compile_definitions_micro_os_plus_architecture_cortexm(micro-os-plus-architecture-cortexm-interface)
 
