@@ -120,13 +120,6 @@ function(add_libraries_micro_os_plus_architecture_cortexm)
     add_library(micro-os-plus::architecture ALIAS micro-os-plus-architecture-cortexm-interface)
     message(STATUS "micro-os-plus::architecture")
 
-    target_link_libraries(
-      micro-os-plus-architecture-cortexm-interface
-
-      INTERFACE
-        micro-os-plus::common
-    )
-
   endif()
 
   # ---------------------------------------------------------------------------
