@@ -9,70 +9,66 @@
 #
 # -----------------------------------------------------------------------------
 
-if(micro-os-plus-architecture-cortexm-idevice-ncluded)
+if(micro-os-plus-architecture-cortexm-device-included)
   return()
 endif()
 
 set(micro-os-plus-architecture-cortexm-device-included TRUE)
 
-message(STATUS "Including micro-os-plus-architecture-cortexm-device...")
+message(STATUS "Including micro-os-plus-architecture-cortexm/device...")
+
+# -----------------------------------------------------------------------------
+# Dependencies.
+
+find_package(micro-os-plus-semihosting REQUIRED)
+
+# -----------------------------------------------------------------------------
+# The current folder.
+
+get_filename_component(xpack_current_folder ${CMAKE_CURRENT_LIST_DIR} DIRECTORY)
 
 # -----------------------------------------------------------------------------
 
-find_package(micro-os-plus-semihosting)
+if(NOT TARGET micro-os-plus-architecture-cortexm-device-interface)
 
-# -----------------------------------------------------------------------------
-
-function(add_libraries_micro_os_plus_architecture_cortexm_device)
-
-  get_filename_component(xpack_current_folder ${CMAKE_CURRENT_FUNCTION_LIST_DIR} DIRECTORY)
+  add_library(micro-os-plus-architecture-cortexm-device-interface INTERFACE EXCLUDE_FROM_ALL)
 
   # ---------------------------------------------------------------------------
-
-  if(NOT TARGET micro-os-plus-architecture-cortexm-device-interface)
-
-    add_library(micro-os-plus-architecture-cortexm-device-interface INTERFACE EXCLUDE_FROM_ALL)
-
-    # -------------------------------------------------------------------------
-    # Target settings.
-    
-    target_sources(
-      micro-os-plus-architecture-cortexm-device-interface
+  # Target settings.
   
-      INTERFACE
-        ${xpack_current_folder}/src/diag/trace-itm.cpp
-        ${xpack_current_folder}/src/diag/trace-segger-rtt.cpp
-        ${xpack_current_folder}/src/rtos/port/os-core.cpp
-        ${xpack_current_folder}/src/startup/initialize-hardware-early.c
-        ${xpack_current_folder}/src/startup/initialize-hardware.c
-        ${xpack_current_folder}/src/startup/initialise-interrupts-stack.cpp
-        ${xpack_current_folder}/src/exception-handlers.cpp
-    )
+  target_sources(
+    micro-os-plus-architecture-cortexm-device-interface
 
-    target_include_directories(
-      micro-os-plus-architecture-cortexm-device-interface
-  
-      INTERFACE
-        ${xpack_current_folder}/include
-    )
+    INTERFACE
+      ${xpack_current_folder}/src/diag/trace-itm.cpp
+      ${xpack_current_folder}/src/diag/trace-segger-rtt.cpp
+      ${xpack_current_folder}/src/rtos/port/os-core.cpp
+      ${xpack_current_folder}/src/startup/initialize-hardware-early.c
+      ${xpack_current_folder}/src/startup/initialize-hardware.c
+      ${xpack_current_folder}/src/startup/initialise-interrupts-stack.cpp
+      ${xpack_current_folder}/src/exception-handlers.cpp
+  )
 
-    target_link_libraries(
-      micro-os-plus-architecture-cortexm-device-interface
-  
-      INTERFACE
-        micro-os-plus::semihosting-static
-    )
+  target_include_directories(
+    micro-os-plus-architecture-cortexm-device-interface
 
-    # -------------------------------------------------------------------------
-    # Aliases
+    INTERFACE
+      ${xpack_current_folder}/include
+  )
 
-    add_library(micro-os-plus::architecture-cortexm-device ALIAS micro-os-plus-architecture-cortexm-device-interface)
-    message(STATUS "micro-os-plus::architecture-cortexm-device")
+  target_link_libraries(
+    micro-os-plus-architecture-cortexm-device-interface
 
-  endif()
+    INTERFACE
+      micro-os-plus::semihosting-static
+  )
 
   # ---------------------------------------------------------------------------
+  # Aliases.
 
-endfunction()
+  add_library(micro-os-plus::architecture-cortexm-device ALIAS micro-os-plus-architecture-cortexm-device-interface)
+  message(STATUS "micro-os-plus::architecture-cortexm-device")
+
+endif()
 
 # -----------------------------------------------------------------------------

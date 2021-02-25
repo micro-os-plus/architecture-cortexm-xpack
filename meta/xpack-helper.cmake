@@ -17,53 +17,47 @@ set(micro-os-plus-architecture-cortexm-included TRUE)
 
 message(STATUS "Including micro-os-plus-architecture-cortexm...")
 
+# -----------------------------------------------------------------------------
+# Local dependencies.
+
 include("${CMAKE_CURRENT_LIST_DIR}/../device/meta/xpack-helper.cmake")
 
 # -----------------------------------------------------------------------------
+# The current folder.
 
-function(add_libraries_micro_os_plus_architecture_cortexm)
+get_filename_component(xpack_current_folder ${CMAKE_CURRENT_LIST_DIR} DIRECTORY)
 
-  get_filename_component(xpack_current_folder ${CMAKE_CURRENT_FUNCTION_LIST_DIR} DIRECTORY)
+# -----------------------------------------------------------------------------
 
-  # ---------------------------------------------------------------------------
+if(NOT TARGET micro-os-plus-architecture-cortexm-interface)
 
-  if(NOT TARGET micro-os-plus-architecture-cortexm-interface)
-
-    add_library(micro-os-plus-architecture-cortexm-interface INTERFACE EXCLUDE_FROM_ALL)
-
-    # -------------------------------------------------------------------------
-    # Target settings.
-
-    target_sources(
-      micro-os-plus-architecture-cortexm-interface
-  
-      PRIVATE
-        # None so far, all are device dependent.
-    )
-
-    target_include_directories(
-      micro-os-plus-architecture-cortexm-interface
-  
-      INTERFACE
-        ${xpack_current_folder}/include
-    )
-
-    # -------------------------------------------------------------------------
-    # Aliases
-
-    add_library(micro-os-plus::architecture-cortexm ALIAS micro-os-plus-architecture-cortexm-interface)
-    message(STATUS "micro-os-plus::architecture-cortexm")
-    add_library(micro-os-plus::architecture ALIAS micro-os-plus-architecture-cortexm-interface)
-    message(STATUS "micro-os-plus::architecture")
-
-  endif()
+  add_library(micro-os-plus-architecture-cortexm-interface INTERFACE EXCLUDE_FROM_ALL)
 
   # ---------------------------------------------------------------------------
+  # Target settings.
 
-  add_libraries_micro_os_plus_architecture_cortexm_device()
+  target_sources(
+    micro-os-plus-architecture-cortexm-interface
+
+    PRIVATE
+      # None so far, all are device dependent.
+  )
+
+  target_include_directories(
+    micro-os-plus-architecture-cortexm-interface
+
+    INTERFACE
+      ${xpack_current_folder}/include
+  )
 
   # ---------------------------------------------------------------------------
+  # Aliases.
 
-endfunction()
+  add_library(micro-os-plus::architecture-cortexm ALIAS micro-os-plus-architecture-cortexm-interface)
+  message(STATUS "micro-os-plus::architecture-cortexm")
+  add_library(micro-os-plus::architecture ALIAS micro-os-plus-architecture-cortexm-interface)
+  message(STATUS "micro-os-plus::architecture")
+
+endif()
 
 # -----------------------------------------------------------------------------

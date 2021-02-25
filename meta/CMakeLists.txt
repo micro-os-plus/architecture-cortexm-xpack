@@ -16,6 +16,4 @@ cmake_minimum_required(VERSION 3.18)
 
 include("${CMAKE_CURRENT_LIST_DIR}/xpack-helper.cmake")
 
-add_libraries_micro_os_plus_architecture_cortexm()
-
 # -----------------------------------------------------------------------------
