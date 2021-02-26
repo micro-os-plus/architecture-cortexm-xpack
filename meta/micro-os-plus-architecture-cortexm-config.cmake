@@ -23,7 +23,7 @@ message(STATUS "Including micro-os-plus-architecture-cortexm...")
 # -----------------------------------------------------------------------------
 # Local dependencies.
 
-include("${CMAKE_CURRENT_LIST_DIR}/../device/meta/xpack-helper.cmake")
+include("${CMAKE_CURRENT_LIST_DIR}/../device/meta/config.cmake")
 
 # -----------------------------------------------------------------------------
 # The current folder.
