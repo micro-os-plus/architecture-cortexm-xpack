@@ -39,6 +39,9 @@
 // ----------------------------------------------------------------------------
 
 #include <micro-os-plus/config.h>
+
+#include <micro-os-plus/architecture.h>
+
 #include <micro-os-plus/rtos/port/defines.h>
 #include <micro-os-plus/rtos/port/declarations-c.h>
 #include <micro-os-plus/startup/defines.h>
