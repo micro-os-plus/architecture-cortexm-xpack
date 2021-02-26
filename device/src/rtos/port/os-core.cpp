@@ -45,7 +45,7 @@
 #include <string.h>
 #include <cassert>
 
-#include <micro-os-plus/rtos/os.h>
+#include <micro-os-plus/rtos.h>
 
 #include <micro-os-plus/architecture-cortexm/exception-handlers.h>
 
