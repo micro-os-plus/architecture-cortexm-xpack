@@ -31,9 +31,13 @@
 
 #if defined(TRACE)
 
+// ----------------------------------------------------------------------------
+
 #if defined(HAVE_MICRO_OS_PLUS_CONFIG_H)
 #include <micro-os-plus/config.h>
 #endif // HAVE_MICRO_OS_PLUS_CONFIG_H
+
+// ----------------------------------------------------------------------------
 
 #if defined(OS_USE_TRACE_SEGGER_RTT)
 

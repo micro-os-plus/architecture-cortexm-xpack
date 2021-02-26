@@ -32,7 +32,9 @@
 
 #if defined(HAVE_MICRO_OS_PLUS_CONFIG_H)
 #include <micro-os-plus/config.h>
-#endif
+#endif // HAVE_MICRO_OS_PLUS_CONFIG_H
+
+// ----------------------------------------------------------------------------
 
 #if defined(OS_INCLUDE_RTOS)
 
