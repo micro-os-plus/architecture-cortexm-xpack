@@ -46,7 +46,7 @@ extern "C"
   // --------------------------------------------------------------------------
 
   static inline __attribute__ ((always_inline)) void
-  cortexm_arch_nop (void)
+  cortexm_architecture_nop (void)
   {
     __asm__ volatile(
 
@@ -59,7 +59,7 @@ extern "C"
   }
 
   static inline __attribute__ ((always_inline)) void
-  cortexm_arch_bkpt (void)
+  cortexm_architecture_bkpt (void)
   {
     __asm__ volatile(
 
@@ -72,7 +72,7 @@ extern "C"
   }
 
   static inline __attribute__ ((always_inline)) void
-  cortexm_arch_wfi (void)
+  cortexm_architecture_wfi (void)
   {
     __asm__ volatile(
 
@@ -85,27 +85,27 @@ extern "C"
   }
 
   static inline __attribute__ ((always_inline)) void
-  os_arch_nop (void)
+  os_architecture_nop (void)
   {
-    cortexm_arch_nop ();
+    cortexm_architecture_nop ();
   }
 
   /**
    * `break` instruction.
    */
   static inline __attribute__ ((always_inline)) void
-  os_arch_brk (void)
+  os_architecture_brk (void)
   {
-    cortexm_arch_bkpt ();
+    cortexm_architecture_bkpt ();
   }
 
   /**
    * `wfi` instruction.
    */
   static inline __attribute__ ((always_inline)) void
-  os_arch_wfi (void)
+  os_architecture_wfi (void)
   {
-    cortexm_arch_wfi ();
+    cortexm_architecture_wfi ();
   }
 
   // --------------------------------------------------------------------------
@@ -127,19 +127,19 @@ namespace cortexm
     inline __attribute__ ((always_inline)) void
     nop (void)
     {
-      cortexm_arch_nop ();
+      cortexm_architecture_nop ();
     }
 
     inline __attribute__ ((always_inline)) void
     bkpt (void)
     {
-      cortexm_arch_bkpt ();
+      cortexm_architecture_bkpt ();
     }
 
     inline __attribute__ ((always_inline)) void
     wfi (void)
     {
-      cortexm_arch_wfi ();
+      cortexm_architecture_wfi ();
     }
 
     // ------------------------------------------------------------------------
