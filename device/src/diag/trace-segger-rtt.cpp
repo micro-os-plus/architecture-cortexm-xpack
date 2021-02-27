@@ -39,7 +39,7 @@
 
 // ----------------------------------------------------------------------------
 
-#if defined(OS_USE_TRACE_SEGGER_RTT)
+#if defined(MICRO_OS_PLUS_USE_TRACE_SEGGER_RTT)
 
 #include <micro-os-plus/rtos.h>
 #include <micro-os-plus/diag/trace.h>
@@ -104,7 +104,7 @@ namespace os
   } // namespace trace
 } // namespace os
 
-#endif // defined(OS_USE_TRACE_SEGGER_RTT)
+#endif // defined(MICRO_OS_PLUS_USE_TRACE_SEGGER_RTT)
 #endif // defined(TRACE)
 
 // ----------------------------------------------------------------------------

@@ -76,11 +76,11 @@ void __attribute__ ((weak)) os_startup_initialize_hardware_early (void)
   // so it needs to be recomputed after the RAM initialisations
   // are completed.
 
-#if defined(OS_INCLUDE_STARTUP_INIT_FP) || defined(__ARM_FP)
+#if defined(MICRO_OS_PLUS_INCLUDE_STARTUP_INIT_FP) || defined(__ARM_FP)
 
   // Normally FP init is done by SystemInit(). In case this is not done
   // there, it is possible to force its inclusion by defining
-  // OS_INCLUDE_STARTUP_INIT_FP.
+  // MICRO_OS_PLUS_INCLUDE_STARTUP_INIT_FP.
 
   // Enable the Cortex-M4 FPU only when -mfloat-abi=hard or -mfloat-abi=softfp.
   // Code taken from Section 7.1, Cortex-M4 TRM (DDI0439C)
@@ -91,9 +91,9 @@ void __attribute__ ((weak)) os_startup_initialize_hardware_early (void)
   // Lazy save.
   FPU->FPCCR |= FPU_FPCCR_ASPEN_Msk | FPU_FPCCR_LSPEN_Msk;
 
-#endif // defined(OS_INCLUDE_STARTUP_INIT_FP) || defined (__ARM_FP)
+#endif // defined(MICRO_OS_PLUS_INCLUDE_STARTUP_INIT_FP) || defined (__ARM_FP)
 
-#if defined(OS_DEBUG_SEMIHOSTING_FAULTS)
+#if defined(MICRO_OS_PLUS_DEBUG_SEMIHOSTING_FAULTS)
 
   SCB->SHCSR |= SCB_SHCSR_USGFAULTENA_Msk;
 

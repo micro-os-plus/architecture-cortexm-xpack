@@ -32,7 +32,7 @@
 #include <micro-os-plus/device.h>
 #include <micro-os-plus/startup/hooks.h>
 
-#if !defined(OS_USE_SEMIHOSTING_SYSCALLS)
+#if !defined(MICRO_OS_PLUS_USE_SEMIHOSTING_SYSCALLS)
 
 /**
  * @details
@@ -48,7 +48,7 @@ os_terminate (int code __attribute__ ((unused)))
   /* NOTREACHED */
 }
 
-#endif // !defined(OS_USE_SEMIHOSTING_SYSCALLS)
+#endif // !defined(MICRO_OS_PLUS_USE_SEMIHOSTING_SYSCALLS)
 
 // ----------------------------------------------------------------------------
 

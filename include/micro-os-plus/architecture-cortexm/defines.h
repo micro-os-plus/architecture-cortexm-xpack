@@ -30,8 +30,8 @@
 
 // ----------------------------------------------------------------------------
 
-#define OS_HAS_INTERRUPTS_STACK
-#define OS_INTEGER_STARTUP_STACK_FILL_MAGIC (0xEFBEADDE)
+#define MICRO_OS_PLUS_HAS_INTERRUPTS_STACK
+#define MICRO_OS_PLUS_INTEGER_STARTUP_STACK_FILL_MAGIC (0xEFBEADDE)
 
 // ----------------------------------------------------------------------------
 

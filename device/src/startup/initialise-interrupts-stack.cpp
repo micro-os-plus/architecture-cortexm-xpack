@@ -36,7 +36,7 @@
 
 // ----------------------------------------------------------------------------
 
-#if defined(OS_INCLUDE_RTOS)
+#if defined(MICRO_OS_PLUS_INCLUDE_RTOS)
 
 // ----------------------------------------------------------------------------
 
@@ -63,7 +63,7 @@ os_startup_initialize_interrupts_stack (void* stack_begin_address,
 
 // ----------------------------------------------------------------------------
 
-#endif // defined(OS_INCLUDE_RTOS)
+#endif // defined(MICRO_OS_PLUS_INCLUDE_RTOS)
 
 // ----------------------------------------------------------------------------
 

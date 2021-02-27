@@ -82,13 +82,13 @@ namespace os
 #endif
           trace::printf (", preemptive");
 #if (defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)) \
-    && defined(OS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY)
+    && defined(MICRO_OS_PLUS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY)
           trace::printf (", BASEPRI(%u)",
-                         OS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY);
+                         MICRO_OS_PLUS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY);
 #else
           trace::printf (", DI/EI");
 #endif
-#if defined(OS_EXCLUDE_RTOS_IDLE_SLEEP)
+#if defined(MICRO_OS_PLUS_EXCLUDE_RTOS_IDLE_SLEEP)
           trace::printf (", no WFI");
 #else
           trace::printf (", WFI");
@@ -121,14 +121,14 @@ namespace os
         inline __attribute__ ((always_inline)) void
         wait_for_interrupt (void)
         {
-#if !defined(OS_EXCLUDE_RTOS_IDLE_SLEEP)
-#if defined(OS_TRACE_RTOS_THREAD_CONTEXT)
+#if !defined(MICRO_OS_PLUS_EXCLUDE_RTOS_IDLE_SLEEP)
+#if defined(MICRO_OS_PLUS_TRACE_RTMICRO_OS_PLUS_THREAD_CONTEXT)
           trace::printf ("%s() \n", __func__);
 #endif
           // The DSB is recommended by ARM before WFI.
           __DSB ();
           __WFI ();
-#endif // !defined(OS_EXCLUDE_RTOS_IDLE_SLEEP)
+#endif // !defined(MICRO_OS_PLUS_EXCLUDE_RTOS_IDLE_SLEEP)
         }
 
       } // namespace scheduler
@@ -160,7 +160,7 @@ namespace os
          * handlers, the user must not be allowed to invoke
          * any system calls that may interfere with the scheduler.
          *
-         * If the OS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY
+         * If the MICRO_OS_PLUS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY
          * is defined, the numeric value of the current interrupt
          * priority must be higher than or equal to the macro definition
          * (lower priorities).
@@ -170,7 +170,7 @@ namespace os
         {
 #if defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
 
-#if defined(OS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY)
+#if defined(MICRO_OS_PLUS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY)
 
           // The trick here is to properly account for differences
           // between Cortex-M exception number stored in IPSR (an
@@ -183,7 +183,7 @@ namespace os
               uint32_t prio
                   = NVIC_GetPriority ((IRQn_Type) (exception_number - 16));
               return (prio
-                      >= OS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY);
+                      >= MICRO_OS_PLUS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY);
             }
           else
             {
@@ -195,7 +195,7 @@ namespace os
           // When using DI/EI, all priority levels are valid.
           return true;
 
-#endif // defined(OS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY)
+#endif // defined(MICRO_OS_PLUS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY)
 
 #elif defined(__ARM_ARCH_6M__)
 
@@ -213,7 +213,7 @@ namespace os
 
 #if defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
 
-#if defined(OS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY)
+#if defined(MICRO_OS_PLUS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY)
 
           // Read the current BASEPRI, to be returned and later restored.
           pri = __get_BASEPRI ();
@@ -224,7 +224,7 @@ namespace os
           // Rn is non-zero and the current BASEPRI value is 0
           // Rn is non-zero and less than the current BASEPRI value.
           __set_BASEPRI_MAX (
-              OS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY
+              MICRO_OS_PLUS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY
               << ((8 - __NVIC_PRIO_BITS)));
 
 #else
@@ -235,7 +235,7 @@ namespace os
           // Disable all interrupts.
           __disable_irq ();
 
-#endif // defined(OS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY)
+#endif // defined(MICRO_OS_PLUS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY)
 
 #elif defined(__ARM_ARCH_6M__)
 
@@ -263,7 +263,7 @@ namespace os
         {
 #if defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
 
-#if defined(OS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY)
+#if defined(MICRO_OS_PLUS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY)
 
           // Restore BASEPRI to the value saved by enter().
           __set_BASEPRI (state);
@@ -273,7 +273,7 @@ namespace os
           // Restore PRIMASK to the value saved by enter().
           __set_PRIMASK (state);
 
-#endif // defined(OS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY)
+#endif // defined(MICRO_OS_PLUS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY)
 
 #elif defined(__ARM_ARCH_6M__)
 
@@ -296,7 +296,7 @@ namespace os
 
 #if defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
 
-#if defined(OS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY)
+#if defined(MICRO_OS_PLUS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY)
 
           pri = __get_BASEPRI ();
 
@@ -311,7 +311,7 @@ namespace os
           // Enable all interrupts.
           __enable_irq ();
 
-#endif // defined(OS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY)
+#endif // defined(MICRO_OS_PLUS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY)
 
 #elif defined(__ARM_ARCH_6M__)
 
@@ -334,7 +334,7 @@ namespace os
         {
 #if defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
 
-#if defined(OS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY)
+#if defined(MICRO_OS_PLUS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY)
 
           // Restore BASEPRI to the value saved by enter().
           __set_BASEPRI (state);
@@ -344,7 +344,7 @@ namespace os
           // Restore PRIMASK to the value saved by enter().
           __set_PRIMASK (state);
 
-#endif // defined(OS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY)
+#endif // defined(MICRO_OS_PLUS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY)
 
 #elif defined(__ARM_ARCH_6M__)
 

@@ -40,7 +40,7 @@
 
 // ----------------------------------------------------------------------------
 
-#if defined(OS_INCLUDE_RTOS)
+#if defined(MICRO_OS_PLUS_INCLUDE_RTOS)
 
 // ----------------------------------------------------------------------------
 
@@ -62,31 +62,31 @@
 
 #if defined(__ARM_ARCH_6M__)
 
-#if defined(OS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY)
+#if defined(MICRO_OS_PLUS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY)
 #error \
-    "OS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY should not be used with Cortex-M0/M0+ devices."
+    "MICRO_OS_PLUS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY should not be used with Cortex-M0/M0+ devices."
 #endif
 
 #endif // defined(__ARM_ARCH_6M__)
 
 #if defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
 
-#if defined(OS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY)
+#if defined(MICRO_OS_PLUS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY)
 
 #define __MAX_PRIO ((1 << __NVIC_PRIO_BITS) - 1)
 
-#define OS_MACRO_SHARP(x) #x
-#define OS_MACRO_STRINGIFY(x) OS_MACRO_SHARP (x)
+#define MICRO_OS_PLUS_MACRO_SHARP(x) #x
+#define MICRO_OS_PLUS_MACRO_STRINGIFY(x) MICRO_OS_PLUS_MACRO_SHARP (x)
 
 static_assert (
-    OS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY != 0,
-    "OS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY cannot be 0");
-static_assert (OS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY
+    MICRO_OS_PLUS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY != 0,
+    "MICRO_OS_PLUS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY cannot be 0");
+static_assert (MICRO_OS_PLUS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY
                    <= __MAX_PRIO,
-               "OS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY must be "
-               "<= " OS_MACRO_STRINGIFY (__MAX_PRIO));
+               "MICRO_OS_PLUS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY must be "
+               "<= " MICRO_OS_PLUS_MACRO_STRINGIFY (__MAX_PRIO));
 
-#endif // defined(OS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY)
+#endif // defined(MICRO_OS_PLUS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY)
 
 #endif // defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
 
@@ -264,7 +264,7 @@ namespace os
       void
       context::create (void* context, void* func, void* args)
       {
-#if defined(OS_TRACE_RTOS_THREAD_CONTEXT)
+#if defined(MICRO_OS_PLUS_TRACE_RTMICRO_OS_PLUS_THREAD_CONTEXT)
         trace::printf ("port::context::%s(%p)\n", __func__, context);
 #endif
         class rtos::thread::context* th_ctx
@@ -308,7 +308,7 @@ namespace os
             = (rtos::thread::stack::element_t) (((ptrdiff_t)func) & (~1));
 
         // Link register // LR/R14 +13*4=56
-#if defined(OS_BOOL_RTOS_PORT_CONTEXT_CREATE_ZERO_LR)
+#if defined(MICRO_OS_PLUS_BOOL_RTOS_PORT_CONTEXT_CREATE_ZERO_LR)
         f->r14_lr = 0x00000000;
 #else
         // 0x0 looks odd in the debugger, so try to hide it.
@@ -423,7 +423,7 @@ namespace os
 #endif
             start (void)
         {
-#if defined(OS_TRACE_RTOS_SCHEDULER)
+#if defined(MICRO_OS_PLUS_TRACE_RTOS_SCHEDULER)
           trace::printf ("port::scheduler::%s() \n", __func__);
 #endif
 
@@ -455,9 +455,9 @@ namespace os
 
 #if defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
 
-#if !defined(OS_DISABLE_CORTEXM_SET_MSP_VIA_VTOR)
+#if !defined(MICRO_OS_PLUS_DISABLE_CORTEXM_SET_MSP_VIA_VTOR)
           __set_MSP (*((uint32_t*)SCB->VTOR));
-#endif // !defined(OS_DISABLE_CORTEXM_SET_MSP_VIA_VTOR)
+#endif // !defined(MICRO_OS_PLUS_DISABLE_CORTEXM_SET_MSP_VIA_VTOR)
 
 #elif defined(__ARM_ARCH_6M__)
 
@@ -578,14 +578,14 @@ namespace os
               || (rtos::interrupts::in_handler_mode ()
                   && !rtos::scheduler::preemptive ()))
             {
-#if defined(OS_TRACE_RTOS_THREAD_CONTEXT)
+#if defined(MICRO_OS_PLUS_TRACE_RTMICRO_OS_PLUS_THREAD_CONTEXT)
               trace::printf ("port::scheduler::%s() %s nop\n", __func__,
                              rtos::scheduler::current_thread_->name ());
 #endif
               return;
             }
 
-#if defined(OS_TRACE_RTOS_THREAD_CONTEXT)
+#if defined(MICRO_OS_PLUS_TRACE_RTMICRO_OS_PLUS_THREAD_CONTEXT)
           trace::printf ("port::scheduler::%s()\n", __func__);
 #endif
           // Set PendSV to request a context switch.
@@ -797,11 +797,11 @@ namespace os
           // Enter a local critical section to protect the lists.
 #if defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
 
-#if defined(OS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY)
+#if defined(MICRO_OS_PLUS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY)
 
           pri = __get_BASEPRI ();
           __set_BASEPRI_MAX (
-              OS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY
+              MICRO_OS_PLUS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY
               << ((8 - __NVIC_PRIO_BITS)));
 
 #else
@@ -812,7 +812,7 @@ namespace os
           // Disable all interrupts.
           __disable_irq ();
 
-#endif // defined(OS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY)
+#endif // defined(MICRO_OS_PLUS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY)
 
 #elif defined(__ARM_ARCH_6M__)
 
@@ -839,14 +839,14 @@ namespace os
           // Save the current SP in the initial context.
           old_thread->context_.port_.stack_ptr = sp;
 
-#if defined(OS_TRACE_RTOS_THREAD_CONTEXT)
+#if defined(MICRO_OS_PLUS_TRACE_RTMICRO_OS_PLUS_THREAD_CONTEXT)
           trace::printf ("port::scheduler::%s() leave %s\n", __func__,
                          old_thread->name ());
 #endif
 
           rtos::scheduler::internal_switch_threads ();
 
-#if defined(OS_TRACE_RTOS_THREAD_CONTEXT)
+#if defined(MICRO_OS_PLUS_TRACE_RTMICRO_OS_PLUS_THREAD_CONTEXT)
           trace::printf ("port::scheduler::%s() to %s\n", __func__,
                          rtos::scheduler::current_thread_->name ());
 #endif
@@ -857,7 +857,7 @@ namespace os
 
 #if defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
 
-#if defined(OS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY)
+#if defined(MICRO_OS_PLUS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY)
 
           // Restore BASEPRI to the value saved at the beginning.
           __set_BASEPRI (pri);
@@ -867,7 +867,7 @@ namespace os
           // Restore PRIMASK to the value saved at the beginning.
           __set_PRIMASK (pri);
 
-#endif // defined(OS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY)
+#endif // defined(MICRO_OS_PLUS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY)
 
 #elif defined(__ARM_ARCH_6M__)
 
@@ -991,7 +991,7 @@ PendSV_Handler (void)
 
 // ----------------------------------------------------------------------------
 
-#endif // defined(OS_INCLUDE_RTOS)
+#endif // defined(MICRO_OS_PLUS_INCLUDE_RTOS)
 
 // ----------------------------------------------------------------------------
 

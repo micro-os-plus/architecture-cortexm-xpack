@@ -85,7 +85,7 @@ Reset_Handler (void)
   // Fill the main stack with a pattern, to detect usage and underflow.
   for (unsigned int* p = &__heap_end__; p < &__stack;)
     {
-      *p++ = OS_INTEGER_STARTUP_STACK_FILL_MAGIC; // DEADBEEF
+      *p++ = MICRO_OS_PLUS_INTEGER_STARTUP_STACK_FILL_MAGIC; // DEADBEEF
     }
 
   _start ();
@@ -186,9 +186,9 @@ dump_exception_stack (exception_stack_frame_s* frame, uint32_t lr)
 
 #if defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
 
-#if defined(OS_USE_SEMIHOSTING_SYSCALLS) \
-    || defined(OS_USE_TRACE_SEMIHOSTING_STDOUT) \
-    || defined(OS_USE_TRACE_SEMIHOSTING_DEBUG)
+#if defined(MICRO_OS_PLUS_USE_SEMIHOSTING_SYSCALLS) \
+    || defined(MICRO_OS_PLUS_USE_TRACE_SEMIHOSTING_STDOUT) \
+    || defined(MICRO_OS_PLUS_USE_TRACE_SEMIHOSTING_DEBUG)
 
 int
 is_semihosting_call (exception_stack_frame_s* frame, uint16_t opCode);
@@ -207,24 +207,24 @@ is_semihosting_call (exception_stack_frame_s* frame, uint16_t opCode)
   if (*pw == opCode)
     {
       uint32_t r0 = frame->r0;
-#if defined(OS_DEBUG_SEMIHOSTING_FAULTS) \
-    || defined(OS_USE_SEMIHOSTING_SYSCALLS) \
-    || defined(OS_USE_TRACE_SEMIHOSTING_STDOUT)
+#if defined(MICRO_OS_PLUS_DEBUG_SEMIHOSTING_FAULTS) \
+    || defined(MICRO_OS_PLUS_USE_SEMIHOSTING_SYSCALLS) \
+    || defined(MICRO_OS_PLUS_USE_TRACE_SEMIHOSTING_STDOUT)
       uint32_t r1 = frame->r1;
 #endif
-#if defined(OS_USE_SEMIHOSTING_SYSCALLS) \
-    || defined(OS_USE_TRACE_SEMIHOSTING_STDOUT)
+#if defined(MICRO_OS_PLUS_USE_SEMIHOSTING_SYSCALLS) \
+    || defined(MICRO_OS_PLUS_USE_TRACE_SEMIHOSTING_STDOUT)
       uint32_t* blk = (uint32_t*)r1;
 #endif
 
-#if defined(OS_DEBUG_SEMIHOSTING_FAULTS)
+#if defined(MICRO_OS_PLUS_DEBUG_SEMIHOSTING_FAULTS)
       // os::trace::printf ("sh r0=%d\n", r0);
 #endif
 
       switch (r0)
         {
 
-#if defined(OS_USE_SEMIHOSTING_SYSCALLS)
+#if defined(MICRO_OS_PLUS_USE_SEMIHOSTING_SYSCALLS)
 
         case SEMIHOSTING_SYS_CLOCK:
         case SEMIHOSTING_SYS_ELAPSED:
@@ -280,10 +280,10 @@ is_semihosting_call (exception_stack_frame_s* frame, uint16_t opCode)
           // Should not reach here
           return 0;
 
-#endif // defined(OS_USE_SEMIHOSTING_SYSCALLS)
+#endif // defined(MICRO_OS_PLUS_USE_SEMIHOSTING_SYSCALLS)
 
-#if defined(OS_USE_SEMIHOSTING_SYSCALLS) \
-    || defined(OS_USE_TRACE_SEMIHOSTING_STDOUT)
+#if defined(MICRO_OS_PLUS_USE_SEMIHOSTING_SYSCALLS) \
+    || defined(MICRO_OS_PLUS_USE_TRACE_SEMIHOSTING_STDOUT)
 
 #define HANDLER_STDIN (1)
 #define HANDLER_STDOUT (2)
@@ -318,12 +318,12 @@ is_semihosting_call (exception_stack_frame_s* frame, uint16_t opCode)
           // handler.
           if ((blk[0] == HANDLER_STDOUT) || (blk[0] == HANDLER_STDERR))
             {
-#if defined(OS_DEBUG_SEMIHOSTING_FAULTS)
+#if defined(MICRO_OS_PLUS_DEBUG_SEMIHOSTING_FAULTS)
               frame->r0
                   = (uint32_t)blk[2] - trace_write ((char*)blk[1], blk[2]);
 #else
               frame->r0 = 0; // all sent, no more.
-#endif // defined(OS_DEBUG_SEMIHOSTING_FAULTS)
+#endif // defined(MICRO_OS_PLUS_DEBUG_SEMIHOSTING_FAULTS)
             }
           else
             {
@@ -333,15 +333,15 @@ is_semihosting_call (exception_stack_frame_s* frame, uint16_t opCode)
             }
           break;
 
-#endif // defined(OS_USE_SEMIHOSTING_SYSCALLS) ||
-       // defined(OS_USE_TRACE_SEMIHOSTING_STDOUT)
+#endif // defined(MICRO_OS_PLUS_USE_SEMIHOSTING_SYSCALLS) ||
+       // defined(MICRO_OS_PLUS_USE_TRACE_SEMIHOSTING_STDOUT)
 
-#if defined(OS_USE_SEMIHOSTING_SYSCALLS) \
-    || defined(OS_USE_TRACE_SEMIHOSTING_STDOUT) \
-    || defined(OS_USE_TRACE_SEMIHOSTING_DEBUG)
+#if defined(MICRO_OS_PLUS_USE_SEMIHOSTING_SYSCALLS) \
+    || defined(MICRO_OS_PLUS_USE_TRACE_SEMIHOSTING_STDOUT) \
+    || defined(MICRO_OS_PLUS_USE_TRACE_SEMIHOSTING_DEBUG)
 
         case SEMIHOSTING_SYS_WRITEC:
-#if defined(OS_DEBUG_SEMIHOSTING_FAULTS)
+#if defined(MICRO_OS_PLUS_DEBUG_SEMIHOSTING_FAULTS)
           {
             char ch = *((char*)r1);
             trace_write (&ch, 1);
@@ -351,7 +351,7 @@ is_semihosting_call (exception_stack_frame_s* frame, uint16_t opCode)
           break;
 
         case SEMIHOSTING_SYS_WRITE0:
-#if defined(OS_DEBUG_SEMIHOSTING_FAULTS)
+#if defined(MICRO_OS_PLUS_DEBUG_SEMIHOSTING_FAULTS)
           {
             char* p = ((char*)r1);
             trace_write (p, strlen (p));
@@ -412,9 +412,9 @@ hard_fault_handler_c (exception_stack_frame_s* frame __attribute__ ((unused)),
   uint32_t cfsr = SCB->CFSR; // Configurable Fault Status Registers
 #endif
 
-#if defined(OS_USE_SEMIHOSTING_SYSCALLS) \
-    || defined(OS_USE_TRACE_SEMIHOSTING_STDOUT) \
-    || defined(OS_USE_TRACE_SEMIHOSTING_DEBUG)
+#if defined(MICRO_OS_PLUS_USE_SEMIHOSTING_SYSCALLS) \
+    || defined(MICRO_OS_PLUS_USE_TRACE_SEMIHOSTING_STDOUT) \
+    || defined(MICRO_OS_PLUS_USE_TRACE_SEMIHOSTING_DEBUG)
 
   // If the BKPT instruction is executed with C_DEBUGEN == 0 and MON_EN == 0,
   // it will cause the processor to enter a HardFault exception, with DEBUGEVT
@@ -624,7 +624,7 @@ usage_fault_handler_c (exception_stack_frame_s* frame __attribute__ ((unused)),
   uint32_t cfsr = SCB->CFSR; // Configurable Fault Status Registers
 #endif
 
-#if defined(OS_DEBUG_SEMIHOSTING_FAULTS)
+#if defined(MICRO_OS_PLUS_DEBUG_SEMIHOSTING_FAULTS)
 
   if ((cfsr & (1UL << 16)) != 0) // UNDEFINSTR
     {

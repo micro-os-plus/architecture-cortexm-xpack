@@ -81,15 +81,15 @@ namespace os
 
         // Initial value for the minimum stack size in bytes.
         constexpr std::size_t min_size_bytes
-            = OS_INTEGER_RTOS_MIN_STACK_SIZE_BYTES;
+            = MICRO_OS_PLUS_INTEGER_RTOS_MIN_STACK_SIZE_BYTES;
 
         // Initial value for the default stack size in bytes.
         constexpr std::size_t default_size_bytes
-            = OS_INTEGER_RTOS_DEFAULT_STACK_SIZE_BYTES;
+            = MICRO_OS_PLUS_INTEGER_RTOS_DEFAULT_STACK_SIZE_BYTES;
 
         // Used to fill in the stack.
         constexpr element_t magic
-            = OS_INTEGER_STARTUP_STACK_FILL_MAGIC; // DEADBEEF
+            = MICRO_OS_PLUS_INTEGER_STARTUP_STACK_FILL_MAGIC; // DEADBEEF
 
       } // namespace stack
 

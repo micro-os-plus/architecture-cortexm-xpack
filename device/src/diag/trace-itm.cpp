@@ -41,7 +41,7 @@
 
 // ----------------------------------------------------------------------------
 
-#if defined(OS_USE_TRACE_ITM)
+#if defined(MICRO_OS_PLUS_USE_TRACE_ITM)
 
 #include <micro-os-plus/diag/trace.h>
 
@@ -77,8 +77,8 @@ namespace os
     // so this configuration will not work on OpenOCD (will not crash, but
     // nothing will be displayed in the output console).
 
-#if !defined(OS_INTEGER_TRACE_ITM_STIMULUS_PORT)
-#define OS_INTEGER_TRACE_ITM_STIMULUS_PORT (0)
+#if !defined(MICRO_OS_PLUS_INTEGER_TRACE_ITM_STIMULUS_PORT)
+#define MICRO_OS_PLUS_INTEGER_TRACE_ITM_STIMULUS_PORT (0)
 #endif
 
     ssize_t
@@ -95,7 +95,7 @@ namespace os
         {
           // Check if ITM or the stimulus port are not enabled.
           if (((ITM->TCR & ITM_TCR_ITMENA_Msk) == 0)
-              || ((ITM->TER & (1UL << OS_INTEGER_TRACE_ITM_STIMULUS_PORT))
+              || ((ITM->TER & (1UL << MICRO_OS_PLUS_INTEGER_TRACE_ITM_STIMULUS_PORT))
                   == 0))
             {
               // Return the number of sent characters (may be 0).
@@ -103,10 +103,10 @@ namespace os
             }
 
           // Wait until STIMx is ready...
-          while (ITM->PORT[OS_INTEGER_TRACE_ITM_STIMULUS_PORT].u32 == 0)
+          while (ITM->PORT[MICRO_OS_PLUS_INTEGER_TRACE_ITM_STIMULUS_PORT].u32 == 0)
             ;
           // then send data, one byte at a time
-          ITM->PORT[OS_INTEGER_TRACE_ITM_STIMULUS_PORT].u8
+          ITM->PORT[MICRO_OS_PLUS_INTEGER_TRACE_ITM_STIMULUS_PORT].u8
               = (uint8_t) (*cbuf++);
         }
 
@@ -123,7 +123,7 @@ namespace os
   } // namespace trace
 } // namespace os
 
-#endif // defined(OS_USE_TRACE_ITM)
+#endif // defined(MICRO_OS_PLUS_USE_TRACE_ITM)
 
 #endif // defined(TRACE)
 

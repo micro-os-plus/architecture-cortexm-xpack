@@ -62,7 +62,7 @@ extern "C"
 #define AngelSWIAsm swi
 #endif
 
-#if defined(OS_DEBUG_SEMIHOSTING_FAULTS)
+#if defined(MICRO_OS_PLUS_DEBUG_SEMIHOSTING_FAULTS)
 // Testing the local semihosting handler cannot use another BKPT, since this
 // configuration cannot trigger HaedFault exceptions while the debugger is
 // connected, so we use an illegal op code, that will trigger an
@@ -79,7 +79,7 @@ extern "C"
 
         " mov r0, %[rsn]  \n"
         " mov r1, %[arg]  \n"
-#if defined(OS_DEBUG_SEMIHOSTING_FAULTS)
+#if defined(MICRO_OS_PLUS_DEBUG_SEMIHOSTING_FAULTS)
         " " AngelSWITestFault " \n"
 #else
       " " AngelSWIInsn " %[swi] \n"
