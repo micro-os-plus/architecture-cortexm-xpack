@@ -29,7 +29,7 @@
  * This file is part of the CMSIS++ proposal, intended as a CMSIS
  * replacement for C++ applications.
  *
- * It is included in `cmsis-plus/rtos/os.h` to customise
+ * It is included in `micro-os-plus/rtos.h` to customise
  * it with Cortex-M specific declarations.
  */
 
