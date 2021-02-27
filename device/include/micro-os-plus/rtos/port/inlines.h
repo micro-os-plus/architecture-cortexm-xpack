@@ -26,11 +26,8 @@
  */
 
 /*
- * This file is part of the CMSIS++ proposal, intended as a CMSIS
- * replacement for C++ applications.
- *
- * If contains the implementation for all objects, using the
- * FreeRTOS API.
+ * This file contains the implementation for all objects, using the
+ * CMSIS definitions.
  *
  * This file is included in all src/os-*.cpp files.
  */
@@ -152,7 +149,7 @@ namespace os
 
         /**
          * @details
-         * In the simplest form, CMSIS++ can disable all interrupts
+         * In the simplest form, the µOS++ RTOS can disable all interrupts
          * when entering a critical region, and in this case all
          * interrupt priorities are valid.
          *

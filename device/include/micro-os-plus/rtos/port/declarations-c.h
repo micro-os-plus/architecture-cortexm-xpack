@@ -26,16 +26,8 @@
  */
 
 /*
- * The initial CMSIS++ RTOS API was inspired by CMSIS RTOS API v1.x,
- * Copyright (c) 2013 ARM LIMITED
- */
-
-/*
- * This file is part of the CMSIS++ proposal, intended as a CMSIS
- * replacement for C++ applications.
- *
- * It is included in `micro-os-plus/rtos/declarations-c.h` to customise
- * it with port specific declarations.
+ * This file is included in `micro-os-plus/rtos/declarations-c.h` to
+ * customise it with port specific declarations.
  *
  * These structures (which basically contain handlers)
  * are conditionally included in the system objects
