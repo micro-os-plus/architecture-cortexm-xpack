@@ -95,7 +95,8 @@ namespace os
         {
           // Check if ITM or the stimulus port are not enabled.
           if (((ITM->TCR & ITM_TCR_ITMENA_Msk) == 0)
-              || ((ITM->TER & (1UL << MICRO_OS_PLUS_INTEGER_TRACE_ITM_STIMULUS_PORT))
+              || ((ITM->TER
+                   & (1UL << MICRO_OS_PLUS_INTEGER_TRACE_ITM_STIMULUS_PORT))
                   == 0))
             {
               // Return the number of sent characters (may be 0).
@@ -103,7 +104,8 @@ namespace os
             }
 
           // Wait until STIMx is ready...
-          while (ITM->PORT[MICRO_OS_PLUS_INTEGER_TRACE_ITM_STIMULUS_PORT].u32 == 0)
+          while (ITM->PORT[MICRO_OS_PLUS_INTEGER_TRACE_ITM_STIMULUS_PORT].u32
+                 == 0)
             ;
           // then send data, one byte at a time
           ITM->PORT[MICRO_OS_PLUS_INTEGER_TRACE_ITM_STIMULUS_PORT].u8

@@ -82,9 +82,11 @@ namespace os
 #endif
           trace::printf (", preemptive");
 #if (defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)) \
-    && defined(MICRO_OS_PLUS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY)
-          trace::printf (", BASEPRI(%u)",
-                         MICRO_OS_PLUS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY);
+    && defined( \
+        MICRO_OS_PLUS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY)
+          trace::printf (
+              ", BASEPRI(%u)",
+              MICRO_OS_PLUS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY);
 #else
           trace::printf (", DI/EI");
 #endif
@@ -160,10 +162,10 @@ namespace os
          * handlers, the user must not be allowed to invoke
          * any system calls that may interfere with the scheduler.
          *
-         * If the MICRO_OS_PLUS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY
-         * is defined, the numeric value of the current interrupt
-         * priority must be higher than or equal to the macro definition
-         * (lower priorities).
+         * If the
+         * MICRO_OS_PLUS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY is
+         * defined, the numeric value of the current interrupt priority must be
+         * higher than or equal to the macro definition (lower priorities).
          */
         inline bool
         is_priority_valid (void)
@@ -182,8 +184,9 @@ namespace os
             {
               uint32_t prio
                   = NVIC_GetPriority ((IRQn_Type) (exception_number - 16));
-              return (prio
-                      >= MICRO_OS_PLUS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY);
+              return (
+                  prio
+                  >= MICRO_OS_PLUS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY);
             }
           else
             {
