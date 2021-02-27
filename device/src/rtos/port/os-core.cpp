@@ -55,6 +55,10 @@
 
 // ----------------------------------------------------------------------------
 
+using namespace micro_os_plus::rtos;
+
+// ----------------------------------------------------------------------------
+
 #if !defined(__ARM_ARCH_7M__) && !defined(__ARM_ARCH_7EM__) \
     && !defined(__ARM_ARCH_6M__)
 #error "Architecture not supported."
@@ -108,7 +112,7 @@ extern "C"
 
 // ----------------------------------------------------------------------------
 
-namespace os
+namespace micro_os_plus
 {
   namespace rtos
   {
@@ -887,11 +891,9 @@ namespace os
       } // namespace scheduler
     } // namespace port
   } // namespace rtos
-} // namespace os
+} // namespace micro_os_plus
 
 // ----------------------------------------------------------------------------
-
-using namespace os::rtos;
 
 /**
  * @brief PendSV exception handler.
@@ -933,7 +935,7 @@ using namespace os::rtos;
  * 800019a: f3ef 8009   mrs r0, PSP
  * 800019e: f3bf 8f6f   isb sy
  * 80001a2: e920 0ff0   stmdb r0!, {r4, r5, r6, r7, r8, r9, sl, fp}
- * 80001a6: f000 fe21   bl  8000dec <os::rtos::port::scheduler::switch_stacks(unsigned long*)>
+ * 80001a6: f000 fe21   bl  8000dec <micro_os_plus::rtos::port::scheduler::switch_stacks(unsigned long*)>
  * 80001aa: e8b0 0ff0   ldmia.w r0!, {r4, r5, r6, r7, r8, r9, sl, fp}
  * 80001ae: f380 8809   msr PSP, r0
  * 80001b2: f3bf 8f6f   isb sy
@@ -941,27 +943,27 @@ using namespace os::rtos;
  *
  * The switch_stack() function (using BASEPRI) doesn't look bad either:
  *
- * 8000d88 <os::rtos::port::scheduler::switch_stacks(unsigned long*)>:
+ * 8000d88 <micro_os_plus::rtos::port::scheduler::switch_stacks(unsigned long*)>:
  * 8000d88: b538        push  {r3, r4, r5, lr}
  * 8000d8a: f3ef 8511   mrs r5, BASEPRI
  * 8000d8e: 2340        movs  r3, #64 ; 0x40
  * 8000d90: f383 8812   msr BASEPRI_MAX, r3
- * 8000d94: 4b0c        ldr r3, [pc, #48] ; (8000dc8 <os::rtos::port::scheduler::switch_stacks(unsigned long*)+0x40>)
+ * 8000d94: 4b0c        ldr r3, [pc, #48] ; (8000dc8 <micro_os_plus::rtos::port::scheduler::switch_stacks(unsigned long*)+0x40>)
  * 8000d96: f04f 6200   mov.w r2, #134217728  ; 0x8000000
- * 8000d9a: 4c0c        ldr r4, [pc, #48] ; (8000dcc <os::rtos::port::scheduler::switch_stacks(unsigned long*)+0x44>)
+ * 8000d9a: 4c0c        ldr r4, [pc, #48] ; (8000dcc <micro_os_plus::rtos::port::scheduler::switch_stacks(unsigned long*)+0x44>)
  * 8000d9c: 605a        str r2, [r3, #4]
  * 8000d9e: 6821        ldr r1, [r4, #0]
  * 8000da0: f891 3058   ldrb.w  r3, [r1, #88] ; 0x58
  * 8000da4: 66c8        str r0, [r1, #108]  ; 0x6c
  * 8000da6: 2b03        cmp r3, #3
- * 8000da8: d105        bne.n 8000db6 <os::rtos::port::scheduler::switch_stacks(unsigned long*)+0x2e>
+ * 8000da8: d105        bne.n 8000db6 <micro_os_plus::rtos::port::scheduler::switch_stacks(unsigned long*)+0x2e>
  * 8000daa: 68cb        ldr r3, [r1, #12]
- * 8000dac: b91b        cbnz  r3, 8000db6 <os::rtos::port::scheduler::switch_stacks(unsigned long*)+0x2e>
+ * 8000dac: b91b        cbnz  r3, 8000db6 <micro_os_plus::rtos::port::scheduler::switch_stacks(unsigned long*)+0x2e>
  * 8000dae: 3108        adds  r1, #8
- * 8000db0: 4807        ldr r0, [pc, #28] ; (8000dd0 <os::rtos::port::scheduler::switch_stacks(unsigned long*)+0x48>)
- * 8000db2: f003 f935   bl  8004020 <os::rtos::ready_threads_list::link(os::rtos::waiting_thread_node&)>
- * 8000db6: 4806        ldr r0, [pc, #24] ; (8000dd0 <os::rtos::port::scheduler::switch_stacks(unsigned long*)+0x48>)
- * 8000db8: f003 f960   bl  800407c <os::rtos::ready_threads_list::unlink_head()>
+ * 8000db0: 4807        ldr r0, [pc, #28] ; (8000dd0 <micro_os_plus::rtos::port::scheduler::switch_stacks(unsigned long*)+0x48>)
+ * 8000db2: f003 f935   bl  8004020 <micro_os_plus::rtos::ready_threads_list::link(micro_os_plus::rtos::waiting_thread_node&)>
+ * 8000db6: 4806        ldr r0, [pc, #24] ; (8000dd0 <micro_os_plus::rtos::port::scheduler::switch_stacks(unsigned long*)+0x48>)
+ * 8000db8: f003 f960   bl  800407c <micro_os_plus::rtos::ready_threads_list::unlink_head()>
  * 8000dbc: 6020        str r0, [r4, #0]
  * 8000dbe: 6823        ldr r3, [r4, #0]
  * 8000dc0: 6ed8        ldr r0, [r3, #108]  ; 0x6c

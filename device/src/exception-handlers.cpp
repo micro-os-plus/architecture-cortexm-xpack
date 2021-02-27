@@ -40,6 +40,10 @@
 
 // ----------------------------------------------------------------------------
 
+using namespace micro_os_plus;
+
+// ----------------------------------------------------------------------------
+
 extern "C"
 {
   extern unsigned int __heap_end__;
@@ -131,31 +135,31 @@ void
 dump_exception_stack (exception_stack_frame_s* frame, uint32_t cfsr,
                       uint32_t mmfar, uint32_t bfar, uint32_t lr)
 {
-  os::trace::printf ("Stack frame:\n");
-  os::trace::printf (" R0 =  %08X\n", frame->r0);
-  os::trace::printf (" R1 =  %08X\n", frame->r1);
-  os::trace::printf (" R2 =  %08X\n", frame->r2);
-  os::trace::printf (" R3 =  %08X\n", frame->r3);
-  os::trace::printf (" R12 = %08X\n", frame->r12);
-  os::trace::printf (" LR =  %08X\n", frame->lr);
-  os::trace::printf (" PC =  %08X\n", frame->pc);
-  os::trace::printf (" PSR = %08X\n", frame->psr);
-  os::trace::printf ("FSR/FAR:\n");
-  os::trace::printf (" CFSR =  %08X\n", cfsr);
-  os::trace::printf (" HFSR =  %08X\n", SCB->HFSR);
-  os::trace::printf (" DFSR =  %08X\n", SCB->DFSR);
-  os::trace::printf (" AFSR =  %08X\n", SCB->AFSR);
+  trace::printf ("Stack frame:\n");
+  trace::printf (" R0 =  %08X\n", frame->r0);
+  trace::printf (" R1 =  %08X\n", frame->r1);
+  trace::printf (" R2 =  %08X\n", frame->r2);
+  trace::printf (" R3 =  %08X\n", frame->r3);
+  trace::printf (" R12 = %08X\n", frame->r12);
+  trace::printf (" LR =  %08X\n", frame->lr);
+  trace::printf (" PC =  %08X\n", frame->pc);
+  trace::printf (" PSR = %08X\n", frame->psr);
+  trace::printf ("FSR/FAR:\n");
+  trace::printf (" CFSR =  %08X\n", cfsr);
+  trace::printf (" HFSR =  %08X\n", SCB->HFSR);
+  trace::printf (" DFSR =  %08X\n", SCB->DFSR);
+  trace::printf (" AFSR =  %08X\n", SCB->AFSR);
 
   if (cfsr & (1UL << 7))
     {
-      os::trace::printf (" MMFAR = %08X\n", mmfar);
+      trace::printf (" MMFAR = %08X\n", mmfar);
     }
   if (cfsr & (1UL << 15))
     {
-      os::trace::printf (" BFAR =  %08X\n", bfar);
+      trace::printf (" BFAR =  %08X\n", bfar);
     }
-  os::trace::printf ("Misc\n");
-  os::trace::printf (" LR/EXC_RETURN= %08X\n", lr);
+  trace::printf ("Misc\n");
+  trace::printf (" LR/EXC_RETURN= %08X\n", lr);
 }
 
 #endif // defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
@@ -165,17 +169,17 @@ dump_exception_stack (exception_stack_frame_s* frame, uint32_t cfsr,
 void
 dump_exception_stack (exception_stack_frame_s* frame, uint32_t lr)
 {
-  os::trace::printf ("Stack frame:\n");
-  os::trace::printf (" R0 =  %08X\n", frame->r0);
-  os::trace::printf (" R1 =  %08X\n", frame->r1);
-  os::trace::printf (" R2 =  %08X\n", frame->r2);
-  os::trace::printf (" R3 =  %08X\n", frame->r3);
-  os::trace::printf (" R12 = %08X\n", frame->r12);
-  os::trace::printf (" LR =  %08X\n", frame->lr);
-  os::trace::printf (" PC =  %08X\n", frame->pc);
-  os::trace::printf (" PSR = %08X\n", frame->psr);
-  os::trace::printf ("Misc\n");
-  os::trace::printf (" LR/EXC_RETURN= %08X\n", lr);
+  trace::printf ("Stack frame:\n");
+  trace::printf (" R0 =  %08X\n", frame->r0);
+  trace::printf (" R1 =  %08X\n", frame->r1);
+  trace::printf (" R2 =  %08X\n", frame->r2);
+  trace::printf (" R3 =  %08X\n", frame->r3);
+  trace::printf (" R12 = %08X\n", frame->r12);
+  trace::printf (" LR =  %08X\n", frame->lr);
+  trace::printf (" PC =  %08X\n", frame->pc);
+  trace::printf (" PSR = %08X\n", frame->psr);
+  trace::printf ("Misc\n");
+  trace::printf (" LR/EXC_RETURN= %08X\n", lr);
 }
 
 #endif // defined(__ARM_ARCH_6M__)
@@ -218,7 +222,7 @@ is_semihosting_call (exception_stack_frame_s* frame, uint16_t opCode)
 #endif
 
 #if defined(MICRO_OS_PLUS_DEBUG_SEMIHOSTING_FAULTS)
-      // os::trace::printf ("sh r0=%d\n", r0);
+      // trace::printf ("sh r0=%d\n", r0);
 #endif
 
       switch (r0)
@@ -437,7 +441,7 @@ hard_fault_handler_c (exception_stack_frame_s* frame __attribute__ ((unused)),
 #endif // semihosting
 
 #if defined(TRACE)
-  os::trace::printf ("[HardFault]\n");
+  trace::printf ("[HardFault]\n");
   dump_exception_stack (frame, cfsr, mmfar, bfar, lr);
 #endif // defined(TRACE)
 
@@ -501,7 +505,7 @@ hard_fault_handler_c (exception_stack_frame_s* frame __attribute__ ((unused)),
   // faults are fatal and it is not possible to return from the handler.
 
 #if defined(TRACE)
-  os::trace::printf ("[HardFault]\n");
+  trace::printf ("[HardFault]\n");
   dump_exception_stack (frame, lr);
 #endif // defined(TRACE)
 
@@ -574,7 +578,7 @@ bus_fault_handler_c (exception_stack_frame_s* frame __attribute__ ((unused)),
   uint32_t bfar = SCB->BFAR; // Bus Fault Address
   uint32_t cfsr = SCB->CFSR; // Configurable Fault Status Registers
 
-  os::trace::printf ("[BusFault]\n");
+  trace::printf ("[BusFault]\n");
   dump_exception_stack (frame, cfsr, mmfar, bfar, lr);
 #endif // defined(TRACE)
 
@@ -638,7 +642,7 @@ usage_fault_handler_c (exception_stack_frame_s* frame __attribute__ ((unused)),
 #endif
 
 #if defined(TRACE)
-  os::trace::printf ("[UsageFault]\n");
+  trace::printf ("[UsageFault]\n");
   dump_exception_stack (frame, cfsr, mmfar, bfar, lr);
 #endif // defined(TRACE)
 

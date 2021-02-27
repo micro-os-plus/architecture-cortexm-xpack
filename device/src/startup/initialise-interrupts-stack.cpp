@@ -45,7 +45,7 @@
 
 // ----------------------------------------------------------------------------
 
-using namespace os;
+using namespace micro_os_plus;
 
 // ----------------------------------------------------------------------------
 
@@ -56,8 +56,8 @@ os_startup_initialize_interrupts_stack (void* stack_begin_address,
   trace::printf ("%s(%p,%u)\n", __func__, stack_begin_address,
                  stack_size_bytes);
 
-  os::rtos::interrupts::stack ()->set (
-      (os::rtos::thread::stack::element_t*)stack_begin_address,
+  rtos::interrupts::stack ()->set (
+      (rtos::thread::stack::element_t*)stack_begin_address,
       stack_size_bytes);
 }
 

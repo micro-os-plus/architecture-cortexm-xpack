@@ -126,7 +126,7 @@ namespace cortexm
   } // namespace arch
 } // namespace cortexm
 
-namespace os
+namespace micro_os_plus
 {
   namespace arch
   {
@@ -153,7 +153,7 @@ namespace os
 
     // ------------------------------------------------------------------------
   } // namespace arch
-} // namespace os
+} // namespace micro_os_plus
 
 #endif // defined(__cplusplus)
 
