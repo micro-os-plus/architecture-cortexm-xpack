@@ -120,7 +120,7 @@ extern "C"
 
 namespace cortexm
 {
-  namespace arch
+  namespace architecture
   {
     // ------------------------------------------------------------------------
 
@@ -143,35 +143,35 @@ namespace cortexm
     }
 
     // ------------------------------------------------------------------------
-  } // namespace arch
+  } // namespace architecture
 } // namespace cortexm
 
 namespace micro_os_plus
 {
-  namespace arch
+  namespace architecture
   {
     // ------------------------------------------------------------------------
 
     inline __attribute__ ((always_inline)) void
     nop (void)
     {
-      cortexm::arch::nop ();
+      cortexm::architecture::nop ();
     }
 
     inline __attribute__ ((always_inline)) void
     brk (void)
     {
-      cortexm::arch::bkpt ();
+      cortexm::architecture::bkpt ();
     }
 
     inline __attribute__ ((always_inline)) void
     wfi (void)
     {
-      cortexm::arch::wfi ();
+      cortexm::architecture::wfi ();
     }
 
     // ------------------------------------------------------------------------
-  } // namespace arch
+  } // namespace architecture
 } // namespace micro_os_plus
 
 #endif // defined(__cplusplus)

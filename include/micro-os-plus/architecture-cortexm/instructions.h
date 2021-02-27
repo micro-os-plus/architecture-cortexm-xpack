@@ -99,7 +99,7 @@ extern "C"
 
 namespace cortexm
 {
-  namespace arch
+  namespace architecture
   {
     // ------------------------------------------------------------------------
     // Architecture assembly instructions in C++.
@@ -123,12 +123,12 @@ namespace cortexm
     wfi (void);
 
     // ------------------------------------------------------------------------
-  } // namespace arch
+  } // namespace architecture
 } // namespace cortexm
 
 namespace micro_os_plus
 {
-  namespace arch
+  namespace architecture
   {
     // ------------------------------------------------------------------------
     // Portable architecture assembly instructions in C++.
@@ -152,7 +152,7 @@ namespace micro_os_plus
     wfi (void);
 
     // ------------------------------------------------------------------------
-  } // namespace arch
+  } // namespace architecture
 } // namespace micro_os_plus
 
 #endif // defined(__cplusplus)

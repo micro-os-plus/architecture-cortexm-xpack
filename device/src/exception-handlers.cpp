@@ -101,16 +101,16 @@ void __attribute__ ((section (".after_vectors"), weak)) NMI_Handler (void)
 #if defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
   if ((CoreDebug->DHCSR & CoreDebug_DHCSR_C_DEBUGEN_Msk) != 0)
     {
-      cortexm::arch::bkpt ();
+      cortexm::architecture::bkpt ();
     }
 #else
-  cortexm::arch::bkpt ();
+  cortexm::architecture::bkpt ();
 #endif // defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
 #endif // defined(DEBUG)
 
   while (1)
     {
-      cortexm::arch::wfi ();
+      cortexm::architecture::wfi ();
     }
 }
 
@@ -449,16 +449,16 @@ hard_fault_handler_c (exception_stack_frame_s* frame __attribute__ ((unused)),
 #if defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
   if ((CoreDebug->DHCSR & CoreDebug_DHCSR_C_DEBUGEN_Msk) != 0)
     {
-      cortexm::arch::bkpt ();
+      cortexm::architecture::bkpt ();
     }
 #else
-  cortexm::arch::bkpt ();
+  cortexm::architecture::bkpt ();
 #endif // defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
 #endif // defined(DEBUG)
 
   while (1)
     {
-      cortexm::arch::wfi ();
+      cortexm::architecture::wfi ();
     }
 }
 
@@ -513,16 +513,16 @@ hard_fault_handler_c (exception_stack_frame_s* frame __attribute__ ((unused)),
 #if defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
   if ((CoreDebug->DHCSR & CoreDebug_DHCSR_C_DEBUGEN_Msk) != 0)
     {
-      cortexm::arch::bkpt ();
+      cortexm::architecture::bkpt ();
     }
 #else
-  cortexm::arch::bkpt ();
+  cortexm::architecture::bkpt ();
 #endif // defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
 #endif // defined(DEBUG)
 
   while (1)
     {
-      cortexm::arch::wfi ();
+      cortexm::architecture::wfi ();
     }
 }
 
@@ -537,16 +537,16 @@ MemManage_Handler (void)
 #if defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
   if ((CoreDebug->DHCSR & CoreDebug_DHCSR_C_DEBUGEN_Msk) != 0)
     {
-      cortexm::arch::bkpt ();
+      cortexm::architecture::bkpt ();
     }
 #else
-  cortexm::arch::bkpt ();
+  cortexm::architecture::bkpt ();
 #endif // defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
 #endif // defined(DEBUG)
 
   while (1)
     {
-      cortexm::arch::wfi ();
+      cortexm::architecture::wfi ();
     }
 }
 
@@ -586,16 +586,16 @@ bus_fault_handler_c (exception_stack_frame_s* frame __attribute__ ((unused)),
 #if defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
   if ((CoreDebug->DHCSR & CoreDebug_DHCSR_C_DEBUGEN_Msk) != 0)
     {
-      cortexm::arch::bkpt ();
+      cortexm::architecture::bkpt ();
     }
 #else
-  cortexm::arch::bkpt ();
+  cortexm::architecture::bkpt ();
 #endif // defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
 #endif // defined(DEBUG)
 
   while (1)
     {
-      cortexm::arch::wfi ();
+      cortexm::architecture::wfi ();
     }
 }
 
@@ -650,16 +650,16 @@ usage_fault_handler_c (exception_stack_frame_s* frame __attribute__ ((unused)),
 #if defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
   if ((CoreDebug->DHCSR & CoreDebug_DHCSR_C_DEBUGEN_Msk) != 0)
     {
-      cortexm::arch::bkpt ();
+      cortexm::architecture::bkpt ();
     }
 #else
-  cortexm::arch::bkpt ();
+  cortexm::architecture::bkpt ();
 #endif // defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
 #endif // defined(DEBUG)
 
   while (1)
     {
-      cortexm::arch::wfi ();
+      cortexm::architecture::wfi ();
     }
 }
 
@@ -671,16 +671,16 @@ void __attribute__ ((section (".after_vectors"), weak)) SVC_Handler (void)
 #if defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
   if ((CoreDebug->DHCSR & CoreDebug_DHCSR_C_DEBUGEN_Msk) != 0)
     {
-      cortexm::arch::bkpt ();
+      cortexm::architecture::bkpt ();
     }
 #else
-  cortexm::arch::bkpt ();
+  cortexm::architecture::bkpt ();
 #endif // defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
 #endif // defined(DEBUG)
 
   while (1)
     {
-      cortexm::arch::wfi ();
+      cortexm::architecture::wfi ();
     }
 }
 
@@ -691,13 +691,13 @@ void __attribute__ ((section (".after_vectors"), weak)) DebugMon_Handler (void)
 #if defined(DEBUG)
   if ((CoreDebug->DHCSR & CoreDebug_DHCSR_C_DEBUGEN_Msk) != 0)
     {
-      cortexm::arch::bkpt ();
+      cortexm::architecture::bkpt ();
     }
 #endif // defined(DEBUG)
 
   while (1)
     {
-      cortexm::arch::wfi ();
+      cortexm::architecture::wfi ();
     }
 }
 
@@ -709,16 +709,16 @@ void __attribute__ ((section (".after_vectors"), weak)) PendSV_Handler (void)
 #if defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
   if ((CoreDebug->DHCSR & CoreDebug_DHCSR_C_DEBUGEN_Msk) != 0)
     {
-      cortexm::arch::bkpt ();
+      cortexm::architecture::bkpt ();
     }
 #else
-  cortexm::arch::bkpt ();
+  cortexm::architecture::bkpt ();
 #endif // defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
 #endif // defined(DEBUG)
 
   while (1)
     {
-      cortexm::arch::wfi ();
+      cortexm::architecture::wfi ();
     }
 }
 

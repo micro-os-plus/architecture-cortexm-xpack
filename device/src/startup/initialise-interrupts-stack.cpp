@@ -57,8 +57,7 @@ os_startup_initialize_interrupts_stack (void* stack_begin_address,
                  stack_size_bytes);
 
   rtos::interrupts::stack ()->set (
-      (rtos::thread::stack::element_t*)stack_begin_address,
-      stack_size_bytes);
+      (rtos::thread::stack::element_t*)stack_begin_address, stack_size_bytes);
 }
 
 // ----------------------------------------------------------------------------
