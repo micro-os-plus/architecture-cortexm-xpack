@@ -48,7 +48,7 @@ typedef uint64_t micro_os_plus_port_clock_timestamp_t;
 typedef uint32_t micro_os_plus_port_clock_duration_t;
 typedef uint64_t micro_os_plus_port_clock_offset_t;
 
-typedef bool micro_os_plus_port_sched_state_t;
+typedef bool micro_os_plus_port_scheduler_state_t;
 
 typedef uint32_t micro_os_plus_port_irq_state_t;
 

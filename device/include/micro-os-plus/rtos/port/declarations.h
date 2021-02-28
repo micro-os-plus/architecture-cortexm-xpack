@@ -105,7 +105,7 @@ namespace micro_os_plus
 
       namespace scheduler
       {
-        using state_t = micro_os_plus_port_sched_state_t;
+        using state_t = micro_os_plus_port_scheduler_state_t;
 
         namespace state
         {
