@@ -261,7 +261,7 @@ namespace micro_os_plus
        * @param [in] context Pointer to thread context.
        * @param [in] function Pointer to function to execute in the new
        * context.
-       * @param [in] args Function arguments.
+       * @param [in] arguments Function arguments.
        *
        * @details
        * Initialise the stack with a repetitive pattern; create an
@@ -269,7 +269,7 @@ namespace micro_os_plus
        * PendSV will pass control to the new context.
        */
       void
-      context::create (void* context, void* function, void* args)
+      context::create (void* context, void* function, void* arguments)
       {
 #if defined(MICRO_OS_PLUS_TRACE_RTMICRO_OS_PLUS_THREAD_CONTEXT)
         trace::printf ("port::context::%s(%p)\n", __func__, context);
@@ -335,7 +335,7 @@ namespace micro_os_plus
         f->r3 = 0x33333333 + 0x00010203; // R3 +11*4=48
         f->r2 = 0x22222222 + 0x00010203; // R2 +10*4=44
         f->r1 = 0x11111111 + 0x00010203; // R1 +9*4=40
-        f->r0 = (rtos::thread::stack::element_t)args; // R0 +8*4=36
+        f->r0 = (rtos::thread::stack::element_t)arguments; // R0 +8*4=36
 
         // This frame does not include initial FPU registers.
         // bit 4: 1 (8 words), 0 (26 words)
