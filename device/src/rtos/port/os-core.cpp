@@ -259,7 +259,8 @@ namespace micro_os_plus
       /**
        * @brief Create a new thread context on the stack.
        * @param [in] context Pointer to thread context.
-       * @param [in] func Pointer to function to execute in the new context.
+       * @param [in] function Pointer to function to execute in the new
+       * context.
        * @param [in] args Function arguments.
        *
        * @details
@@ -268,7 +269,7 @@ namespace micro_os_plus
        * PendSV will pass control to the new context.
        */
       void
-      context::create (void* context, void* func, void* args)
+      context::create (void* context, void* function, void* args)
       {
 #if defined(MICRO_OS_PLUS_TRACE_RTMICRO_OS_PLUS_THREAD_CONTEXT)
         trace::printf ("port::context::%s(%p)\n", __func__, context);
@@ -311,16 +312,17 @@ namespace micro_os_plus
 
         // The address of the trampoline code. // PC/R15 +14*4=60
         f->r15_pc
-            = (rtos::thread::stack::element_t) (((ptrdiff_t)func) & (~1));
+            = (rtos::thread::stack::element_t) (((ptrdiff_t)function) & (~1));
 
         // Link register // LR/R14 +13*4=56
 #if defined(MICRO_OS_PLUS_BOOL_RTOS_PORT_CONTEXT_CREATE_ZERO_LR)
         f->r14_lr = 0x00000000;
 #else
         // 0x0 looks odd in the debugger, so try to hide it.
-        // In Eclipse using 'func+2' will make the stack trace
-        // start with 'func' (don't ask why).
-        f->r14_lr = (rtos::thread::stack::element_t) (((ptrdiff_t)func + 2));
+        // In Eclipse using 'function+2' will make the stack trace
+        // start with 'function' (don't ask why).
+        f->r14_lr
+            = (rtos::thread::stack::element_t) (((ptrdiff_t)function + 2));
 #endif
         // R13 is the SP; it is not present in the frame,
         // it is loaded separately as PSP.
