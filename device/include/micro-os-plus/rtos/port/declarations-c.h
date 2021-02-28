@@ -50,7 +50,7 @@ typedef uint64_t micro_os_plus_port_clock_offset_t;
 
 typedef bool micro_os_plus_port_scheduler_state_t;
 
-typedef uint32_t micro_os_plus_port_irq_state_t;
+typedef uint32_t micro_os_plus_port_interrupts_state_t;
 
 typedef uint32_t micro_os_plus_port_thread_stack_element_t;
 typedef uint64_t micro_os_plus_port_thread_stack_allocation_element_t;

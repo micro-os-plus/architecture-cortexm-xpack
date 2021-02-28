@@ -94,7 +94,7 @@ namespace micro_os_plus
       namespace interrupts
       {
         // Type to store the entire processor interrupts mask.
-        using state_t = micro_os_plus_port_irq_state_t;
+        using state_t = micro_os_plus_port_interrupts_state_t;
 
         namespace state
         {
