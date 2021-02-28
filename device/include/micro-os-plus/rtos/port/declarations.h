@@ -71,10 +71,11 @@ namespace micro_os_plus
       namespace stack
       {
         // Stack word.
-        using element_t = os_port_thread_stack_element_t;
+        using element_t = micro_os_plus_port_thread_stack_element_t;
 
         // Align stack to 8 bytes.
-        using allocation_element_t = os_port_thread_stack_allocation_element_t;
+        using allocation_element_t
+            = micro_os_plus_port_thread_stack_allocation_element_t;
 
         // Initial value for the minimum stack size in bytes.
         constexpr std::size_t min_size_bytes
@@ -93,7 +94,7 @@ namespace micro_os_plus
       namespace interrupts
       {
         // Type to store the entire processor interrupts mask.
-        using state_t = os_port_irq_state_t;
+        using state_t = micro_os_plus_port_irq_state_t;
 
         namespace state
         {
@@ -104,7 +105,7 @@ namespace micro_os_plus
 
       namespace scheduler
       {
-        using state_t = os_port_scheduler_state_t;
+        using state_t = micro_os_plus_port_sched_state_t;
 
         namespace state
         {

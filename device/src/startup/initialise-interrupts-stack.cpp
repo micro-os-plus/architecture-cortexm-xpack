@@ -50,8 +50,8 @@ using namespace micro_os_plus;
 // ----------------------------------------------------------------------------
 
 void
-os_startup_initialize_interrupts_stack (void* stack_begin_address,
-                                        size_t stack_size_bytes)
+micro_os_plus_startup_initialize_interrupts_stack (void* stack_begin_address,
+                                                   size_t stack_size_bytes)
 {
   trace::printf ("%s(%p,%u)\n", __func__, stack_begin_address,
                  stack_size_bytes);

@@ -73,19 +73,19 @@ extern "C"
    * `nop` instruction.
    */
   static void
-  os_architecture_nop (void);
+  micro_os_plus_architecture_nop (void);
 
   /**
    * `break` instruction.
    */
   static void
-  os_architecture_brk (void);
+  micro_os_plus_architecture_brk (void);
 
   /**
    * `wfi` instruction.
    */
   static void
-  os_architecture_wfi (void);
+  micro_os_plus_architecture_wfi (void);
 
   // --------------------------------------------------------------------------
 

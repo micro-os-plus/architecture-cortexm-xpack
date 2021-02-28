@@ -41,7 +41,7 @@
  * like powering down devices, saving state, etc.
  */
 void __attribute__ ((noreturn, weak))
-os_terminate (int code __attribute__ ((unused)))
+micro_os_plus_terminate (int code __attribute__ ((unused)))
 {
   NVIC_SystemReset ();
 

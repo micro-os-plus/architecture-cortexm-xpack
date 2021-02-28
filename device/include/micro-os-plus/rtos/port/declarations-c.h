@@ -44,21 +44,21 @@
 
 // ----------------------------------------------------------------------------
 
-typedef uint64_t os_port_clock_timestamp_t;
-typedef uint32_t os_port_clock_duration_t;
-typedef uint64_t os_port_clock_offset_t;
+typedef uint64_t micro_os_plus_port_clock_timestamp_t;
+typedef uint32_t micro_os_plus_port_clock_duration_t;
+typedef uint64_t micro_os_plus_port_clock_offset_t;
 
-typedef bool os_port_scheduler_state_t;
+typedef bool micro_os_plus_port_sched_state_t;
 
-typedef uint32_t os_port_irq_state_t;
+typedef uint32_t micro_os_plus_port_irq_state_t;
 
-typedef uint32_t os_port_thread_stack_element_t;
-typedef uint64_t os_port_thread_stack_allocation_element_t;
+typedef uint32_t micro_os_plus_port_thread_stack_element_t;
+typedef uint64_t micro_os_plus_port_thread_stack_allocation_element_t;
 
 typedef struct
 {
-  os_port_thread_stack_element_t* stack_ptr;
-} os_port_thread_context_t;
+  micro_os_plus_port_thread_stack_element_t* stack_ptr;
+} micro_os_plus_port_thread_context_t;
 
 // ----------------------------------------------------------------------------
 

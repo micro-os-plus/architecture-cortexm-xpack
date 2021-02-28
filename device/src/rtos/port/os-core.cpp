@@ -435,7 +435,7 @@ namespace micro_os_plus
 
 #if defined(__ARM_FP)
           // The FPU should have been enabled by
-          // os_startup_initialize_hardware_early().
+          // micro_os_plus_startup_initialize_hardware_early().
 #endif
 
           // Disable all interrupts, to safely change the stack.
@@ -506,8 +506,8 @@ namespace micro_os_plus
           // somewhere, so prepare a fake thread context.
           // Don't worry for being on the stack, this is used
           // only once and can be overridden later.
-          os_thread_t fake_thread;
-          memset (&fake_thread, 0, sizeof (os_thread_t));
+          micro_os_plus_thread_t fake_thread;
+          memset (&fake_thread, 0, sizeof (micro_os_plus_thread_t));
 
           fake_thread.name = "fake_thread";
           rtos::thread* pth = (rtos::thread*)&fake_thread;
@@ -543,7 +543,7 @@ namespace micro_os_plus
         state_t
         locked (state_t state)
         {
-          os_assert_throw (!interrupts::in_handler_mode (), EPERM);
+          micro_os_plus_assert_throw (!interrupts::in_handler_mode (), EPERM);
 
           state_t tmp;
 

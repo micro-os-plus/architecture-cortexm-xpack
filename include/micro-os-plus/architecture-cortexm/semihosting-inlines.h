@@ -72,7 +72,7 @@ extern "C"
 #endif
 
   static inline __attribute__ ((always_inline)) int
-  os_semihosting_call_host (int reason, void* arg)
+  micro_os_plus_semihosting_call_host (int reason, void* arg)
   {
     int value;
     __asm__ volatile(

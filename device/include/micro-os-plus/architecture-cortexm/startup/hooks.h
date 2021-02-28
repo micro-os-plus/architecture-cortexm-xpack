@@ -56,7 +56,7 @@ extern "C"
    *  Nothing.
    */
   void
-  os_startup_initialize_hardware_early (void);
+  micro_os_plus_startup_initialize_hardware_early (void);
 
   /**
    * @brief Initialise hardware.
@@ -66,7 +66,7 @@ extern "C"
    *  Nothing.
    */
   void
-  os_startup_initialize_hardware (void);
+  micro_os_plus_startup_initialize_hardware (void);
 
   /**
    * @brief Initialise the free store.
@@ -76,8 +76,8 @@ extern "C"
    *  Nothing.
    */
   void
-  os_startup_initialize_free_store (void* heap_address,
-                                    size_t heap_size_bytes);
+  micro_os_plus_startup_initialize_free_store (void* heap_address,
+                                               size_t heap_size_bytes);
 
   /**
    * @brief Initialise the interrupts stack.
@@ -87,8 +87,8 @@ extern "C"
    *  Nothing.
    */
   void
-  os_startup_initialize_interrupts_stack (void* stack_begin_address,
-                                          size_t stack_size_bytes);
+  micro_os_plus_startup_initialize_interrupts_stack (void* stack_begin_address,
+                                                     size_t stack_size_bytes);
 
   /**
    * @}

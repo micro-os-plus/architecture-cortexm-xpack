@@ -56,7 +56,8 @@ extern unsigned int __vectors_start;
  * Also useful on platform with external RAM, that need to be
  * initialised before filling the BSS section.
  */
-void __attribute__ ((weak)) os_startup_initialize_hardware_early (void)
+void __attribute__ ((weak))
+micro_os_plus_startup_initialize_hardware_early (void)
 {
   // Call the CSMSIS system initialisation routine.
   SystemInit ();
