@@ -15,7 +15,7 @@ endif()
 
 set(micro-os-plus-architecture-cortexm-device-included TRUE)
 
-message(STATUS "Including micro-os-plus-architecture-cortexm/device...")
+message(STATUS "Processing xPack ${PACKAGE_JSON_NAME}@${PACKAGE_JSON_VERSION}...")
 
 # -----------------------------------------------------------------------------
 # Dependencies.
