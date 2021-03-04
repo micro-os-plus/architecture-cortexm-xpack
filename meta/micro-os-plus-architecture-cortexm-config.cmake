@@ -57,9 +57,9 @@ if(NOT TARGET micro-os-plus-architecture-cortexm-interface)
   # Aliases.
 
   add_library(micro-os-plus::architecture-cortexm ALIAS micro-os-plus-architecture-cortexm-interface)
-  message(STATUS "micro-os-plus::architecture-cortexm")
+  message(STATUS "=> micro-os-plus::architecture-cortexm")
   add_library(micro-os-plus::architecture ALIAS micro-os-plus-architecture-cortexm-interface)
-  message(STATUS "micro-os-plus::architecture")
+  message(STATUS "=> micro-os-plus::architecture")
 
 endif()
 

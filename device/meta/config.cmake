@@ -64,7 +64,7 @@ if(NOT TARGET micro-os-plus-architecture-cortexm-device-interface)
   # Aliases.
 
   add_library(micro-os-plus::architecture-cortexm-device ALIAS micro-os-plus-architecture-cortexm-device-interface)
-  message(STATUS "micro-os-plus::architecture-cortexm-device")
+  message(STATUS "=> micro-os-plus::architecture-cortexm-device")
 
 endif()
 
