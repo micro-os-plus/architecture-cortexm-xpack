@@ -57,7 +57,7 @@ if(NOT TARGET micro-os-plus-architecture-cortexm-device-interface)
     micro-os-plus-architecture-cortexm-device-interface
 
     INTERFACE
-      micro-os-plus::semihosting-static
+      micro-os-plus::semihosting
   )
 
   # ---------------------------------------------------------------------------
