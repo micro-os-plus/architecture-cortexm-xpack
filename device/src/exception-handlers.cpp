@@ -52,6 +52,10 @@ extern "C"
   void __attribute__ ((noreturn, weak)) _start (void);
 }
 
+#pragma GCC diagnostic push
+// core_cm4.h:1558:42: error: use of old-style cast to 'struct CoreDebug_Type*
+#pragma GCC diagnostic ignored "-Wold-style-cast"
+
 // ----------------------------------------------------------------------------
 // Default exception handlers. Override the ones here by defining your own
 // handler routines in your application code.
@@ -728,6 +732,8 @@ void __attribute__ ((section (".after_vectors"), weak)) SysTick_Handler (void)
   // Useful in case someone (like STM HAL) inadvertently enables SysTick.
   ;
 }
+
+#pragma GCC diagnostic pop
 
 // ----------------------------------------------------------------------------
 
