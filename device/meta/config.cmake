@@ -43,7 +43,7 @@ if(NOT TARGET micro-os-plus-architecture-cortexm-device-interface)
     micro-os-plus-architecture-cortexm-device-interface
 
     INTERFACE
-    ${source_files}
+      ${source_files}
   )
 
   target_include_directories(
