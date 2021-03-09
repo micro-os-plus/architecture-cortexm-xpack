@@ -1,6 +1,6 @@
 {
   "name": "@micro-os-plus/architecture-cortexm",
-  "version": "2.1.0",
+  "version": "3.0.0",
   "description": "A source xPack with the µOS++ Arm Cortex-M architecture port",
   "main": "",
   "scripts": {
@@ -28,6 +28,5 @@
     "url": "https://github.com/micro-os-plus/architecture-cortexm-xpack/issues/"
   },
   "config": {},
-  "dependencies": {},
   "xpack": {}
 }
