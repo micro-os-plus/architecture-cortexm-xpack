@@ -24,6 +24,7 @@ message(STATUS "Processing xPack ${PACKAGE_JSON_NAME}@${PACKAGE_JSON_VERSION}...
 # Local dependencies.
 
 include("${CMAKE_CURRENT_LIST_DIR}/../device/meta/config.cmake")
+include("${CMAKE_CURRENT_LIST_DIR}/../rtos-port/meta/config.cmake")
 
 # -----------------------------------------------------------------------------
 # The current folder.
@@ -57,7 +58,7 @@ if(NOT TARGET micro-os-plus-architecture-cortexm-interface)
   # Aliases.
 
   add_library(micro-os-plus::architecture-cortexm ALIAS micro-os-plus-architecture-cortexm-interface)
-  message(STATUS "=> micro-os-plus::architecture-cortexm")
+  # message(STATUS "=> micro-os-plus::architecture-cortexm")
   add_library(micro-os-plus::architecture ALIAS micro-os-plus-architecture-cortexm-interface)
   message(STATUS "=> micro-os-plus::architecture")
 

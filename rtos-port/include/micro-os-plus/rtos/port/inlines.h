@@ -179,8 +179,14 @@ namespace micro_os_plus
           uint32_t exception_number = __get_IPSR ();
           if (exception_number > 0)
             {
+#pragma GCC diagnostic push
+
+#if defined(__cplusplus)
+#pragma GCC diagnostic ignored "-Wold-style-cast"
+#endif
               uint32_t prio
                   = NVIC_GetPriority ((IRQn_Type) (exception_number - 16));
+#pragma GCC diagnostic pop
               return (
                   prio
                   >= MICRO_OS_PLUS_INTEGER_RTOS_CRITICAL_SECTION_INTERRUPT_PRIORITY);
@@ -386,6 +392,12 @@ namespace micro_os_plus
         return SystemCoreClock;
       }
 
+#pragma GCC diagnostic push
+
+#if defined(__cplusplus)
+#pragma GCC diagnostic ignored "-Wold-style-cast"
+#endif
+
       inline __attribute__ ((always_inline)) uint32_t
       clock_highres::cycles_per_tick (void)
       {
@@ -424,6 +436,8 @@ namespace micro_os_plus
 
         return load_value - val;
       }
+
+#pragma GCC diagnostic pop
 
       // ======================================================================
 

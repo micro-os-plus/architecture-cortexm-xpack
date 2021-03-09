@@ -274,8 +274,8 @@ namespace micro_os_plus
 #if defined(MICRO_OS_PLUS_TRACE_RTMICRO_OS_PLUS_THREAD_CONTEXT)
         trace::printf ("port::context::%s(%p)\n", __func__, context);
 #endif
-        class rtos::thread::context* th_ctx
-            = static_cast<class rtos::thread::context*> (context);
+        rtos::thread::context* th_ctx
+            = static_cast<rtos::thread::context*> (context);
 
         class rtos::thread::stack& stack = th_ctx->stack ();
 
@@ -283,7 +283,8 @@ namespace micro_os_plus
 
         // Be sure the stack is large enough to hold at least
         // two exception frames.
-        assert ((p - stack.bottom ()) > (int)(2 * sizeof (stack::frame_t)));
+        assert ((p - stack.bottom ())
+                > static_cast<int> (2 * sizeof (stack::frame_t)));
 
         p -= (sizeof (stack::frame_t)
               / sizeof (rtos::thread::stack::element_t));
@@ -294,7 +295,8 @@ namespace micro_os_plus
         // var_args() will fail (for example printf() does not floats/doubles).
         if ((reinterpret_cast<uintptr_t> (p) & 3) != 0)
           {
-            p = (rtos::thread::stack::element_t*)(((int)p) & (~3));
+            p = reinterpret_cast<rtos::thread::stack::element_t*> (
+                (reinterpret_cast<int> (p)) & (~3));
           }
 
         if ((reinterpret_cast<uintptr_t> (p) & 7) == 0)
@@ -311,8 +313,8 @@ namespace micro_os_plus
         f->psr = 0x01000000; // xPSR +15*4=64
 
         // The address of the trampoline code. // PC/R15 +14*4=60
-        f->r15_pc
-            = (rtos::thread::stack::element_t) (((ptrdiff_t)function) & (~1));
+        f->r15_pc = static_cast<rtos::thread::stack::element_t> (
+            (reinterpret_cast<ptrdiff_t> (function)) & (~1));
 
         // Link register // LR/R14 +13*4=56
 #if defined(MICRO_OS_PLUS_BOOL_RTOS_PORT_CONTEXT_CREATE_ZERO_LR)
@@ -321,8 +323,8 @@ namespace micro_os_plus
         // 0x0 looks odd in the debugger, so try to hide it.
         // In Eclipse using 'function+2' will make the stack trace
         // start with 'function' (don't ask why).
-        f->r14_lr
-            = (rtos::thread::stack::element_t) (((ptrdiff_t)function + 2));
+        f->r14_lr = static_cast<rtos::thread::stack::element_t> (
+            (reinterpret_cast<ptrdiff_t> (function) + 2));
 #endif
         // R13 is the SP; it is not present in the frame,
         // it is loaded separately as PSP.
@@ -335,7 +337,8 @@ namespace micro_os_plus
         f->r3 = 0x33333333 + 0x00010203; // R3 +11*4=48
         f->r2 = 0x22222222 + 0x00010203; // R2 +10*4=44
         f->r1 = 0x11111111 + 0x00010203; // R1 +9*4=40
-        f->r0 = (rtos::thread::stack::element_t)arguments; // R0 +8*4=36
+        f->r0 = reinterpret_cast<rtos::thread::stack::element_t> (
+            arguments); // R0 +8*4=36
 
         // This frame does not include initial FPU registers.
         // bit 4: 1 (8 words), 0 (26 words)
@@ -358,7 +361,7 @@ namespace micro_os_plus
         th_ctx->port_.stack_ptr = p;
 
         // Guarantee that the stack is properly aligned.
-        assert ((((int)(&f->r0)) & 7) == 0);
+        assert (((reinterpret_cast<int> (&f->r0)) & 7) == 0);
       }
 
       /**
@@ -464,7 +467,11 @@ namespace micro_os_plus
 #if defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
 
 #if !defined(MICRO_OS_PLUS_DISABLE_CORTEXM_SET_MSP_VIA_VTOR)
-          __set_MSP (*((uint32_t*)SCB->VTOR));
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wold-style-cast"
+          uint32_t* vectors_addr = reinterpret_cast<uint32_t*> (SCB->VTOR);
+#pragma GCC diagnostic pop
+          __set_MSP (*vectors_addr);
 #endif // !defined(MICRO_OS_PLUS_DISABLE_CORTEXM_SET_MSP_VIA_VTOR)
 
 #elif defined(__ARM_ARCH_6M__)
@@ -498,7 +505,8 @@ namespace micro_os_plus
           // Set the beginning address and size of the interrupt stack.
           rtos::interrupts::stack ()->set (
               reinterpret_cast<stack::element_t*> (&__heap_end__),
-              (&__stack - &__heap_end__) * sizeof (__stack));
+              (static_cast<std::size_t> (&__stack - &__heap_end__)
+               * sizeof (__stack)));
 
           // Set PendSV interrupt priority to the lowest level (highest value).
           NVIC_SetPriority (PendSV_IRQn, (1UL << __NVIC_PRIO_BITS) - 1UL);
@@ -508,14 +516,14 @@ namespace micro_os_plus
           // somewhere, so prepare a fake thread context.
           // Don't worry for being on the stack, this is used
           // only once and can be overridden later.
-          micro_os_plus_thread_t fake_thread;
-          memset (&fake_thread, 0, sizeof (micro_os_plus_thread_t));
+          micro_os_plus_thread_t thread_ghost;
+          memset (&thread_ghost, 0, sizeof (micro_os_plus_thread_t));
 
-          fake_thread.name = "fake_thread";
-          rtos::thread* pth = (rtos::thread*)&fake_thread;
+          thread_ghost.name = "ghost";
 
-          // Make the fake thread look like the current thread.
-          rtos::scheduler::current_thread_ = pth;
+          // Make the ghost thread look like the current thread.
+          rtos::scheduler::current_thread_
+              = reinterpret_cast<rtos::thread*> (&thread_ghost);
 
           // Trigger the PendSV; the exception will happen a bit later,
           // after re-enabling the interrupts.
@@ -596,8 +604,14 @@ namespace micro_os_plus
 #if defined(MICRO_OS_PLUS_TRACE_RTMICRO_OS_PLUS_THREAD_CONTEXT)
           trace::printf ("port::scheduler::%s()\n", __func__);
 #endif
+
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wold-style-cast"
+
           // Set PendSV to request a context switch.
           SCB->ICSR = SCB_ICSR_PENDSVSET_Msk;
+
+#pragma GCC diagnostic pop
 
           // The DSB/ISB are recommended by ARM after programming
           // the control registers.
@@ -832,6 +846,9 @@ namespace micro_os_plus
 
 #endif
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wold-style-cast"
+
           // Clear the PendSV bit. This is done automatically,
           // but it seems that in some extreme conditions with
           // late arrival/preemption, it might trigger a new
@@ -841,6 +858,8 @@ namespace micro_os_plus
           // but without it the semaphore stress test sometimes fails
           // on debug, so better safe than sorry.
           SCB->ICSR = SCB_ICSR_PENDSVCLR_Msk;
+
+#pragma GCC diagnostic pop
 
           rtos::thread* old_thread = rtos::scheduler::current_thread_;
 
