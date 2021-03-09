@@ -24,7 +24,9 @@ message(STATUS "Processing xPack ${PACKAGE_JSON_NAME}@${PACKAGE_JSON_VERSION}...
 # Local dependencies.
 
 include("${CMAKE_CURRENT_LIST_DIR}/../device/meta/config.cmake")
+if(MICRO_OS_PLUS_INCLUDE_RTOS)
 include("${CMAKE_CURRENT_LIST_DIR}/../rtos-port/meta/config.cmake")
+endif()
 
 # -----------------------------------------------------------------------------
 # The current folder.
