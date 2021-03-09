@@ -490,7 +490,7 @@ namespace micro_os_plus
           uint32_t* volatile vectors_addr = 0x00000000;
           __set_MSP (*vectors_addr);
 #else
-          __set_MSP (*((uint32_t*)0x00000000));
+          __set_MSP (*(static_cast<uint32_t*>(0x00000000)));
 #endif
 
 #else
