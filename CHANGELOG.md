@@ -8,7 +8,7 @@ and close existing issues and pull requests.
 
 ## 2021-03-09
 
-- v2.1.0
+- v3.0.0
 - separate rtos-port folder
 - fix/silence warnings
 
