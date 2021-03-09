@@ -35,10 +35,7 @@
 #include <stdint.h>
 
 // ----------------------------------------------------------------------------
-
-/*
- * Declarations of RISC-V functions to wrap architecture instructions.
- */
+// Declarations of RISC-V functions to wrap architecture instructions.
 
 #if defined(__cplusplus)
 extern "C"

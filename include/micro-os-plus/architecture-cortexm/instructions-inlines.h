@@ -33,10 +33,7 @@
 #include <stdint.h>
 
 // ----------------------------------------------------------------------------
-
-/*
- * Inline implementations for the Cortex-M architecture instructions.
- */
+// Inline implementations for the Cortex-M architecture instructions.
 
 #if defined(__cplusplus)
 extern "C"

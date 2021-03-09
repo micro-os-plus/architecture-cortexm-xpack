@@ -33,10 +33,7 @@
 #include <stdint.h>
 
 // ----------------------------------------------------------------------------
-
-/*
- * Inline implementations for the Cortex-M semihosting call.
- */
+// Inline implementations for the Cortex-M semihosting call.
 
 #if defined(__cplusplus)
 extern "C"
