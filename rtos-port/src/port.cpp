@@ -490,7 +490,10 @@ namespace micro_os_plus
           uint32_t* volatile vectors_addr = 0x00000000;
           __set_MSP (*vectors_addr);
 #else
-          __set_MSP (*(static_cast<uint32_t*>(0x00000000)));
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wzero-as-null-pointer-constant"
+          __set_MSP (*(static_cast<uint32_t*> (0x00000000)));
+#pragma GCC diagnostic pop
 #endif
 
 #else
