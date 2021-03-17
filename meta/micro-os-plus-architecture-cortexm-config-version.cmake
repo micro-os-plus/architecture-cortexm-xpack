@@ -9,8 +9,8 @@
 #
 # -----------------------------------------------------------------------------
 
-# https://cmake.org/cmake/help/v3.18/
-# https://cmake.org/cmake/help/v3.18/manual/cmake-packages.7.html#package-configuration-file
+# https://cmake.org/cmake/help/v3.19/
+# https://cmake.org/cmake/help/v3.19/manual/cmake-packages.7.html#package-configuration-file
 
 # message(STATUS "Including micro-os-plus-architecture-cortexm-config-version...")
 
