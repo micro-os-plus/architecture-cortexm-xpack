@@ -9,11 +9,18 @@
 #
 # -----------------------------------------------------------------------------
 
-if(micro-os-plus-architecture-cortexm-device-included)
+# Use targets as include markers (variables are not scope independent).
+if(TARGET micro-os-plus-architecture-cortexm-device-included)
   return()
+else()
+  add_custom_target(micro-os-plus-architecture-cortexm-device-included)
 endif()
 
 set(micro-os-plus-architecture-cortexm-device-included TRUE)
+
+if(NOT TARGET micro-os-plus-build-helper-included)
+  message(FATAL_ERROR "Include the mandatory build-helper (xpacks/micro-os-plus-build-helper/cmake/xpack-helper.cmake)")
+endif()
 
 message(STATUS "Processing xPack ${PACKAGE_JSON_NAME}@${PACKAGE_JSON_VERSION}...")
 
@@ -35,7 +42,7 @@ if(NOT TARGET micro-os-plus-architecture-cortexm-device-interface)
 
   # ---------------------------------------------------------------------------
   # Target settings.
-  
+
   xpack_glob_recurse_cxx(source_files "${xpack_current_folder}/src")
   xpack_display_relative_paths("${source_files}" "${xpack_current_folder}")
 
