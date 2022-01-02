@@ -35,7 +35,7 @@ In the `micro-os-plus/web-jekyll` GitHub repo:
 - select the `develop` branch
 - add a new file to `_posts/architecture-cortexm-xpack/releases`
 - name the file like `2020-12-19-architecture-cortexm-xpack-v1-1-0-released.md`
-- name the post like: **µOS++ architecture-cortexm-xpack v3.0.1 released**
+- name the post like: **µOS++ architecture-cortexm-xpack v3.0.2 released**
 - update the `date:` field with the current date
 - update the GitHub Actions URLs using the actual test pages
 
@@ -49,7 +49,7 @@ as:
 
 - select the `xpack-develop` branch
 - commit all changes
-- update `CHANGELOG.md`; commit with a message like _CHANGELOG: prepare v3.0.1_
+- update `CHANGELOG.md`; commit with a message like _CHANGELOG: prepare v3.0.2_
 - `npm pack` and check the content of the archive, which should list
   only the `package.json`, the `README.md`, `LICENSE` and `CHANGELOG.md`;
   possibly adjust `.npmignore`
@@ -94,7 +94,7 @@ When the package is considered stable:
 When the release is considered stable, promote it as `latest`:
 
 - `npm dist-tag ls @micro-os-plus/architecture-cortexm-xpack`
-- `npm dist-tag add @micro-os-plus/architecture-cortexm-xpack@3.0.1 latest`
+- `npm dist-tag add @micro-os-plus/architecture-cortexm-xpack@3.0.2 latest`
 - `npm dist-tag ls @@micro-os-plus/architecture-cortexm-xpack`
 
 ## Announce to the community
@@ -105,6 +105,6 @@ Post an announcement to the forum.
 
 - in a separate browser windows, open [TweetDeck](https://tweetdeck.twitter.com/)
 - using the `@micro_os_plus` account
-- paste the release name like **µOS++ architecture-cortexm-xpack v3.0.1 released**
+- paste the release name like **µOS++ architecture-cortexm-xpack v3.0.2 released**
 - paste the link to the Web page release
 - click the **Tweet** button
