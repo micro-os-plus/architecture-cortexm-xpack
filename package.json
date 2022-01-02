@@ -4,7 +4,11 @@
   "description": "A source xPack with the µOS++ Arm Cortex-M architecture port",
   "main": "",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "npm-install": "npm install",
+    "pack": "npm pack",
+    "version-patch": "npm version patch",
+    "version-minor": "npm version minor",
+    "git-log": "git log --pretty='%cd * %h %s' --date=short"
   },
   "repository": {
     "type": "git",
