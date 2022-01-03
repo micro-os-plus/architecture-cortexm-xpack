@@ -153,4 +153,6 @@ Release*/
 # Builds
 build/
 
+.vscode/c_cpp_properties.json
+
 # end
