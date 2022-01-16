@@ -16,8 +16,6 @@ else()
   add_custom_target(micro-os-plus-architecture-cortexm-device-included)
 endif()
 
-set(micro-os-plus-architecture-cortexm-device-included TRUE)
-
 if(NOT TARGET micro-os-plus-build-helper-included)
   message(FATAL_ERROR "Include the mandatory build-helper (xpacks/micro-os-plus-build-helper/cmake/xpack-helper.cmake)")
 endif()
