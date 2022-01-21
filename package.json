@@ -13,7 +13,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/micro-os-plus/architecture-cortexm-xpack.git/"
+    "url": "https://github.com/micro-os-plus/architecture-cortexm-xpack.git/"
   },
   "keywords": [
     "xpack",
