@@ -60,11 +60,8 @@ else()
   ## Main targets built by this project ##
   add_subdirectory("sources")
 
+  # Common definitions used in the device libraries.
   add_subdirectory("device-sources")
-
-  if(MICRO_OS_PLUS_INCLUDE_RTOS)
-    add_subdirectory("rtos-port-sources")
-  endif()
 
 endif()
 
