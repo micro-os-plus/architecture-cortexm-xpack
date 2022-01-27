@@ -57,7 +57,7 @@ if ("${CMAKE_CURRENT_LIST_DIR}" STREQUAL "${CMAKE_SOURCE_DIR}")
 
 else()
 
-  ## Main targets built by this project ##
+  # Main targets built by this project.
   add_subdirectory("sources")
 
   # Common definitions used in the device libraries.
