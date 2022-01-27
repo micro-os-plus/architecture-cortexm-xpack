@@ -9,7 +9,7 @@
 #
 # -----------------------------------------------------------------------------
 
-# https://cmake.org/cmake/help/v3.19/
+# https://cmake.org/cmake/help/v3.20/
 
 # PRIVATE: build definitions, used internally
 # INTERFACE: usage definitions, passed up to targets linking to it

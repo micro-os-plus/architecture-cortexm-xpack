@@ -9,9 +9,9 @@
 #
 # -----------------------------------------------------------------------------
 
-# https://cmake.org/cmake/help/v3.19/
-# https://cmake.org/cmake/help/v3.19/manual/cmake-packages.7.html#package-configuration-file
-cmake_minimum_required(VERSION 3.19)
+# https://cmake.org/cmake/help/v3.20/
+# https://cmake.org/cmake/help/v3.20/manual/cmake-packages.7.html#package-configuration-file
+cmake_minimum_required(VERSION 3.20)
 
 # Use targets as include markers (variables are not scope independent).
 if(TARGET micro-os-plus-architecture-cortexm-rtos-port-included)
