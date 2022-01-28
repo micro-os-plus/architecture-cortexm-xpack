@@ -15,9 +15,6 @@
 # The result several libraries that can be added to the linker with:
 #
 # `target_link_libraries(your-target PUBLIC micro-os-plus::architecture-cortexm)`
-#
-# To avoid poluting this file with test related details, there is a separate
-# CMake configuration in the `tests` folder.
 
 # -----------------------------------------------------------------------------
 ## Preamble ##
@@ -30,39 +27,99 @@ project(
   DESCRIPTION "µOS++ Arm Cortex-M architecture"
 )
 
-# Must be called from the project root folder.
-enable_testing()
+# PRIVATE: build definitions, used internally
+# INTERFACE: usage definitions, passed up to targets linking to it
+# PUBLIC: both
 
-# -----------------------------------------------------------------------------
-## Project wide setup ##
-
-enable_language(C)
-enable_language(CXX)
-enable_language(ASM)
-
-# Specify the C/C++ standards.
-set(CMAKE_C_STANDARD 11)
-set(CMAKE_C_STANDARD_REQUIRED ON)
-set(CMAKE_C_EXTENSIONS OFF)
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_EXTENSIONS OFF)
-
-# -----------------------------------------------------------------------------
-
-if ("${CMAKE_CURRENT_LIST_DIR}" STREQUAL "${CMAKE_SOURCE_DIR}")
-
-  # Tests, only when not part of a parent application
-  add_subdirectory("tests")
-
-else()
-
-  # Main targets built by this project.
-  add_subdirectory("sources")
-
-  # Common definitions used in the device libraries.
-  add_subdirectory("device-sources")
-
+if(COMMAND xpack_get_package_name_and_version)
+  xpack_get_package_name_and_version("${CMAKE_CURRENT_SOURCE_DIR}/package.json")
+  message(VERBOSE "Processing xPack ${PACKAGE_JSON_NAME}@${PACKAGE_JSON_VERSION}...")
 endif()
+
+# -----------------------------------------------------------------------------
+## The project library definitions ##
+
+add_library(micro-os-plus-architecture-cortexm-interface INTERFACE EXCLUDE_FROM_ALL)
+
+# -----------------------------------------------------------------------------
+# Target settings.
+
+target_sources(
+  micro-os-plus-architecture-cortexm-interface
+
+  PRIVATE
+    # None so far, all are device dependent.
+)
+
+target_include_directories(
+  micro-os-plus-architecture-cortexm-interface
+
+  INTERFACE
+    include
+)
+
+message(VERBOSE "+ include")
+
+# -----------------------------------------------------------------------------
+# Aliases.
+
+add_library(micro-os-plus::architecture-cortexm ALIAS micro-os-plus-architecture-cortexm-interface)
+message(VERBOSE "> micro-os-plus::architecture-cortexm -> micro-os-plus-architecture-cortexm-interface")
+add_library(micro-os-plus::architecture ALIAS micro-os-plus-architecture-cortexm-interface)
+message(VERBOSE "> micro-os-plus::architecture -> micro-os-plus-architecture-cortexm-interface")
+
+# =============================================================================
+
+add_library(micro-os-plus-architecture-cortexm-device-interface INTERFACE EXCLUDE_FROM_ALL)
+
+# -----------------------------------------------------------------------------
+# Target settings.
+
+target_sources(
+  micro-os-plus-architecture-cortexm-device-interface
+
+  INTERFACE
+    "sources-device/src/diag/trace-itm.cpp"
+    "sources-device/src/diag/trace-segger-rtt.cpp"
+
+    "sources-device/src/startup/initialize-hardware-early.c"
+    "sources-device/src/startup/initialize-hardware.c"
+    "sources-device/src/startup/initialize-interrupts-stack.cpp"
+    "sources-device/src/startup/terminate.cpp"
+
+    "sources-device/src/exception-handlers.cpp"
+  )
+
+message(VERBOSE "+ sources-device/src/diag/trace-itm.cpp")
+message(VERBOSE "+ sources-device/src/diag/trace-segger-rtt.cpp")
+
+message(VERBOSE "+ sources-device/src/startup/initialize-hardware-early.c")
+message(VERBOSE "+ sources-device/src/startup/initialize-hardware.c")
+message(VERBOSE "+ sources-device/src/startup/initialize-interrupts-stack.cpp")
+message(VERBOSE "+ sources-device/src/startup/terminate.cpp")
+
+message(VERBOSE "+ sources-device/src/exception-handlers.cpp")
+
+target_include_directories(
+  micro-os-plus-architecture-cortexm-device-interface
+
+  INTERFACE
+    "sources-device/include"
+)
+
+message(VERBOSE "+ sources-device/include")
+
+target_link_libraries(
+  micro-os-plus-architecture-cortexm-device-interface
+
+  INTERFACE
+    micro-os-plus::semihosting
+)
+
+# ---------------------------------------------------------------------------
+# Aliases.
+
+add_library(micro-os-plus::architecture-cortexm-device ALIAS micro-os-plus-architecture-cortexm-device-interface)
+message(VERBOSE "> micro-os-plus::architecture-cortexm-device -> micro-os-plus-architecture-cortexm-device-interface")
 
 # -----------------------------------------------------------------------------
