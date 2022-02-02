@@ -27,9 +27,9 @@ project(
   DESCRIPTION "µOS++ Arm Cortex-M architecture"
 )
 
-# PRIVATE: build definitions, used internally
-# INTERFACE: usage definitions, passed up to targets linking to it
-# PUBLIC: both
+if(TARGET micro-os-plus::architecture)
+  message(FATAL_ERROR "micro-os-plus::architecture already defined")
+endif()
 
 if(COMMAND xpack_get_package_name_and_version)
   xpack_get_package_name_and_version("${CMAKE_CURRENT_SOURCE_DIR}/package.json")
@@ -38,6 +38,11 @@ endif()
 
 # -----------------------------------------------------------------------------
 ## The project library definitions ##
+
+# https://cmake.org/cmake/help/v3.20/command/add_library.html?highlight=interface#normal-libraries
+# PRIVATE: build definitions, used internally
+# INTERFACE: usage definitions, passed up to targets linking to it
+# PUBLIC: both
 
 add_library(micro-os-plus-architecture-cortexm-interface INTERFACE EXCLUDE_FROM_ALL)
 
@@ -65,6 +70,7 @@ message(VERBOSE "+ include")
 
 add_library(micro-os-plus::architecture-cortexm ALIAS micro-os-plus-architecture-cortexm-interface)
 message(VERBOSE "> micro-os-plus::architecture-cortexm -> micro-os-plus-architecture-cortexm-interface")
+
 add_library(micro-os-plus::architecture ALIAS micro-os-plus-architecture-cortexm-interface)
 message(VERBOSE "> micro-os-plus::architecture -> micro-os-plus-architecture-cortexm-interface")
 
