@@ -6,13 +6,16 @@
 # Permission to use, copy, modify, and/or distribute this software
 # for any purpose is hereby granted, under the terms of the MIT license.
 #
+# If a copy of the license was not distributed with this file, it can
+# be obtained from https://opensource.org/licenses/MIT/.
+#
 # -----------------------------------------------------------------------------
 
 # This file is intended to be consumed by applications with:
 #
 # `add_subdirectory("xpacks/micro-os-plus-architecture-cortexm")`
 #
-# The result several libraries that can be added to the linker with:
+# The result is an interface library that can be added to the linker with:
 #
 # `target_link_libraries(your-target PUBLIC micro-os-plus::architecture-cortexm)`
 
@@ -26,10 +29,6 @@ project(
   micro-os-plus-architecture-cortexm
   DESCRIPTION "µOS++ Arm Cortex-M architecture"
 )
-
-if(TARGET micro-os-plus::architecture)
-  message(FATAL_ERROR "micro-os-plus::architecture already defined")
-endif()
 
 if(COMMAND xpack_get_package_name_and_version)
   xpack_get_package_name_and_version("${CMAKE_CURRENT_SOURCE_DIR}/package.json")
@@ -49,13 +48,6 @@ add_library(micro-os-plus-architecture-cortexm-interface INTERFACE EXCLUDE_FROM_
 # -----------------------------------------------------------------------------
 # Target settings.
 
-target_sources(
-  micro-os-plus-architecture-cortexm-interface
-
-  PRIVATE
-    # None so far, all are device dependent.
-)
-
 target_include_directories(
   micro-os-plus-architecture-cortexm-interface
 
@@ -63,11 +55,41 @@ target_include_directories(
     include
 )
 
-message(VERBOSE "+ include")
+message(VERBOSE "+ -I include")
+
+target_sources(
+  micro-os-plus-architecture-cortexm-interface
+
+  PRIVATE
+    # None so far, all are device dependent.
+)
+
+target_compile_definitions(
+  micro-os-plus-architecture-cortexm-interface
+
+  INTERFACE
+    # ... add preprocessor macro definitions.
+)
+
+target_compile_options(
+  micro-os-plus-architecture-cortexm-interface
+
+  INTERFACE
+    # ... perhaps ignore some warnings.
+)
+
+target_link_libraries(
+  micro-os-plus-architecture-cortexm-interface
+
+  INTERFACE
+    # Dependencies
+    # ... list all dependencies.
+)
 
 # -----------------------------------------------------------------------------
 # Aliases.
 
+# https://cmake.org/cmake/help/v3.20/command/add_library.html#alias-libraries
 add_library(micro-os-plus::architecture-cortexm ALIAS micro-os-plus-architecture-cortexm-interface)
 message(VERBOSE "> micro-os-plus::architecture-cortexm -> micro-os-plus-architecture-cortexm-interface")
 
