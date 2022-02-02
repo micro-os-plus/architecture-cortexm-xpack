@@ -1,7 +1,7 @@
 /*
  * This file is part of the µOS++ distribution.
  *   (https://github.com/micro-os-plus)
- * Copyright (c) 2017 Liviu Ionescu.
+ * Copyright (c) 2022 Liviu Ionescu.
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -43,46 +43,22 @@ extern "C"
 #endif // defined(__cplusplus)
 
   // --------------------------------------------------------------------------
-  // Architecture assembly instructions in C.
+  // Architecture registers getters and mutators in C.
 
   /**
-   * `nop` instruction.
+   * Main Stack Pointer getter.
    */
-  static void
-  cortexm_architecture_nop (void);
-
-  /**
-   * `bkpt` instruction.
-   */
-  static void
-  cortexm_architecture_bkpt (void);
-
-  /**
-   * `wfi` instruction.
-   */
-  static void
-  cortexm_architecture_wfi (void);
+  static cortexm_architecture_register_t
+  cortexm_architecture_get_msp (void);
 
   // --------------------------------------------------------------------------
   // Portable architecture assembly instructions in C.
 
   /**
-   * `nop` instruction.
+   * Stack Pointer getter.
    */
-  static void
-  micro_os_plus_architecture_nop (void);
-
-  /**
-   * `break` instruction.
-   */
-  static void
-  micro_os_plus_architecture_brk (void);
-
-  /**
-   * `wfi` instruction.
-   */
-  static void
-  micro_os_plus_architecture_wfi (void);
+  static micro_os_plus_architecture_register_t
+  micro_os_plus_architecture_get_sp (void);
 
   // --------------------------------------------------------------------------
 
@@ -98,28 +74,19 @@ namespace cortexm
 {
   namespace architecture
   {
-    // ------------------------------------------------------------------------
-    // Architecture assembly instructions in C++.
+    namespace registers
+    {
+      // ----------------------------------------------------------------------
+      // Architecture getters in C++.
 
-    /**
-     * The assembler `nop` instruction.
-     */
-    void
-    nop (void);
+      /**
+       * Main Stack Pointer getter.
+       */
+      register_t
+      msp (void);
 
-    /**
-     * The assembler `bkpt` instruction.
-     */
-    void
-    bkpt (void);
-
-    /**
-     * The assembler `wfi` instruction.
-     */
-    void
-    wfi (void);
-
-    // ------------------------------------------------------------------------
+      // ----------------------------------------------------------------------
+    } // namespace registers
   } // namespace architecture
 } // namespace cortexm
 
@@ -127,29 +94,21 @@ namespace micro_os_plus
 {
   namespace architecture
   {
-    // ------------------------------------------------------------------------
-    // Portable architecture assembly instructions in C++.
+    namespace registers
+    {
+      // ------------------------------------------------------------------------
+      // Portable architecture assembly instructions in C++.
 
-    /**
-     * The assembler `nop` instruction.
-     */
-    void
-    nop (void);
-
-    /**
-     * The assembler `bkpt` instruction.
-     */
-    void
-    brk (void);
-
-    /**
-     * The assembler `wfi` instruction.
-     */
-    void
-    wfi (void);
+      /**
+       * Main Stack Pointer getter.
+       */
+      register_t
+      sp (void);
+    }
 
     // ------------------------------------------------------------------------
-  } // namespace architecture
+  }
+} // namespace architecture
 } // namespace micro_os_plus
 
 #endif // defined(__cplusplus)

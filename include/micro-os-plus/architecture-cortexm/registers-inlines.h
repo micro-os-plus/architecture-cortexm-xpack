@@ -1,7 +1,7 @@
 /*
  * This file is part of the µOS++ distribution.
  *   (https://github.com/micro-os-plus)
- * Copyright (c) 2017 Liviu Ionescu.
+ * Copyright (c) 2022 Liviu Ionescu.
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -25,17 +25,15 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef MICRO_OS_PLUS_ARCHITECTURE_CORTEXM_INSTRUCTIONS_H_
-#define MICRO_OS_PLUS_ARCHITECTURE_CORTEXM_INSTRUCTIONS_H_
+#ifndef MICRO_OS_PLUS_ARCHITECTURE_CORTEXM_REGISTERS_INLINES_H_
+#define MICRO_OS_PLUS_ARCHITECTURE_CORTEXM_REGISTERS_INLINES_H_
 
 // ----------------------------------------------------------------------------
-
-#include <micro-os-plus/architecture-cortexm/defines.h>
 
 #include <stdint.h>
 
 // ----------------------------------------------------------------------------
-// Declarations of Cortex-M functions to wrap architecture instructions.
+// Inline implementations for the Cortex-M architecture instructions.
 
 #if defined(__cplusplus)
 extern "C"
@@ -43,46 +41,23 @@ extern "C"
 #endif // defined(__cplusplus)
 
   // --------------------------------------------------------------------------
-  // Architecture assembly instructions in C.
 
-  /**
-   * `nop` instruction.
-   */
-  static void
-  cortexm_architecture_nop (void);
+  static inline __attribute__ ((always_inline)) cortexm_architecture_register_t
+  cortexm_architecture_get_msp (void)
+  {
+    uint32_t result;
 
-  /**
-   * `bkpt` instruction.
-   */
-  static void
-  cortexm_architecture_bkpt (void);
+    __asm__ volatile(
 
-  /**
-   * `wfi` instruction.
-   */
-  static void
-  cortexm_architecture_wfi (void);
+        "msr %0, msp"
 
-  // --------------------------------------------------------------------------
-  // Portable architecture assembly instructions in C.
+        : "=r" (result) /* Outputs */
+        : /* Inputs */
+        : /* Clobbers */
+    );
 
-  /**
-   * `nop` instruction.
-   */
-  static void
-  micro_os_plus_architecture_nop (void);
-
-  /**
-   * `break` instruction.
-   */
-  static void
-  micro_os_plus_architecture_brk (void);
-
-  /**
-   * `wfi` instruction.
-   */
-  static void
-  micro_os_plus_architecture_wfi (void);
+    return result;
+  }
 
   // --------------------------------------------------------------------------
 
@@ -99,25 +74,12 @@ namespace cortexm
   namespace architecture
   {
     // ------------------------------------------------------------------------
-    // Architecture assembly instructions in C++.
 
-    /**
-     * The assembler `nop` instruction.
-     */
-    void
-    nop (void);
-
-    /**
-     * The assembler `bkpt` instruction.
-     */
-    void
-    bkpt (void);
-
-    /**
-     * The assembler `wfi` instruction.
-     */
-    void
-    wfi (void);
+    inline __attribute__ ((always_inline)) register_t
+    get_msp (void)
+    {
+      cortexm_architecture_get_msp ();
+    }
 
     // ------------------------------------------------------------------------
   } // namespace architecture
@@ -128,25 +90,12 @@ namespace micro_os_plus
   namespace architecture
   {
     // ------------------------------------------------------------------------
-    // Portable architecture assembly instructions in C++.
 
-    /**
-     * The assembler `nop` instruction.
-     */
-    void
-    nop (void);
-
-    /**
-     * The assembler `bkpt` instruction.
-     */
-    void
-    brk (void);
-
-    /**
-     * The assembler `wfi` instruction.
-     */
-    void
-    wfi (void);
+    inline __attribute__ ((always_inline)) register_t
+    get_sp (void)
+    {
+      micro_os_plus_architecture_get_sp ();
+    }
 
     // ------------------------------------------------------------------------
   } // namespace architecture
@@ -156,6 +105,6 @@ namespace micro_os_plus
 
 // ----------------------------------------------------------------------------
 
-#endif // MICRO_OS_PLUS_ARCHITECTURE_CORTEXM_INSTRUCTIONS_H_
+#endif // MICRO_OS_PLUS_ARCHITECTURE_CORTEXM_REGISTERS_INLINES_H_
 
 // ----------------------------------------------------------------------------

@@ -25,25 +25,61 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef MICRO_OS_PLUS_ARCHITECTURE_CORTEXM_ARCHITECTURE_H_
-#define MICRO_OS_PLUS_ARCHITECTURE_CORTEXM_ARCHITECTURE_H_
+#ifndef MICRO_OS_PLUS_ARCHITECTURE_CORTEXM_TYPES_H_
+#define MICRO_OS_PLUS_ARCHITECTURE_CORTEXM_TYPES_H_
 
 // ----------------------------------------------------------------------------
 
-#include <micro-os-plus/architecture-cortexm/defines.h>
+#include <stdint.h>
 
-#include <micro-os-plus/architecture-cortexm/types.h>
-// #include <micro-os-plus/architecture-cortexm/declarations.h>
+#if defined(__cplusplus)
+extern "C"
+{
+#endif // defined(__cplusplus)
 
-#include <micro-os-plus/architecture-cortexm/instructions.h>
-#include <micro-os-plus/architecture-cortexm/instructions-inlines.h>
+  typedef uint32_t cortexm_architecture_register_t;
+  typedef uint32_t micro_os_plus_architecture_register_t;
 
-#include <micro-os-plus/architecture-cortexm/registers.h>
+#if defined(__cplusplus)
+}
+#endif // defined(__cplusplus)
 
-#include <micro-os-plus/architecture-cortexm/semihosting-inlines.h>
+// ============================================================================
+
+#if defined(__cplusplus)
 
 // ----------------------------------------------------------------------------
 
-#endif // MICRO_OS_PLUS_ARCHITECTURE_CORTEXM_ARCHITECTURE_H_
+namespace cortexm
+{
+  namespace architecture
+  {
+    // ------------------------------------------------------------------------
+
+    using register_t = cortexm_architecture_register_t;
+
+    // ------------------------------------------------------------------------
+  } // namespace architecture
+} // namespace cortexm
+
+namespace micro_os_plus
+{
+  namespace architecture
+  {
+    // ------------------------------------------------------------------------
+
+    using register_t = cortexm_architecture_register_t;
+
+    // ------------------------------------------------------------------------
+  } // namespace architecture
+} // namespace micro_os_plus
+
+// ----------------------------------------------------------------------------
+
+#endif // defined(__cplusplus)
+
+// ----------------------------------------------------------------------------
+
+#endif // MICRO_OS_PLUS_ARCHITECTURE_CORTEXM_TYPES_H_
 
 // ----------------------------------------------------------------------------
