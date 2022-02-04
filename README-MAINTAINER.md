@@ -69,7 +69,8 @@ as:
 - update `CHANGELOG.md`
 - commit with a message like _prepare v4.0.0_
 - `npm pack` and check the content of the archive, which should list
-  only the `package.json`, the `README.md`, `LICENSE` and `CHANGELOG.md`;
+  only `package.json`, `README.md`, `LICENSE`, `CHANGELOG.md`,
+  the sources and CMake/meson files;
   possibly adjust `.npmignore`
 - `npm version patch`, `npm version minor`, `npm version major`
 - push the `xpack-develop` branch to GitHub
