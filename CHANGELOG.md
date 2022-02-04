@@ -6,6 +6,21 @@ Please check
 [GitHub](https://github.com/micro-os-plus/architecture-cortexm-xpack/issues/)
 and close existing issues and pull requests.
 
+## 2022-02-04
+
+- v4.0.0
+- cmake: add xpack_display_target_lists
+
+## 2022-02-02
+
+- add meson support
+- add registers-* files
+- mode files to device-cortexm package
+
+## 2022-01-27
+
+- move rtos-port-sources to separate package
+
 ## 2022-01-26
 
 - v3.1.0
