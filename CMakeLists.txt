@@ -55,12 +55,10 @@ target_include_directories(
     include
 )
 
-message(VERBOSE "+ -I include")
-
 target_sources(
   micro-os-plus-architecture-cortexm-interface
 
-  PRIVATE
+  INTERFACE
     # None so far, all are device dependent.
 )
 
@@ -85,6 +83,10 @@ target_link_libraries(
     # Dependencies
     # ... list all dependencies.
 )
+
+if (COMMAND xpack_display_target_lists)
+  xpack_display_target_lists(micro-os-plus-architecture-cortexm-interface)
+endif()
 
 # -----------------------------------------------------------------------------
 # Aliases.
