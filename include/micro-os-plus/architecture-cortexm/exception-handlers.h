@@ -68,7 +68,7 @@ extern "C"
 #endif
   } exception_stack_frame_s;
 
-#if defined(TRACE)
+#if defined(MICRO_OS_PLUS_TRACE)
 #if defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
   void
   dump_exception_stack (exception_stack_frame_s* frame, uint32_t cfsr,
@@ -78,7 +78,7 @@ extern "C"
   void
   dump_exception_stack (exception_stack_frame_s* frame, uint32_t lr);
 #endif // defined(__ARM_ARCH_6M__)
-#endif // defined(TRACE)
+#endif // defined(MICRO_OS_PLUS_TRACE)
 
   void
   hard_fault_handler_c (exception_stack_frame_s* frame, uint32_t lr);
