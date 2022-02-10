@@ -48,40 +48,25 @@ add_library(micro-os-plus-architecture-cortexm-interface INTERFACE EXCLUDE_FROM_
 # -----------------------------------------------------------------------------
 # Target settings.
 
-target_include_directories(
-  micro-os-plus-architecture-cortexm-interface
-
-  INTERFACE
-    include
+target_include_directories(micro-os-plus-architecture-cortexm-interface INTERFACE
+  "include"
 )
 
-target_sources(
-  micro-os-plus-architecture-cortexm-interface
-
-  INTERFACE
-    # None so far, all are device dependent.
+target_sources(micro-os-plus-architecture-cortexm-interface INTERFACE
+  # None so far, all are device dependent.
 )
 
-target_compile_definitions(
-  micro-os-plus-architecture-cortexm-interface
-
-  INTERFACE
-    # ... add preprocessor macro definitions.
+target_compile_definitions(micro-os-plus-architecture-cortexm-interface INTERFACE
+  # None.
 )
 
-target_compile_options(
-  micro-os-plus-architecture-cortexm-interface
-
-  INTERFACE
-    # ... perhaps ignore some warnings.
+target_compile_options(micro-os-plus-architecture-cortexm-interface INTERFACE
+  # None.
 )
 
-target_link_libraries(
-  micro-os-plus-architecture-cortexm-interface
-
-  INTERFACE
-    # Dependencies
-    # ... list all dependencies.
+target_link_libraries(micro-os-plus-architecture-cortexm-interface INTERFACE
+  # Dependencies
+  # None.
 )
 
 if (COMMAND xpack_display_target_lists)
