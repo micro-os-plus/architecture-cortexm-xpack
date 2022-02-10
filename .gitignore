@@ -155,4 +155,6 @@ build/
 
 .vscode/c_cpp_properties.json
 
+tests/top
+
 # end
