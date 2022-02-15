@@ -6,6 +6,11 @@ Please check
 [GitHub](https://github.com/micro-os-plus/architecture-cortexm-xpack/issues/)
 and close existing issues and pull requests.
 
+## 2022-02-08
+
+- v5.0.0
+- aeeef4a rename MICRO_OS_PLUS_TRACE
+
 ## 2022-02-05
 
 - v4.0.1
