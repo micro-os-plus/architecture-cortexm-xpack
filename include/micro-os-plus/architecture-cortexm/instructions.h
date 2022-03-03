@@ -1,6 +1,6 @@
 /*
  * This file is part of the µOS++ distribution.
- *   (https://github.com/micro-os-plus)
+ *   (https://github.com/micro-os-plus/)
  * Copyright (c) 2017 Liviu Ionescu.
  *
  * Permission to use, copy, modify, and/or distribute this software
