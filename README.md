@@ -11,7 +11,7 @@ The project is hosted on GitHub as
 This page is addressed to developers who plan to include this package
 into their own projects.
 
-For maintainer infos, please see the
+For maintainer info, please see the
 [README-MAINTAINER](README-MAINTAINER.md) file.
 
 ## Install
