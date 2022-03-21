@@ -49,6 +49,8 @@ cd my-project
 xpm init # Unless a package.json is already present
 
 xpm install @micro-os-plus/architecture-cortexm@latest
+
+ls -l xpacks/micro-os-plus-architecture-cortexm
 ```
 
 ### Git submodule
