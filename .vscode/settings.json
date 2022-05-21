@@ -1,0 +1,25 @@
+{
+  "editor.rulers": [
+    80
+  ],
+  "cSpell.ignoreWords": [
+    "POSIX",
+    "buildtype",
+    "cmake",
+    "cmsis",
+    "cortexm",
+    "ctest",
+    "eabi",
+    "minsize",
+    "mkdir",
+    "newlib",
+    "npmignore",
+    "npmjs",
+    "postversion",
+    "semihosting",
+    "subdir",
+    "xpack",
+    "xpacks"
+  ],
+  "cmake.configureOnOpen": false
+}
