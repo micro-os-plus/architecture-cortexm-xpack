@@ -319,6 +319,7 @@ SECTIONS
 
   /* _sbrk() expects at least word alignment. */
   . = ALIGN(8);
+  PROVIDE( __end__ = . ); /* Used by crt0.S */
   PROVIDE( __end = . );
   PROVIDE( _end = . );
   PROVIDE( end = . );
