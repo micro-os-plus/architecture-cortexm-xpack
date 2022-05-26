@@ -46,17 +46,26 @@ extern "C"
 
 #if defined(MICRO_OS_PLUS_DEBUG_SEMIHOSTING_FAULTS)
 // Testing the local semihosting handler cannot use another BKPT, since this
-// configuration cannot trigger HaedFault exceptions while the debugger is
+// configuration cannot trigger HardFault exceptions while the debugger is
 // connected, so we use an illegal op code, that will trigger an
 // UsageFault exception.
 #define AngelSWITestFault "setend be"
 #define AngelSWITestFaultOpCode (0xB658)
 #endif
 
-  static inline __attribute__ ((always_inline)) int
-  micro_os_plus_semihosting_call_host (int reason, void* arg)
+  // Type of each entry in a parameter block.
+  typedef micro_os_plus_architecture_register_t
+      micro_os_plus_semihosting_param_block_t;
+  // Type of result.
+  typedef micro_os_plus_architecture_register_t
+      micro_os_plus_semihosting_response_t;
+
+  static inline __attribute__ ((always_inline))
+  micro_os_plus_semihosting_response_t
+  micro_os_plus_semihosting_call_host (
+      int reason, micro_os_plus_semihosting_param_block_t* arg)
   {
-    int value;
+    micro_os_plus_semihosting_response_t value;
     __asm__ volatile(
 
         " mov r0, %[rsn]  \n"
