@@ -1,5 +1,5 @@
 /*
- * Default linker script.
+ * Linker script for FLASH and RAM configurations.
  *
  * Static constructors/destructors use the new .init_array/.fini_array
  * definitions; the old .init/.fini are no longer used.
