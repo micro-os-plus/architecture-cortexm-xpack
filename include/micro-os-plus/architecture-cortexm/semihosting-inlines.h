@@ -25,23 +25,21 @@ extern "C"
 {
 #endif // defined(__cplusplus)
 
-// ----------------------------------------------------------------------------
+  // --------------------------------------------------------------------------
 
-// SWI numbers and reason codes for RDI (Angel) monitors.
-#define AngelSWI_ARM 0x123456
+  // Type of each entry in a parameter block.
+  typedef micro_os_plus_architecture_register_t
+      micro_os_plus_semihosting_param_block_t;
+  // Type of result.
+  typedef micro_os_plus_architecture_register_t
+      micro_os_plus_semihosting_response_t;
+
 #ifdef __thumb__
 #define AngelSWI 0xAB
-#else
-#define AngelSWI AngelSWI_ARM
-#endif
-// For thumb only architectures use the BKPT instruction instead of SWI.
-#if defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__) \
-    || defined(__ARM_ARCH_6M__)
 #define AngelSWIInsn "bkpt"
 #define AngelSWIAsm bkpt
 #else
-#define AngelSWIInsn "swi"
-#define AngelSWIAsm swi
+#error "Unsupported architecture."
 #endif
 
 #if defined(MICRO_OS_PLUS_DEBUG_SEMIHOSTING_FAULTS)
@@ -52,13 +50,6 @@ extern "C"
 #define AngelSWITestFault "setend be"
 #define AngelSWITestFaultOpCode (0xB658)
 #endif
-
-  // Type of each entry in a parameter block.
-  typedef micro_os_plus_architecture_register_t
-      micro_os_plus_semihosting_param_block_t;
-  // Type of result.
-  typedef micro_os_plus_architecture_register_t
-      micro_os_plus_semihosting_response_t;
 
   static inline __attribute__ ((always_inline))
   micro_os_plus_semihosting_response_t
