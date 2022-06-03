@@ -3,6 +3,8 @@
     80
   ],
   "cSpell.ignoreWords": [
+    "Ionescu",
+    "Liviu",
     "POSIX",
     "buildtype",
     "cmake",
@@ -10,9 +12,11 @@
     "cortexm",
     "ctest",
     "eabi",
+    "fini",
     "minsize",
     "mkdir",
     "newlib",
+    "noinit",
     "npmignore",
     "npmjs",
     "postversion",
