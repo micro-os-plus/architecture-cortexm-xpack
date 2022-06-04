@@ -6,59 +6,74 @@ Please check
 [GitHub](https://github.com/micro-os-plus/architecture-cortexm-xpack/issues/)
 and close existing issues and pull requests.
 
+## 2022-06-04
+
+* v6.0.0
+
+## 2022-06-03
+
+* bcd8e9a semihosting-inlines.h simplify for thumb only
+* a7c98c8 rename sections-flash.ld
+
+## 2022-05-26
+
+* 6fbb090 semihosting-inlines: add param_block_t and response_t
+* 3e38bfc sections.ld: add __end__
+* 64824ee -std=c++20
+
 ## 2022-02-08
 
-- v5.0.0
-- aeeef4a rename MICRO_OS_PLUS_TRACE
+* v5.0.0
+* aeeef4a rename MICRO_OS_PLUS_TRACE
 
 ## 2022-02-05
 
-- v4.0.1
+* v4.0.1
 
 ## 2022-02-04
 
-- v4.0.0
-- cmake: add xpack_display_target_lists
+* v4.0.0
+* cmake: add xpack_display_target_lists
 
 ## 2022-02-02
 
-- add meson support
-- add registers-* files
-- mode files to device-cortexm package
+* add meson support
+* add registers-* files
+* mode files to device-cortexm package
 
 ## 2022-01-27
 
-- move rtos-port-sources to separate package
+* move rtos-port-sources to separate package
 
 ## 2022-01-26
 
-- v3.1.0
-- rework CMake
+* v3.1.0
+* rework CMake
 
 ## 2022-01-02
 
-- v3.0.2
+* v3.0.2
 
 ## 2021-03-10
 
-- v3.0.1
-- fix/silence warnings
+* v3.0.1
+* fix/silence warnings
 
 ## 2021-03-09
 
-- v3.0.0
-- separate rtos-port folder
-- fix/silence warnings
+* v3.0.0
+* separate rtos-port folder
+* fix/silence warnings
 
 ## 2021-03-01
 
-- v2.0.0
+* v2.0.0
 
 ## 2021-02-28
 
-- rename namespaces, prefixes, etc to micro_os_plus
+* rename namespaces, prefixes, etc to micro_os_plus
 
 ## 2021-02-04
 
-- v1.1.0
-- content moved here form single repo
+* v1.1.0
+* content moved here form single repo

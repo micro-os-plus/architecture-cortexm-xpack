@@ -82,31 +82,34 @@ into `xpack`.
 
 ## User info
 
-This source xPack provides general Cortex-M definitions and
-the implementation for the µOS++ scheduler,
-running on **Arm Cortex-M** devices.
+This source xPack provides general Cortex-M definitions in addition to the
+CMSIS Core.
 
 ### Status
 
-The µOS++ Cortex-M scheduler port is fully functional.
+The µOS++ Cortex-M definitions are functional.
 
 ### Build & integration info
 
 To include this package in a project, consider the following details.
 
-#### Source folders
-
-- `src`
-
 #### Include folders
 
 - `include`
 
-TODO: list the available headeres
+The header file to be included is:
+
+```c++
+#include <micro-os-plus/architecture.h>
+```
+
+#### Source folders
+
+- none
 
 #### Preprocessor definitions
 
-TBD
+- none
 
 #### Compiler options
 
@@ -115,11 +118,11 @@ TBD
 
 #### C++ Namespaces
 
-TBD
+- `micro_os_plus::architecture`
 
 #### C++ Classes
 
-TBD
+- none
 
 ### Examples
 
@@ -131,7 +134,19 @@ TBD
 
 ### Tests
 
-TBD
+## Change log - incompatible changes
+
+According to [semver](https://semver.org) rules:
+
+> Major version X (X.y.z | X > 0) MUST be incremented if any
+backwards incompatible changes are introduced to the public API.
+
+The incompatible changes, in reverse chronological order,
+are:
+
+- v6.x: the linker script was renamed `sections-flash.ld`
+- v5.x: the TRACE macro was renamed MICRO_OS_PLUS_TRACE
+- v4.x: move RTOS port sources to separate package
 
 ## License
 
