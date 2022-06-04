@@ -95,15 +95,19 @@ To include this package in a project, consider the following details.
 
 #### Include folders
 
+The following folders should be passed to the compiler during the build:
+
 - `include`
 
-The header file to be included is:
+The header files to be included in user projects are:
 
 ```c++
 #include <micro-os-plus/architecture.h>
 ```
 
-#### Source folders
+#### Source files
+
+The source files to be added to user projects are:
 
 - none
 
