@@ -115,9 +115,9 @@ When the package is considered stable:
 
 When the release is considered stable, promote it as `latest`:
 
-- `npm dist-tag ls @micro-os-plus/architecture-cortexm-xpack`
-- `npm dist-tag add @micro-os-plus/architecture-cortexm-xpack@6.0.0 latest`
-- `npm dist-tag ls @micro-os-plus/architecture-cortexm-xpack`
+- `npm dist-tag ls @micro-os-plus/architecture-cortexm`
+- `npm dist-tag add @micro-os-plus/architecture-cortexm@6.0.0 latest`
+- `npm dist-tag ls @micro-os-plus/architecture-cortexm`
 
 ## Share on Twitter
 
