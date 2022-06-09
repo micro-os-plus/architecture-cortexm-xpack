@@ -6,6 +6,13 @@ Please check
 [GitHub](https://github.com/micro-os-plus/architecture-cortexm-xpack/issues/)
 and close existing issues and pull requests.
 
+## 2022-06-09
+
+* v6.1.0 prepared
+* a5fd72a sections-flash.ld update stack & heap; cleanups
+* bc55a40 include: add setter & shorten namespaces
+* b542bc6 exception-handlers.h: add handler_ptr_t
+
 ## 2022-06-04
 
 * v6.0.0
@@ -18,7 +25,7 @@ and close existing issues and pull requests.
 ## 2022-05-26
 
 * 6fbb090 semihosting-inlines: add param_block_t and response_t
-* 3e38bfc sections.ld: add __end__
+* 3e38bfc sections.ld: add `__end__`
 * 64824ee -std=c++20
 
 ## 2022-02-08
