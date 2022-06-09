@@ -36,12 +36,38 @@ extern "C"
 
         "msr %0, msp"
 
-        : "=r" (result) /* Outputs */
+        : "=r"(result) /* Outputs */
         : /* Inputs */
         : /* Clobbers */
     );
 
     return result;
+  }
+
+  static inline __attribute__ ((always_inline)) void
+  cortexm_architecture_set_msp (
+      cortexm_architecture_register_t top_of_main_stack)
+  {
+    __asm__ volatile("msr msp, %0"
+
+                     : /* Outputs */
+                     : "r"(top_of_main_stack) /* Inputs */
+                     : /* Clobbers */
+    );
+  }
+
+  static inline __attribute__ ((always_inline))
+  micro_os_plus_architecture_register_t
+  micro_os_plus_architecture_get_sp (void)
+  {
+    return cortexm_architecture_get_msp ();
+  }
+
+  static inline __attribute__ ((always_inline)) void
+  micro_os_plus_architecture_set_sp (
+      micro_os_plus_architecture_register_t top_of_stack)
+  {
+    cortexm_architecture_set_msp (top_of_stack);
   }
 
   // --------------------------------------------------------------------------
@@ -54,37 +80,43 @@ extern "C"
 
 #if defined(__cplusplus)
 
-namespace cortexm
+namespace cortexm::architecture::registers
 {
-  namespace architecture
+  // --------------------------------------------------------------------------
+
+  inline __attribute__ ((always_inline)) register_t
+  msp (void)
   {
-    // ------------------------------------------------------------------------
+    return cortexm_architecture_get_msp ();
+  }
 
-    inline __attribute__ ((always_inline)) register_t
-    get_msp (void)
-    {
-      cortexm_architecture_get_msp ();
-    }
+  inline __attribute__ ((always_inline)) void
+  msp (register_t top_of_main_stack)
+  {
+    cortexm_architecture_set_msp (top_of_main_stack);
+  }
 
-    // ------------------------------------------------------------------------
-  } // namespace architecture
-} // namespace cortexm
+  // --------------------------------------------------------------------------
+} // namespace cortexm::architecture::registers
 
-namespace micro_os_plus
+namespace micro_os_plus::architecture::registers
 {
-  namespace architecture
+  // --------------------------------------------------------------------------
+
+  inline __attribute__ ((always_inline)) register_t
+  sp (void)
   {
-    // ------------------------------------------------------------------------
+    return cortexm::architecture::registers::msp ();
+  }
 
-    inline __attribute__ ((always_inline)) register_t
-    get_sp (void)
-    {
-      micro_os_plus_architecture_get_sp ();
-    }
+  inline __attribute__ ((always_inline)) void
+  msp (register_t top_of_main_stack)
+  {
+    cortexm::architecture::registers::msp (top_of_main_stack);
+  }
 
-    // ------------------------------------------------------------------------
-  } // namespace architecture
-} // namespace micro_os_plus
+  // --------------------------------------------------------------------------
+} // namespace micro_os_plus::architecture::registers
 
 #endif // defined(__cplusplus)
 

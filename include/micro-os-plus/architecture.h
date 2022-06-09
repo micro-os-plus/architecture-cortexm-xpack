@@ -24,6 +24,7 @@
 #include <micro-os-plus/architecture-cortexm/instructions-inlines.h>
 
 #include <micro-os-plus/architecture-cortexm/registers.h>
+#include <micro-os-plus/architecture-cortexm/registers-inlines.h>
 
 #include <micro-os-plus/architecture-cortexm/semihosting-inlines.h>
 

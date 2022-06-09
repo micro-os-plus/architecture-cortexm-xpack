@@ -79,63 +79,57 @@ extern "C"
 
 #if defined(__cplusplus)
 
-namespace cortexm
+namespace cortexm::architecture
 {
-  namespace architecture
-  {
-    // ------------------------------------------------------------------------
-    // Architecture assembly instructions in C++.
+  // --------------------------------------------------------------------------
+  // Architecture assembly instructions in C++.
 
-    /**
-     * The assembler `nop` instruction.
-     */
-    void
-    nop (void);
+  /**
+   * The assembler `nop` instruction.
+   */
+  void
+  nop (void);
 
-    /**
-     * The assembler `bkpt` instruction.
-     */
-    void
-    bkpt (void);
+  /**
+   * The assembler `bkpt` instruction.
+   */
+  void
+  bkpt (void);
 
-    /**
-     * The assembler `wfi` instruction.
-     */
-    void
-    wfi (void);
+  /**
+   * The assembler `wfi` instruction.
+   */
+  void
+  wfi (void);
 
-    // ------------------------------------------------------------------------
-  } // namespace architecture
-} // namespace cortexm
+  // --------------------------------------------------------------------------
+} // namespace cortexm::architecture
 
-namespace micro_os_plus
+namespace micro_os_plus::architecture
 {
-  namespace architecture
-  {
-    // ------------------------------------------------------------------------
-    // Portable architecture assembly instructions in C++.
+  // --------------------------------------------------------------------------
+  // Portable architecture assembly instructions in C++.
 
-    /**
-     * The assembler `nop` instruction.
-     */
-    void
-    nop (void);
+  /**
+   * The assembler `nop` instruction.
+   */
+  void
+  nop (void);
 
-    /**
-     * The assembler `bkpt` instruction.
-     */
-    void
-    brk (void);
+  /**
+   * The assembler `bkpt` instruction.
+   */
+  void
+  brk (void);
 
-    /**
-     * The assembler `wfi` instruction.
-     */
-    void
-    wfi (void);
+  /**
+   * The assembler `wfi` instruction.
+   */
+  void
+  wfi (void);
 
-    // ------------------------------------------------------------------------
-  } // namespace architecture
-} // namespace micro_os_plus
+  // ------------------------------------------------------------------------
+} // namespace micro_os_plus::architecture
 
 #endif // defined(__cplusplus)
 

@@ -36,6 +36,13 @@ extern "C"
   static cortexm_architecture_register_t
   cortexm_architecture_get_msp (void);
 
+  /**
+   * Main Stack Pointer setter.
+   */
+  static void
+  cortexm_architecture_set_msp (
+      cortexm_architecture_register_t top_of_main_stack);
+
   // --------------------------------------------------------------------------
   // Portable architecture assembly instructions in C.
 
@@ -44,6 +51,10 @@ extern "C"
    */
   static micro_os_plus_architecture_register_t
   micro_os_plus_architecture_get_sp (void);
+
+  static void
+  micro_os_plus_architecture_set_sp (
+      micro_os_plus_architecture_register_t top_of_stack);
 
   // --------------------------------------------------------------------------
 
@@ -55,46 +66,44 @@ extern "C"
 
 #if defined(__cplusplus)
 
-namespace cortexm
+namespace cortexm::architecture::registers
 {
-  namespace architecture
-  {
-    namespace registers
-    {
-      // ----------------------------------------------------------------------
-      // Architecture getters in C++.
+  // --------------------------------------------------------------------------
+  // Architecture getters in C++.
 
-      /**
-       * Main Stack Pointer getter.
-       */
-      register_t
-      msp (void);
+  /**
+   * Main Stack Pointer getter.
+   */
+  register_t
+  msp (void);
 
-      // ----------------------------------------------------------------------
-    } // namespace registers
-  } // namespace architecture
-} // namespace cortexm
+  /**
+   * Main Stack Pointer setter.
+   */
+  void
+  msp (register_t top_of_main_stack);
 
-namespace micro_os_plus
+  // --------------------------------------------------------------------------
+} // namespace cortexm::architecture::registers
+
+namespace micro_os_plus::architecture::registers
 {
-  namespace architecture
-  {
-    namespace registers
-    {
-      // ------------------------------------------------------------------------
-      // Portable architecture assembly instructions in C++.
+  // --------------------------------------------------------------------------
+  // Portable architecture assembly instructions in C++.
 
-      /**
-       * Main Stack Pointer getter.
-       */
-      register_t
-      sp (void);
-    }
+  /**
+   * Stack Pointer getter.
+   */
+  register_t
+  sp (void);
 
-    // ------------------------------------------------------------------------
-  }
-} // namespace architecture
-} // namespace micro_os_plus
+  /**
+   * Stack Pointer setter.
+   */
+  void sp (register_t);
+
+  // --------------------------------------------------------------------------
+} // namespace micro_os_plus::architecture::registers
 
 #endif // defined(__cplusplus)
 

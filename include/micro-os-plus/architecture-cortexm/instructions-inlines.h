@@ -100,61 +100,55 @@ extern "C"
 
 #if defined(__cplusplus)
 
-namespace cortexm
+namespace cortexm::architecture
 {
-  namespace architecture
+  // --------------------------------------------------------------------------
+
+  inline __attribute__ ((always_inline)) void
+  nop (void)
   {
-    // ------------------------------------------------------------------------
+    cortexm_architecture_nop ();
+  }
 
-    inline __attribute__ ((always_inline)) void
-    nop (void)
-    {
-      cortexm_architecture_nop ();
-    }
+  inline __attribute__ ((always_inline)) void
+  bkpt (void)
+  {
+    cortexm_architecture_bkpt ();
+  }
 
-    inline __attribute__ ((always_inline)) void
-    bkpt (void)
-    {
-      cortexm_architecture_bkpt ();
-    }
+  inline __attribute__ ((always_inline)) void
+  wfi (void)
+  {
+    cortexm_architecture_wfi ();
+  }
 
-    inline __attribute__ ((always_inline)) void
-    wfi (void)
-    {
-      cortexm_architecture_wfi ();
-    }
+  // --------------------------------------------------------------------------
+} // namespace cortexm::architecture
 
-    // ------------------------------------------------------------------------
-  } // namespace architecture
-} // namespace cortexm
-
-namespace micro_os_plus
+namespace micro_os_plus::architecture
 {
-  namespace architecture
+  // --------------------------------------------------------------------------
+
+  inline __attribute__ ((always_inline)) void
+  nop (void)
   {
-    // ------------------------------------------------------------------------
+    cortexm::architecture::nop ();
+  }
 
-    inline __attribute__ ((always_inline)) void
-    nop (void)
-    {
-      cortexm::architecture::nop ();
-    }
+  inline __attribute__ ((always_inline)) void
+  brk (void)
+  {
+    cortexm::architecture::bkpt ();
+  }
 
-    inline __attribute__ ((always_inline)) void
-    brk (void)
-    {
-      cortexm::architecture::bkpt ();
-    }
+  inline __attribute__ ((always_inline)) void
+  wfi (void)
+  {
+    cortexm::architecture::wfi ();
+  }
 
-    inline __attribute__ ((always_inline)) void
-    wfi (void)
-    {
-      cortexm::architecture::wfi ();
-    }
-
-    // ------------------------------------------------------------------------
-  } // namespace architecture
-} // namespace micro_os_plus
+  // --------------------------------------------------------------------------
+} // namespace micro_os_plus::architecture
 
 #endif // defined(__cplusplus)
 
