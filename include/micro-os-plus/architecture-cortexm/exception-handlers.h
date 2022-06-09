@@ -68,6 +68,8 @@ extern "C"
 #endif
   } exception_stack_frame_s;
 
+  typedef void (*handler_ptr_t) (void);
+
 #if defined(MICRO_OS_PLUS_TRACE)
 #if defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
   void
