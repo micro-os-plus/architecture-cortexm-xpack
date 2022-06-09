@@ -1,32 +1,52 @@
 /*
- * Linker script for FLASH and RAM configurations.
+ * This file is part of the µOS++ distribution.
+ *   (https://github.com/micro-os-plus/)
+ * Copyright (c) 2022 Liviu Ionescu.
+ *
+ * Permission to use, copy, modify, and/or distribute this software
+ * for any purpose is hereby granted, under the terms of the MIT license.
+ *
+ * If a copy of the license was not distributed with this file, it can
+ * be obtained from https://opensource.org/licenses/MIT/.
+ */
+
+/*
+ * Linker script for RAM only configurations.
  *
  * Static constructors/destructors use the new .init_array/.fini_array
- * definitions; the old .init/.fini are no longer used.
+ * definitions; the old .init/.fini are no longer used, but the sections
+ * must still be present when using librdimon.
+ *
+ * TODO: check elf-redboot.ld
  *
  * The heap starts immediately after the last statically allocated
  * .bss/.noinit section (the _end symbol), and extends up to the stack.
  *
  * To make use of the multi-region initialisations, define
- * MICRO_OS_PLUS_INCLUDE_STARTUP_INIT_MULTIPLE_RAM_SECTIONS for the _startup.cpp file.
+ * MICRO_OS_PLUS_INCLUDE_STARTUP_INIT_MULTIPLE_RAM_SECTIONS
+ * for the startup.cpp file.
  */
 
- /*
- * The '__stack' definition is required by newlib crt0; do not remove it.
- * The stack is located at the very end of the RAM region.
- */
-__stack = DEFINED(__stack) ? __stack : ORIGIN(RAM) + LENGTH(RAM);
-__stack_size = DEFINED(__stack_size) ? __stack_size : 2K;
-
-_initial_main_stack_pointer = __stack; /* µOS++ specific. */
-
-_estack = __stack; 	/* STM specific definition */
+OUTPUT_FORMAT("elf32-littlearm", "elf32-bigarm", "elf32-littlearm")
+OUTPUT_ARCH(arm)
 
 /*
  * The entry point is important for debuggers and simulators, the
  * hardware has its own notion of the startup address.
  */
 ENTRY(Reset_Handler)
+
+/*
+ * The '__stack' definition is required by newlib crt0; do not remove it.
+ * The stack is located at the very end of the RAM region.
+ * With librdimon, crt0.S gets the heap and the stack from the debugger.
+ */
+__stack = DEFINED(__stack) ? __stack : ORIGIN(RAM) + LENGTH(RAM);
+__stack_size = DEFINED(__stack_size) ? __stack_size : 2K;
+
+/* TODO: check if still used by CubeMX */
+_estack = __stack; 	/* STM specific definition */
+
 
 SECTIONS
 {
@@ -118,7 +138,7 @@ SECTIONS
      * PROVIDE not used intentionally,
      * this symbol must not be used for other purposes.
      */
-    __preinit_array_begin__ = .;   /* µOS++ specific. */
+    __preinit_array_start = .;   /* Used by crt0.S */
 
     /*
      * Used to run the system inits before anything else.
@@ -136,7 +156,7 @@ SECTIONS
      */
     KEEP(*(.preinit_array .preinit_array.*))
 
-    __preinit_array_end__ = .;     /* µOS++ specific. */
+    __preinit_array_end = .;     /* Used by crt0.S */
   } >FLASH
 
   /*
@@ -144,13 +164,13 @@ SECTIONS
    */
   .init_array : ALIGN(4)
   {
-    /* PROVIDE not used intentionally, this symbol must not be used. */
-    __init_array_start = .;        /* Standard newlib definition. */
-    __init_array_begin__ = .;      /* µOS++ specific. */
+    /* PROVIDE not used intentionally, this symbol must not be used */
+    __init_array_start = .;        /* Used by crt0.S */
+
     KEEP(*(SORT_BY_INIT_PRIORITY(.init_array.*) SORT_BY_INIT_PRIORITY(.ctors.*)))
     KEEP(*(.init_array EXCLUDE_FILE(*crtbegin.o *crtbegin?.o *crtend.o *crtend?.o ) .ctors))
-    __init_array_end = .;          /* Standard newlib definition. */
-    __init_array_end__ = .;        /* µOS++ specific. */
+
+    __init_array_end = .;          /* Used by crt0.S */
   } >FLASH
 
   /*
@@ -160,11 +180,11 @@ SECTIONS
   {
     /* PROVIDE not used intentionally, this symbol must not be used. */
     __fini_array_start = .;        /* Standard newlib definition. */
-    __fini_array_begin__ = .;      /* µOS++ specific. */
+
     KEEP(*(SORT_BY_INIT_PRIORITY(.fini_array.*) SORT_BY_INIT_PRIORITY(.dtors.*)))
     KEEP(*(.fini_array EXCLUDE_FILE(*crtbegin.o *crtbegin?.o *crtend.o *crtend?.o ) .dtors))
+
     __fini_array_end = .;          /* Standard newlib definition. */
-    __fini_array_end__ = .;        /* µOS++ specific. */
   } >FLASH
 
   /*
@@ -176,6 +196,24 @@ SECTIONS
     *(.text.startup .text.startup.*)
     *(.text .text.*)
     *(.gnu.linkonce.t.*)
+  } >FLASH
+
+  /*
+   * Mandatory for _init() to work, with crt0.
+   * Called in __libc_fini_array().
+   */
+  .init : ALIGN(4)
+  {
+    KEEP (*(.init))
+  } >FLASH
+
+  /*
+   * Mandatory for _fini() to work, with crt0.
+   * Called in __libc_fini_array().
+   */
+  .fini : ALIGN(4)
+  {
+    KEEP (*(.fini))
   } >FLASH
 
   . = ALIGN(4);
@@ -319,20 +357,28 @@ SECTIONS
 
   /* _sbrk() expects at least word alignment. */
   . = ALIGN(8);
-  PROVIDE( __end__ = . ); /* Used by crt0.S */
-  PROVIDE( __end = . );
-  PROVIDE( _end = . );
-  PROVIDE( end = . );
+  PROVIDE( __end__ = . ); /* Used by crt0.S arm & aarch64 */
+  PROVIDE( __end = . ); /* Used by crt0.S sparc, m68k */
+  PROVIDE( _end = . ); /* Used by libgloss sbrk() */
+  PROVIDE( end = . ); /* Used by newlib _sbrk() arm & aarch64 */
 
   PROVIDE( __heap_begin__ = . );     /* µOS++ extension. */
 
   /*
-   * It should generate an error if the heap overides the stack.
+   * It should generate an error if the heap overrides the stack.
    */
   .stack __stack - __stack_size :
   {
-    PROVIDE( _heap_end = . );      /* Standard newlib definition. */
+    PROVIDE( _heap_end = . );      /* Used by sbrk in some architectures */
+    PROVIDE( _heap_end_ = . );     /* Used by sbrk in some architectures */
+    PROVIDE( __heap_end = . );     /* Used by sbrk in some architectures */
+
     PROVIDE( __heap_end__ = . );   /* µOS++ extension. */
+
+    /*
+     * libgloss also uses `__heap_limit` in _sbrk(), initially set to
+     * 0xcafedead and later updated to the value returned by SYS_HEAPINFO.
+     */
     . += __stack_size;
   } >RAM
 
