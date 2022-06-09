@@ -8,7 +8,7 @@ and close existing issues and pull requests.
 
 ## 2022-06-09
 
-* v6.1.0 prepared
+* v6.1.0 released
 * a5fd72a sections-flash.ld update stack & heap; cleanups
 * bc55a40 include: add setter & shorten namespaces
 * b542bc6 exception-handlers.h: add handler_ptr_t
