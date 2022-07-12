@@ -1,7 +1,7 @@
-[![license](https://img.shields.io/github/license/micro-os-plus/architecture-cortexm-xpack-xpack)](https://github.com/micro-os-plus/architecture-cortexm-xpack-xpack/blob/xpack/LICENSE)
-[![CI on Push](https://github.com/micro-os-plus/architecture-cortexm-xpack-xpack/workflows/CI%20on%20Push/badge.svg)](https://github.com/micro-os-plus/architecture-cortexm-xpack-xpack/actions?query=workflow%3A%22CI+on+Push%22)
-[![GitHub issues](https://img.shields.io/github/issues/micro-os-plus/architecture-cortexm-xpack-xpack.svg)](https://github.com/micro-os-plus/architecture-cortexm-xpack/issues/)
-[![GitHub pulls](https://img.shields.io/github/issues-pr/micro-os-plus/architecture-cortexm-xpack-xpack.svg)](https://github.com/micro-os-plus/architecture-cortexm-xpack-xpack/pulls/)
+[![license](https://img.shields.io/github/license/micro-os-plus/architecture-cortexm-xpack)](https://github.com/micro-os-plus/architecture-cortexm-xpack/blob/xpack/LICENSE)
+[![CI on Push](https://github.com/micro-os-plus/architecture-cortexm-xpack/workflows/CI%20on%20Push/badge.svg)](https://github.com/micro-os-plus/architecture-cortexm-xpack/actions?query=workflow%3A%22CI+on+Push%22)
+[![GitHub issues](https://img.shields.io/github/issues/micro-os-plus/architecture-cortexm-xpack.svg)](https://github.com/micro-os-plus/architecture-cortexm-xpack/issues/)
+[![GitHub pulls](https://img.shields.io/github/issues-pr/micro-os-plus/architecture-cortexm-xpack.svg)](https://github.com/micro-os-plus/architecture-cortexm-xpack/pulls/)
 
 # Maintainer info
 
@@ -9,28 +9,28 @@
 
 The project is hosted on GitHub:
 
-- <https://github.com/micro-os-plus/architecture-cortexm-xpack-xpack.git>
+- <https://github.com/micro-os-plus/architecture-cortexm-xpack.git>
 
 To clone the stable branch (`xpack`), run the following commands in a
 terminal (on Windows use the _Git Bash_ console):
 
 ```sh
-rm -rf ~/Work/architecture-cortexm-xpack-xpack.git && \
+rm -rf ~/Work/architecture-cortexm-xpack.git && \
 mkdir -p ~/Work && \
 git clone \
-  https://github.com/micro-os-plus/architecture-cortexm-xpack-xpack.git \
-  ~/Work/architecture-cortexm-xpack-xpack.git
+  https://github.com/micro-os-plus/architecture-cortexm-xpack.git \
+  ~/Work/architecture-cortexm-xpack.git
 ```
 
 For development purposes, clone the `xpack-develop` branch:
 
 ```sh
-rm -rf ~/Work/architecture-cortexm-xpack-xpack.git && \
+rm -rf ~/Work/architecture-cortexm-xpack.git && \
 mkdir -p ~/Work && \
 git clone \
   --branch xpack-develop \
-  https://github.com/micro-os-plus/architecture-cortexm-xpack-xpack.git \
-  ~/Work/architecture-cortexm-xpack-xpack.git
+  https://github.com/micro-os-plus/architecture-cortexm-xpack.git \
+  ~/Work/architecture-cortexm-xpack.git
 ```
 
 ## Prerequisites
@@ -91,7 +91,7 @@ The project includes unit tests.
 To run them, run:
 
 ```sh
-cd architecture-cortexm-xpack-xpack.git
+cd architecture-cortexm-xpack.git
 xpm run install-all
 xpm run test
 ```
@@ -99,7 +99,7 @@ xpm run test
 ## Continuous Integration
 
 The CI tests are performed on GitHub Actions, as the
-[CI on Push](https://github.com/micro-os-plus/architecture-cortexm-xpack-xpack/actions?query=workflow%3A%22CI+on+Push%22)
+[CI on Push](https://github.com/micro-os-plus/architecture-cortexm-xpack/actions?query=workflow%3A%22CI+on+Push%22)
 workflow.
 
 ## Update the repo
