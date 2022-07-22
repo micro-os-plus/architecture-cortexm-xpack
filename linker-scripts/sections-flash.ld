@@ -79,7 +79,7 @@ SECTIONS
 
   /*
    * This section is here for convenience, to store the
-   * startup code at the beginning of the flash area, hoping that
+   * startup code at the beginning of the memory, hoping that
    * this will increase the readability of the listing.
    */
   .after_vectors : ALIGN(4)
