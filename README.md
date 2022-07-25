@@ -1,7 +1,10 @@
 [![license](https://img.shields.io/github/license/micro-os-plus/architecture-cortexm-xpack)](https://github.com/micro-os-plus/architecture-cortexm-xpack/blob/xpack/LICENSE)
-[![CI on Push](https://github.com/micro-os-plus/architecture-cortexm-xpack/workflows/CI%20on%20Push/badge.svg)](https://github.com/micro-os-plus/architecture-cortexm-xpack/actions?query=workflow%3A%22CI+on+Push%22)
+[![CI on Push](https://github.com/micro-os-plus/architecture-cortexm-xpack/actions/workflows/CI.yml/badge.svg)](https://github.com/micro-os-plus/architecture-cortexm-xpack/actions/workflows/CI.yml)
 
-# A source library xPacks with the µOS++ Arm Cortex-M architecture definitions
+# A source library xPack with the µOS++ Arm Cortex-M architecture definitions
+
+This project provides the **architecture-cortexm** source library as an xPack
+dependency and includes architecture definitions for Cortex-M embedded projects.
 
 The project is hosted on GitHub as
 [micro-os-plus/architecture-cortexm-xpack](https://github.com/micro-os-plus/architecture-cortexm-xpack).
@@ -16,7 +19,7 @@ For maintainer info, please see the
 
 ## Install
 
-As a source library xPacks, the easiest way to add it to a project is via
+As a source library xPack, the easiest way to add it to a project is via
 **xpm**, but it can also be used as any Git project, for example as a submodule.
 
 ### Prerequisites
@@ -29,18 +32,7 @@ For details please follow the instructions in the
 
 ### xpm
 
-Note: the package will be available from npmjs.com at a later date.
-
-For now, it can be installed from GitHub:
-
-```sh
-cd my-project
-xpm init # Unless a package.json is already present
-
-xpm install github:micro-os-plus/architecture-cortexm-xpack
-```
-
-When ready, this package will be available as
+This package is available from npmjs.com as
 [`@micro-os-plus/architecture-cortexm`](https://www.npmjs.com/package/@micro-os-plus/architecture-cortexm)
 from the `npmjs.com` registry:
 
@@ -87,11 +79,20 @@ CMSIS Core.
 
 ### Status
 
-The µOS++ Cortex-M definitions are functional.
+The **architecture-cortexm** source library is fully functional.
 
 ### Build & integration info
 
-To include this package in a project, consider the following details.
+The project is written in C++ and assembly and it is expected
+to be used in C and C++ projects.
+
+The source code was compiled with arm-none-eabi-gcc 11,
+and should be warning free.
+
+To ease the integration of this package into user projects, there
+are already made CMake and meson configuration files (see below).
+
+For other build systems, consider the following details:
 
 #### Include folders
 
@@ -128,6 +129,49 @@ The source files to be added to user projects are:
 
 - none
 
+#### CMake
+
+To integrate the architecture-cortexm source library into a CMake application,
+add this folder to the build:
+
+```cmake
+add_subdirectory("xpacks/micro-os-plus-architecture-cortexm")`
+```
+
+The result is an interface library that can be added as an application
+dependency with:
+
+```cmake
+target_link_libraries(your-target PRIVATE
+
+  micro-os-plus::architecture-cortexm
+)
+```
+
+#### meson
+
+To integrate the architecture-cortexm source library into a meson application,
+add this folder to the build:
+
+```meson
+subdir('xpacks/micro-os-plus-architecture-cortexm')
+```
+
+The result is a dependency object that can be added
+to an application with:
+
+```meson
+exe = executable(
+  your-target,
+  link_with: [
+    # Nothing, not static.
+  ],
+  dependencies: [
+    micro_os_plus_architecture_cortexm_dependency,
+  ]
+)
+```
+
 ### Examples
 
 TBD
@@ -137,6 +181,8 @@ TBD
 - none
 
 ### Tests
+
+TBD
 
 ## Change log - incompatible changes
 
