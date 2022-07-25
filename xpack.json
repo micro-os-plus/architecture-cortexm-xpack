@@ -1,0 +1,23 @@
+{
+  "minimumXpmakeRequired": "0.0.0",
+  "license": "MIT",
+  "copyright": "Copyright (c) 2022 Liviu Ionescu",
+  "description": "Top architecture Cortex-M components",
+  "cdlComponents": {
+    "architecture-cortexm": {
+      "description": "The Cortex-M architecture definitions.",
+      "parent": "micro-os-plus",
+      "compilerIncludeFolders": [
+        "include"
+      ],
+      "compilerSourceFiles": [],
+      "compilerDefinitions": [],
+      "compilerOptions": [],
+      "dependencies": [],
+      "generatedDefinition": "MICRO_OS_PLUS_INCLUDE_ARCHITECTURE_CORTEXM",
+      "implementedInterfaces": [
+        "architecture"
+      ]
+    }
+  }
+}
