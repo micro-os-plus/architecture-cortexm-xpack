@@ -11,6 +11,7 @@
     "NOLOAD",
     "POSIX",
     "PROGBITS",
+    "Xpmake",
     "aarch64",
     "abbrev",
     "aranges",
@@ -77,5 +78,6 @@
     "xpack",
     "xpacks"
   ],
-  "cmake.configureOnOpen": false
+  "cmake.configureOnOpen": false,
+  "editor.wordWrap": "on"
 }
