@@ -31,7 +31,7 @@ extern "C"
   typedef micro_os_plus_architecture_register_t
       micro_os_plus_semihosting_param_block_t;
   // Type of result.
-  typedef micro_os_plus_architecture_register_t
+  typedef micro_os_plus_architecture_signed_register_t
       micro_os_plus_semihosting_response_t;
 
 #ifdef __thumb__

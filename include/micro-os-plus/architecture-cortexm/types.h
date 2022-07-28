@@ -23,7 +23,12 @@ extern "C"
 #endif // defined(__cplusplus)
 
   typedef uint32_t cortexm_architecture_register_t;
-  typedef cortexm_architecture_register_t micro_os_plus_architecture_register_t;
+  typedef int32_t cortexm_architecture_signed_register_t;
+
+  typedef cortexm_architecture_register_t
+      micro_os_plus_architecture_register_t;
+  typedef cortexm_architecture_signed_register_t
+      micro_os_plus_architecture_signed_register_t;
 
 #if defined(__cplusplus)
 }
@@ -40,6 +45,7 @@ namespace cortexm::architecture
   // --------------------------------------------------------------------------
 
   using register_t = cortexm_architecture_register_t;
+  using signed_register_t = cortexm_architecture_signed_register_t;
 
   // --------------------------------------------------------------------------
 } // namespace cortexm::architecture
@@ -49,6 +55,7 @@ namespace micro_os_plus::architecture
   // --------------------------------------------------------------------------
 
   using register_t = cortexm::architecture::register_t;
+  using signed_register_t = cortexm::architecture::signed_register_t;
 
   // --------------------------------------------------------------------------
 } // namespace micro_os_plus::architecture
