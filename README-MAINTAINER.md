@@ -63,8 +63,8 @@ No need to add a tag here, it'll be added when the release is created.
 
 ### Increase the version
 
-Determine the upstream version (like `6.1.0`) and update the `package.json`
-file; the format is `6.1.0-pre`.
+Determine the upstream version (like `6.2.0`) and update the `package.json`
+file; the format is `6.2.0-pre`.
 
 ### Fix possible open issues
 
@@ -72,7 +72,7 @@ Check GitHub issues and pull requests:
 
 - <https://github.com/micro-os-plus/architecture-cortexm-xpack/issues/>
 
-and fix them; assign them to a milestone (like `6.1.0`).
+and fix them; assign them to a milestone (like `6.2.0`).
 
 ### Update `README-MAINTAINER.md`
 
@@ -83,8 +83,8 @@ related to the new version.
 
 - open the `CHANGELOG.md` file
 - check if all previous fixed issues are in
-- add a new entry like _- v6.1.0 prepared_
-- commit with a message like _prepare v6.1.0_
+- add a new entry like _* v6.2.0_
+- commit with a message like _prepare v6.2.0_
 
 ### Push changes
 
@@ -147,5 +147,5 @@ When the package is considered stable:
 When the release is considered stable, promote it as `latest`:
 
 - `npm dist-tag ls @micro-os-plus/architecture-cortexm`
-- `npm dist-tag add @micro-os-plus/architecture-cortexm@6.1.0 latest`
+- `npm dist-tag add @micro-os-plus/architecture-cortexm@6.2.0 latest`
 - `npm dist-tag ls @micro-os-plus/architecture-cortexm`

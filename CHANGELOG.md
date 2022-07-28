@@ -6,6 +6,16 @@ Please check
 [GitHub](https://github.com/micro-os-plus/architecture-cortexm-xpack/issues/)
 and close existing issues and pull requests.
 
+## 2022-07-28
+
+* v6.2.0
+* 29d4946 #5: add signed_register_t for semihosting result
+* ca06f6b #4: add sections-ram.ld
+
+## 2022-07-25
+
+* 285a2f6 add preliminary xpack.json
+
 ## 2022-06-09
 
 * v6.1.0 released
