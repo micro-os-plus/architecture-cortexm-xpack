@@ -30,6 +30,12 @@ As a source library xPack, the easiest way to add it to a project is via
 A recent [xpm](https://xpack.github.io/xpm/),
 which is a portable [Node.js](https://nodejs.org/) command line application.
 
+It is recommended to update to the latest version with:
+
+```sh
+npm install --global xpm@latest
+```
+
 For details please follow the instructions in the
 [xPack install](https://xpack.github.io/install/) page.
 
