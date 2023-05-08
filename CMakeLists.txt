@@ -54,7 +54,7 @@ target_include_directories(micro-os-plus-architecture-cortexm-interface INTERFAC
 )
 
 target_sources(micro-os-plus-architecture-cortexm-interface INTERFACE
-  # None so far, all are device dependent.
+  "src/_init_fini.c"
 )
 
 target_compile_definitions(micro-os-plus-architecture-cortexm-interface INTERFACE

@@ -31,7 +31,16 @@ message('Processing xPack @micro-os-plus/architecture-cortexm...')
 micro_os_plus_architecture_dependency = declare_dependency(
   include_directories: include_directories(
     'include',
-  )
+  ),
+  sources: files(
+    'src/_init_fini.c'
+  ),
+  compile_args: [
+    # None.
+  ],
+  dependencies: [
+    # None.
+  ]
 )
 
 message('+ -I include')
