@@ -41,7 +41,7 @@ For details please follow the instructions in the
 
 ### xpm
 
-This package is available from npmjs.com as
+This package is available as
 [`@micro-os-plus/architecture-cortexm`](https://www.npmjs.com/package/@micro-os-plus/architecture-cortexm)
 from the `npmjs.com` registry:
 
