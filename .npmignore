@@ -41,7 +41,9 @@ README-*
 # CHANGELOG.*
 # LICENSE-*
 .appveyor.yml
-.travis.yml 
+.travis.yml
 .clang-format
+
+.gitkeep
 
 # End
