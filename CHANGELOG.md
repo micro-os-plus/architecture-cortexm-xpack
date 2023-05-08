@@ -6,6 +6,20 @@ Please check
 [GitHub](https://github.com/micro-os-plus/architecture-cortexm-xpack/issues/)
 and close existing issues and pull requests.
 
+## 2023-05-08
+
+* v6.3.0
+* 594cf3e #6: add _init_fini()
+
+## 2022-08-16
+
+* e40dd9d package.json min 0.14.0 & defaults
+
+## 2022-08-03
+
+* 171a9e9 .vscode/settings.json: cmake.ignoreCMakeListsMissing
+* aaba4fe .vscode/settings.json: makefile.configureOnOpen
+
 ## 2022-07-28
 
 * v6.2.0
