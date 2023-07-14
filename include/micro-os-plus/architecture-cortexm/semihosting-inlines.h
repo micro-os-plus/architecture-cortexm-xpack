@@ -64,7 +64,7 @@ extern "C"
 #if defined(MICRO_OS_PLUS_DEBUG_SEMIHOSTING_FAULTS)
         " " AngelSWITestFault " \n"
 #else
-      " " AngelSWIInsn " %[swi] \n"
+        " " AngelSWIInsn " %[swi] \n"
 #endif
         " mov %[val], r0"
 
