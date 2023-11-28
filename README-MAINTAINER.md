@@ -22,7 +22,7 @@ git clone \
   ~/Work/micro-os-plus/architecture-cortexm-xpack.git
 ```
 
-For development purposes, clone the `xpack-develop` branch:
+For development purposes, clone the development branch (`xpack-develop`):
 
 ```sh
 rm -rf ~/Work/micro-os-plus/architecture-cortexm-xpack.git && \
@@ -37,6 +37,9 @@ git clone \
 
 A recent [xpm](https://xpack.github.io/xpm/), which is a portable
 [Node.js](https://nodejs.org/) command line application.
+
+To run the native tests, a C++ development environment is required.
+On macOS install Command Line Tools, on Ubuntu `build-essential`.
 
 ## Code formatting
 
