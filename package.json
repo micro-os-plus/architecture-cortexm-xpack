@@ -5,7 +5,7 @@
   "main": "",
   "scripts": {
     "npm-install": "npm install",
-    "pack": "npm pack",
+    "npm-pack": "npm pack",
     "npm-version-patch": "npm version patch",
     "npm-version-minor": "npm version minor",
     "postversion": "git push origin --all && git push origin --tags",
