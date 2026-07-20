@@ -1,49 +1,107 @@
-# Git
+# -----------------------------------------------------------------------------
+# DO NOT EDIT!
+# Automatically generated from npm-packages-helper/templates/*.
+# -----------------------------------------------------------------------------
+
+# https://docs.npmjs.com/files/package.json#files
+# Certain files are always included, regardless of settings:
+# - package.json
+# - README
+# - CHANGES / CHANGELOG / HISTORY
+# - LICENSE / LICENCE
+# - NOTICE
+# - The file in the "main" field
+# README, CHANGES, LICENSE & NOTICE can have any case and extension.
+#
+# Conversely, some files are always ignored:
+# - .git
+# - CVS
+# - .svn
+# - .hg
+# - .lock-wscript
+# - .wafpickle-N
+# - .*.swp
+# - .DS_Store
+# - ._*
+# - npm-debug.log
+# - .npmrc
+# - node_modules
+# - config.gypi
+# - *.orig
+# -----------------------------------------------------------------------------
+# .gitignore is not automatically included, add relevant lines again.
+
+.DS_Store
 .git/
 .github/
 .gitignore
 .gitmodules
+.clang-*
+.cmake-format
 
-# npm
-node_modules/
-.npm/
-*.tgz
+# npm pack archives
+/*.tgz
 
-# xpm
-xpacks/
+# tap
+coverage/
+tests/
+.tap/
 
-# Windows
-Thumbs.db
+# nyc test coverage
+.nyc_output/
 
-# macOS
-.DS_Store
-
-# Visual Studio Code
+# VS Code
 .vscode/
 
-# Eclipse
-.settings/
-Debug*/
-Release*/
-*.launch
-.project
-.cproject
-
-# Builds
-test*/
-build/
-
-# Misc
-# patches/
-# pkgconfig/
-# scripts/
-README-*
-# CHANGELOG.*
-# LICENSE-*
-.appveyor.yml
+# CI
 .travis.yml
-.clang-format
+.appveyor.yml
 
-.gitkeep
+README-*.md
+LICENSE-*
+!LICENSE-XPACK
+!LICENSE-liquid
+CONTRIBUTING**
+NOTES.md
 
-# End
+**/tsconfig*.json
+typedoc.json
+tsconfig.tsbuildinfo
+
+xpacks/
+node_modules/
+docs/
+# /assets/ # keep it, xpm needs it.
+scripts/
+website/
+tmp/
+patches/
+pkgconfig/
+ci/
+example*/
+test*/
+build*/
+docs/
+build-assets/
+wrappers/
+extras/
+inspiration/
+maintenance-scripts/
+tests/
+config/
+
+# config
+
+.prettierignore
+.prettierrc.json
+
+.taprc
+
+api-extractor.json
+eslint.config.js
+
+**/.cmake-format.yaml
+**/code-review.md
+**/CODE-REVIEW.md
+
+#end

@@ -2,23 +2,6 @@
   "name": "@micro-os-plus/architecture-cortexm",
   "version": "6.3.0",
   "description": "A source code library with the µOS++ Arm Cortex-M architecture",
-  "main": "",
-  "scripts": {
-    "npm-install": "npm install",
-    "npm-pack": "npm pack",
-    "npm-version-patch": "npm version patch",
-    "npm-version-minor": "npm version minor",
-    "postversion": "git push origin --all && git push origin --tags",
-    "git-log": "git log --pretty='%cd * %h %s' --date=short"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/micro-os-plus/architecture-cortexm-xpack.git"
-  },
-  "homepage": "https://github.com/micro-os-plus/architecture-cortexm-xpack",
-  "bugs": {
-    "url": "https://github.com/micro-os-plus/architecture-cortexm-xpack/issues"
-  },
   "keywords": [
     "xpack",
     "c++",
@@ -26,22 +9,64 @@
     "micro-os-plus",
     "cortex-m"
   ],
+  "license": "MIT",
   "author": {
     "name": "Liviu Ionescu",
     "email": "ilg@livius.net",
     "url": "https://github.com/ilg-ul"
   },
-  "license": "MIT",
-  "config": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/micro-os-plus/architecture-cortexm-xpack.git"
+  },
+  "homepage": "https://micro-os-plus.github.io/architecture-cortexm-xpack/",
+  "bugs": {
+    "url": "https://github.com/micro-os-plus/architecture-cortexm-xpack/issues"
+  },
+  "$dependenciesUrls": {
+    "del-cli": "https://www.npmjs.com/package/del-cli",
+    "json": "https://www.npmjs.com/package/json",
+    "liquidjs": "https://www.npmjs.com/package/liquidjs",
+    "glob": "https://www.npmjs.com/package/glob",
+    "json5": "https://www.npmjs.com/package/json5",
+    "jsonc-parser": "https://www.npmjs.com/package/jsonc-parser"
+  },
   "dependencies": {},
-  "bundleDependencies": [],
-  "devDependencies": {},
+  "devDependencies": {
+    "@xpack/npm-packages-helper": "github:xpack/npm-packages-helper",
+    "del-cli": "^7.0.0",
+    "json": "^11.0.0",
+    "liquidjs": "^10.25.0",
+    "glob": "^13.0.6",
+    "json5": "^2.2.3",
+    "jsonc-parser": "^3.3.1"
+  },
+  "scripts": {
+    "generate-top-commons": "bash node_modules/@xpack/npm-packages-helper/maintenance-scripts/generate-top-commons.sh --micro-os-plus",
+    "npm-install": "npm install",
+    "npm-link-helpers": "npm link @xpack/npm-packages-helper",
+    "npm-outdated": "npm outdated",
+    "npm-ci": "npm ci",
+    "npm-pack": "npm pack",
+    "npm-link": "npm link",
+    "git-log": "git log --pretty='%cd * %h %s' --date=short",
+    "git-pull-helper": "git -C ${HOME}/Work/micro-os-plus/build-helper-xpack.git pull",
+    "deep-clean": "del-cli node_modules package-lock.json *.tgz",
+    "postversion": "git push origin --all && git push origin --tags"
+  },
   "xpack": {
-    "minimumXpmRequired": "0.16.2",
-    "dependencies": {},
-    "devDependencies": {},
-    "properties": {},
-    "actions": {},
-    "buildConfigurations": {}
+    "minimumXpmRequired": "0.20.8",
+    "devDependencies": {
+      "@xpack-dev-tools/clang": "21.1.8-1.1"
+    },
+    "actions": {
+      "clang-format": "bash scripts/clang-format.sh",
+      "cmake-format": "bash scripts/cmake-format.sh",
+      "jsonc-format": "bash scripts/jsonc-format.sh",
+      "xcdl-export": "node scripts/xcdl-export.mjs xcdl-package.jsonc"
+    }
+  },
+  "engines": {
+    "node": ">=20.0"
   }
 }

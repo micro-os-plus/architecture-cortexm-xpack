@@ -1,0 +1,102 @@
+# -----------------------------------------------------------------------------
+# DO NOT EDIT!
+# Automatically generated from npm-packages-helper/templates/*.
+#
+# This file is part of the µOS++ project (http://micro-os-plus.github.io).
+# Copyright (c) 2021-2026 Liviu Ionescu. All rights reserved.
+#
+# Permission to use, copy, modify, and/or distribute this software for any
+# purpose is hereby granted, under the terms of the MIT license.
+#
+# If a copy of the license was not distributed with this file, it can be
+# obtained from https://opensource.org/licenses/mit.
+#
+# -----------------------------------------------------------------------------
+
+# https://github.com/micro-os-plus/architecture-cortexm-xpack
+# https://github.com/micro-os-plus/architecture-cortexm-xpack/actions/workflows/test-ci.yml
+
+# Workflow for running some tests on each Push.
+name: CI on Push
+
+# https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions
+# https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows
+
+on:
+  # Runs on pushes, if all conditions are met:
+  push:
+    # ... on the active branches ...
+    branches:
+      - 'xpack-development'
+      - 'xpack'
+    # ... skip tags only ...
+    tags-ignore:
+      - '**'
+    # ... include everything except ...
+    paths-ignore:
+      - '.vscode/**'
+      - 'LICENSE'
+      - '**.md'
+      - '.clang-format'
+      - '.gitignore'
+      - '.npmignore'
+      - '.github/workflows/publish-github-pages.yml'
+      - '.github/workflows/test-all.yml'
+      - 'tests/scripts/**'
+      - '**/README**'
+      - 'website/**'
+
+# Allow one concurrent run.
+concurrency:
+  group: 'test'
+  cancel-in-progress: true
+
+jobs:
+  ci-test:
+    name: 'Architecture: Cortex-M tests'
+
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        # https://github.com/actions/runner-images
+        os: [ 'ubuntu-24.04', 'ubuntu-24.04-arm', 'macos-15-intel', 'macos-15', 'windows-2025' ]
+        # https://nodejs.org/en - use LTS
+        node-version: [ 24 ]
+        # https://www.npmjs.com/package/xpm
+        xpm-version: [ 0.23.2 ]
+
+    steps:
+      - name: Checkout
+        # https://github.com/actions/checkout/
+        uses: actions/checkout@v6.0.1
+        with:
+          fetch-depth: 3
+
+      - name: Setup Node.js ${{ matrix.node-version }} on ${{ matrix.os }}
+        # https://github.com/actions/setup-node
+        uses: actions/setup-node@v6.1.0
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Install xpm@${{ matrix.xpm-version }} on ${{ matrix.os }}
+        run: npm install -g xpm@${{ matrix.xpm-version }}
+
+      - name: Show environment
+        run: |
+          id
+          uname -a
+          node --version
+          npm --version
+          xpm --version
+          env | sort
+
+      - name: Satisfy project dependencies on ${{ matrix.os }}
+        run: |
+          npm ci
+          xpm run install-ci
+
+      - name: Run tests on ${{ matrix.os }}
+        run: xpm run test-ci
+        env:
+            CI: true
