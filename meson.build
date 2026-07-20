@@ -52,6 +52,11 @@ _local_include_directories += [
 
 _local_sources += [
   'src/_init_fini.c',
+  'src/semihosting.cpp',
+]
+
+_local_dependencies += [
+  micro_os_plus_semihosting_dependency,
 ]
 
 # https://mesonbuild.com/Reference-manual_functions.html#declare_dependency

@@ -1,6 +1,6 @@
 /*
  * This file is part of the µOS++ project (https://micro-os-plus.github.io/).
- * Copyright (c) 2017-2026 Liviu Ionescu. All rights reserved.
+ * Copyright (c) 2022-2026 Liviu Ionescu. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose is hereby granted, under the terms of the MIT license.
@@ -9,8 +9,8 @@
  * obtained from https://opensource.org/licenses/mit.
  */
 
-#ifndef MICRO_OS_PLUS_ARCHITECTURE_CORTEXM_INSTRUCTIONS_INLINES_H_
-#define MICRO_OS_PLUS_ARCHITECTURE_CORTEXM_INSTRUCTIONS_INLINES_H_
+#ifndef MICRO_OS_PLUS_ARCHITECTURE_CORTEXM_INLINES_REGISTERS_INLINES_H_
+#define MICRO_OS_PLUS_ARCHITECTURE_CORTEXM_INLINES_REGISTERS_INLINES_H_
 
 // ----------------------------------------------------------------------------
 
@@ -26,67 +26,47 @@ extern "C"
 
   // --------------------------------------------------------------------------
 
-  static inline __attribute__ ((always_inline)) void
-  cortexm_architecture_nop (void)
+  static inline __attribute__ ((always_inline)) cortexm_architecture_register_t
+  cortexm_architecture_get_msp (void)
   {
-    __asm__ volatile(
+    uint32_t result;
 
-        " nop "
+    __asm__ volatile (
 
-        : /* Outputs */
+        "msr %0, msp"
+
+        : "=r"(result) /* Outputs */
         : /* Inputs */
         : /* Clobbers */
     );
+
+    return result;
   }
 
   static inline __attribute__ ((always_inline)) void
-  cortexm_architecture_bkpt (void)
+  cortexm_architecture_set_msp (
+      cortexm_architecture_register_t top_of_main_stack)
   {
-    __asm__ volatile(
+    __asm__ volatile ("msr msp, %0"
 
-        " bkpt 0 "
-
-        : /* Outputs */
-        : /* Inputs */
-        : /* Clobbers */
+                      : /* Outputs */
+                      : "r"(top_of_main_stack) /* Inputs */
+                      : /* Clobbers */
     );
   }
 
-  static inline __attribute__ ((always_inline)) void
-  cortexm_architecture_wfi (void)
+  static inline
+      __attribute__ ((always_inline)) micro_os_plus_architecture_register_t
+      micro_os_plus_architecture_get_sp (void)
   {
-    __asm__ volatile(
-
-        " wfi "
-
-        : /* Outputs */
-        : /* Inputs */
-        : /* Clobbers */
-    );
+    return cortexm_architecture_get_msp ();
   }
 
   static inline __attribute__ ((always_inline)) void
-  micro_os_plus_architecture_nop (void)
+  micro_os_plus_architecture_set_sp (
+      micro_os_plus_architecture_register_t top_of_stack)
   {
-    cortexm_architecture_nop ();
-  }
-
-  /**
-   * `break` instruction.
-   */
-  static inline __attribute__ ((always_inline)) void
-  micro_os_plus_architecture_brk (void)
-  {
-    cortexm_architecture_bkpt ();
-  }
-
-  /**
-   * `wfi` instruction.
-   */
-  static inline __attribute__ ((always_inline)) void
-  micro_os_plus_architecture_wfi (void)
-  {
-    cortexm_architecture_wfi ();
+    cortexm_architecture_set_msp (top_of_stack);
   }
 
   // --------------------------------------------------------------------------
@@ -99,60 +79,48 @@ extern "C"
 
 #if defined(__cplusplus)
 
-namespace cortexm::architecture
+namespace cortexm::architecture::registers
 {
   // --------------------------------------------------------------------------
 
-  inline __attribute__ ((always_inline)) void
-  nop (void)
+  inline __attribute__ ((always_inline)) register_t
+  msp (void)
   {
-    cortexm_architecture_nop ();
+    return cortexm_architecture_get_msp ();
   }
 
   inline __attribute__ ((always_inline)) void
-  bkpt (void)
+  msp (register_t top_of_main_stack)
   {
-    cortexm_architecture_bkpt ();
-  }
-
-  inline __attribute__ ((always_inline)) void
-  wfi (void)
-  {
-    cortexm_architecture_wfi ();
+    cortexm_architecture_set_msp (top_of_main_stack);
   }
 
   // --------------------------------------------------------------------------
-} // namespace cortexm::architecture
+} // namespace cortexm::architecture::registers
 
-namespace micro_os_plus::architecture
+namespace micro_os_plus::architecture::registers
 {
   // --------------------------------------------------------------------------
 
-  inline __attribute__ ((always_inline)) void
-  nop (void)
+  inline __attribute__ ((always_inline)) register_t
+  sp (void)
   {
-    cortexm::architecture::nop ();
+    return cortexm::architecture::registers::msp ();
   }
 
   inline __attribute__ ((always_inline)) void
-  brk (void)
+  msp (register_t top_of_main_stack)
   {
-    cortexm::architecture::bkpt ();
-  }
-
-  inline __attribute__ ((always_inline)) void
-  wfi (void)
-  {
-    cortexm::architecture::wfi ();
+    cortexm::architecture::registers::msp (top_of_main_stack);
   }
 
   // --------------------------------------------------------------------------
-} // namespace micro_os_plus::architecture
+} // namespace micro_os_plus::architecture::registers
 
 #endif // defined(__cplusplus)
 
 // ----------------------------------------------------------------------------
 
-#endif // MICRO_OS_PLUS_ARCHITECTURE_CORTEXM_INSTRUCTIONS_INLINES_H_
+#endif // MICRO_OS_PLUS_ARCHITECTURE_CORTEXM_INLINES_REGISTERS_INLINES_H_
 
 // ----------------------------------------------------------------------------

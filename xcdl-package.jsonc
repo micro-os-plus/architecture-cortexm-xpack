@@ -12,9 +12,12 @@
         "include"
       ],
       "sourceFiles": [
-        "src/_init_fini.c"
+        "src/_init_fini.c",
+        "src/semihosting.cpp"
       ],
-      "dependencies": [],
+      "dependencies": [
+        "micro-os-plus.semihosting"
+      ],
       "implementedInterfaces": [
         "micro-os-plus.architectures.interface"
       ],
