@@ -81,6 +81,7 @@ endif ()
 {% for component in xcdl.cdlComponents %}
 {%- assign nameDash = component.id | replace: '.', '-' %}
 {%- assign nameDoubleColon = component.id | replace_first: '.', '::' | replace: '.', '-' %}
+{%- assign aliasDoubleColon = component.alias | replace_first: '.', '::' | replace: '.', '-' %}
 {%- assign staticArtefacts = component.cdlArtefacts | where: 'type', 'staticLibrary' %}
 {%- assign staticArtefact = staticArtefacts | first %}
 {%- assign staticSuffix = staticArtefact.id %}
@@ -148,6 +149,17 @@ message (
   VERBOSE
   "> {{nameDoubleColon}} -> {{nameDash}}-interface"
 )
+
+{%- if component.alias %}
+
+add_library (
+  {{aliasDoubleColon}} ALIAS {{nameDash}}-interface
+)
+message (
+  VERBOSE
+  "> {{aliasDoubleColon}} -> {{nameDash}}-interface"
+)
+{%- endif %}
 
 {%- if component.cdlArtefacts and component.cdlArtefacts.size > 0 %}
 {%- if component.dependencies and component.dependencies.size > 0 %}
@@ -273,6 +285,18 @@ message (
   "> {{nameDoubleColon}}-{{objectsSuffix}} -> {{nameDash}}-{{objectsSuffix}}"
 )
 
+{%- if component.alias %}
+
+add_library (
+  {{aliasDoubleColon}}-{{objectsSuffix}} ALIAS
+  {{nameDash}}-{{objectsSuffix}}
+)
+message (
+  VERBOSE
+  "> {{aliasDoubleColon}}-{{objectsSuffix}} -> {{nameDash}}-{{objectsSuffix}}"
+)
+{%- endif %}
+
 {%- endif %}
 {%- if staticArtefact %}
 
@@ -375,6 +399,18 @@ message (
   VERBOSE
   "> {{nameDoubleColon}}-{{staticSuffix}} -> {{nameDash}}-{{staticSuffix}}"
 )
+
+{%- if component.alias %}
+
+add_library (
+  {{aliasDoubleColon}}-{{staticSuffix}} ALIAS
+  {{nameDash}}-{{staticSuffix}}
+)
+message (
+  VERBOSE
+  "> {{aliasDoubleColon}}-{{staticSuffix}} -> {{nameDash}}-{{staticSuffix}}"
+)
+{%- endif %}
 {%- endif %}
 {%- endif %}
 
