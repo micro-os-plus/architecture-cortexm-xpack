@@ -60,11 +60,18 @@ jobs:
     strategy:
       matrix:
         # https://github.com/actions/runner-images
-        os: [ 'ubuntu-24.04', 'ubuntu-24.04-arm', 'macos-15-intel', 'macos-15', 'windows-2025' ]
+        os:
+          [
+            'ubuntu-24.04',
+            'ubuntu-24.04-arm',
+            'macos-15-intel',
+            'macos-15',
+            'windows-2025',
+          ]
         # https://nodejs.org/en - use LTS
-        node-version: [ 24 ]
+        node-version: [24]
         # https://www.npmjs.com/package/xpm
-        xpm-version: [ 0.23.2 ]
+        xpm-version: [0.23.2]
 
     steps:
       - name: Checkout
@@ -99,4 +106,4 @@ jobs:
       - name: Run tests on ${{ matrix.os }}
         run: xpm run test-ci
         env:
-            CI: true
+          CI: true
