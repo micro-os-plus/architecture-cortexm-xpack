@@ -1,8 +1,8 @@
 {%- assign packageScope = package.name | remove_first: '@' | split: '/' | first %}
 {%- assign packageName = package.name | remove_first: '@' | split: '/' | last -%}
 # -----------------------------------------------------------------------------
-# DO NOT EDIT!
-# Automatically generated from {{libraryFilePath}}.
+# DO NOT EDIT! Automatically generated from template file:
+# {{libraryFilePath}}
 #
 # This file is part of the µOS++ project (https://micro-os-plus.github.io/).
 # Copyright (c) 2022-2026 Liviu Ionescu. All rights reserved.
@@ -68,10 +68,31 @@ _local_sources += [
 {%- endfor %}
 ]
 {%- endif %}
+{%- assign defines = "" | split: "" %}
+{%- if component.publicDefines and component.publicDefines.size > 0 %}
+  {%- assign defines = defines | concat: component.publicDefines %}
+{%- endif %}
+{%- if component.privateDefines and component.privateDefines.size > 0 %}
+  {%- assign defines = defines | concat: component.privateDefines %}
+{%- endif %}
+{%- if defines.size > 0 %}
+_local_compile_args += [
+{%- for define in defines %}
+  '-D{{define}}',
+{%- endfor %}
+]
+{%- endif %}
+{%- assign compilerOptions = "" | split: "" %}
 {%- if component.publicCompilerOptions and component.publicCompilerOptions.size > 0 %}
+  {%- assign compilerOptions = compilerOptions | concat: component.publicCompilerOptions %}
+{%- endif %}
+{%- if component.privateCompilerOptions and component.privateCompilerOptions.size > 0 %}
+  {%- assign compilerOptions = compilerOptions | concat: component.privateCompilerOptions %}
+{%- endif %}
+{%- if compilerOptions.size > 0 %}
 
-compile_args += [
-{%- for option in component.publicCompilerOptions %}
+_local_compile_args += [
+{%- for option in compilerOptions %}
   '{{option}}',
 {%- endfor %}
 ]
@@ -110,6 +131,9 @@ endforeach
 message('> {{nameUnderscore}}_dependency')
 
 {%- if component.alias %}
+
+# -----------------------------------------------------------------------------
+# Alias.
 
 {{aliasUnderscore}}_dependency = declare_dependency(
   include_directories: include_directories(_local_include_directories),

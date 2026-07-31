@@ -70,22 +70,10 @@ After making changes, run in a terminal:
 
 ## Code Review
 
-- When asked for a code review, provide constructive feedback on all aspects,
-  including the code's readability, maintainability, and adherence to the
-  project's coding standards.
-- Find every flaw, gap, or weak assumption. Focus on code structure, naming
-  conventions, documentation quality, and potential bugs or performance issues.
-- Be specific and direct. Do not soften criticism or balance it with positives.
-- Mention what you did leave out because you were not certain enough to
-  include it.
-- Leave the code review result in a separate file named `CODE-REVIEW.md` in
-  the root of the project, including a summary of the review findings and
-  specific recommendations for improvements.
+- When asked for a code review, follow the separate instructions in `.github/skills/code-review/SKILL.md` for a thorough and uncompromising review of the codebase.
 
 ## Version Control
 
 When making changes to the codebase, follow these guidelines for version control:
 
 - Use descriptive commit messages that clearly explain the purpose of the changes
-
-

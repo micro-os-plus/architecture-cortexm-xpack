@@ -1,6 +1,6 @@
 # -----------------------------------------------------------------------------
-# DO NOT EDIT!
-# Automatically generated from npm-packages-helper/templates/*.
+# DO NOT EDIT! Automatically generated from template file:
+# npm-packages-helper/templates/common/.github/workflows/_micro-os-plus/test-ci-liquid.yml
 #
 # This file is part of the µOS++ project (http://micro-os-plus.github.io).
 # Copyright (c) 2021-2026 Liviu Ionescu. All rights reserved.
@@ -13,7 +13,7 @@
 #
 # -----------------------------------------------------------------------------
 
-# https://github.com/micro-os-plus/architecture-cortexm-xpack
+# https://micro-os-plus.github.io/architecture-cortexm-xpack/
 # https://github.com/micro-os-plus/architecture-cortexm-xpack/actions/workflows/test-ci.yml
 
 # Workflow for running some tests on each Push.
@@ -60,18 +60,11 @@ jobs:
     strategy:
       matrix:
         # https://github.com/actions/runner-images
-        os:
-          [
-            'ubuntu-24.04',
-            'ubuntu-24.04-arm',
-            'macos-15-intel',
-            'macos-15',
-            'windows-2025',
-          ]
+        os: [ 'ubuntu-24.04', 'ubuntu-24.04-arm', 'macos-15-intel', 'macos-15', 'windows-2025' ]
         # https://nodejs.org/en - use LTS
-        node-version: [24]
+        node-version: [ 24 ]
         # https://www.npmjs.com/package/xpm
-        xpm-version: [0.23.2]
+        xpm-version: [ 0.23.2 ]
 
     steps:
       - name: Checkout
@@ -106,4 +99,4 @@ jobs:
       - name: Run tests on ${{ matrix.os }}
         run: xpm run test-ci
         env:
-          CI: true
+            CI: true

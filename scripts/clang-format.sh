@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
 # -----------------------------------------------------------------------------
-# DO NOT EDIT!
-# Automatically generated from npm-packages-helper/templates/*.
+# DO NOT EDIT! Automatically generated from template file:
+# npm-packages-helper/templates/common/scripts/clang-format-liquid.sh
 #
 # This file is part of the xPack project (http://xpack.github.io).
 # Copyright (c) 2026 Liviu Ionescu. All rights reserved.
