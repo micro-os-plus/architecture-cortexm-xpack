@@ -7,6 +7,7 @@
     {
       "id": "micro-os-plus.architectures.cortexm",
       "alias": "micro-os-plus.architecture",
+      "display": "Cortex-M architecture",
       "description": "The Cortex-M architecture definitions",
       "publicIncludeFolders": [
         "include"
@@ -16,12 +17,17 @@
         "src/semihosting.cpp"
       ],
       "dependencies": [
-        "micro-os-plus.semihosting"
+        // This introduces a circular dependency.
+        // "micro-os-plus.semihosting"
       ],
       "implementedInterfaces": [
-        "micro-os-plus.architectures.interface"
+        "micro-os-plus.architecture"
       ],
-      // "defaultDefine": "MICRO_OS_PLUS_INCLUDE_ARCHITECTURE_CORTEXM"
+      "generatedFile": {
+        "type": "c-header",
+        "filePath": "{{buildFolderPath}}/generated/include/micro-os-plus/architecture-defines.h"
+      },
+      // "defaultDefine": "MICRO_OS_PLUS_INCLUDE_ARCHITECTURES_CORTEXM_ENABLED"
     }
   ]
 }
