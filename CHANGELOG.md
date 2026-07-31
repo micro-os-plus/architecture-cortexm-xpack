@@ -6,9 +6,70 @@ Please check
 [GitHub](https://github.com/micro-os-plus/architecture-cortexm-xpack/issues/)
 and close existing issues and pull requests.
 
+## 2026-07-31
+
+* 4b810b2 re-generate top xcdl
+* d186f80 re-generate top commons
+* b917041 xcdl-package.jsonc update
+* a254b24 update guards & includes
+
+## 2026-07-21
+
+* ba536d9 re-generate top commons
+* 13ebf8c reorganise inlines, separate semihosting.cpp
+
+## 2026-07-20
+
+* cc5f620 xcdl-export with alias
+* 9c53975 xcdl templates add alias
+* 12aed50 update copyright notices
+* 9a9a2f6 re-generate top commons
+
+## 2026-06-06
+
+* 4fd5a88 copyright update 2026
+
+## 2025-11-20
+
+* 1376560 rename npm-pack
+
+## 2025-10-07
+
+* 2847586 update copyright notices
+
+## 2023-11-28
+
+* 1e9215a README updates
+* d25172b package.json: cosmetise scripts
+
+## 2023-10-19
+
+* 54368fd package.json: cosmetise description
+* da2238d README updates
+
+## 2023-07-14
+
+* c299074 README updates
+* 124dee1 semihosting-inlines.h: cosmetics
+* f0ff4be package.json: cosmetise urls
+* 5d632fc package.json: minXpm 0.16.2
+
+## 2023-06-04
+
+* 2b58282 update for @scope/name
+
+## 2023-06-03
+
+* f8f1da0 lower case ci.yml
+* e6aa8f3 package.json min 0.16.0
+
 ## 2023-05-08
 
-* v6.3.0
+* 4b82d62 .npmignore update
+* 351bbd8 6.3.0
+* b8c4e99 prepare v6.3.0
+* 30790e4 README updates
+* 3711756 README update
 * 594cf3e #6: add _init_fini()
 
 ## 2022-08-16
