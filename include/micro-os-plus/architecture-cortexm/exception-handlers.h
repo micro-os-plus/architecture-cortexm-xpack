@@ -14,6 +14,8 @@
 
 // ----------------------------------------------------------------------------
 
+#include "micro-os-plus/diag/trace.h"
+
 #include <stdint.h>
 
 // ----------------------------------------------------------------------------
@@ -21,7 +23,7 @@
 #if defined(__cplusplus)
 extern "C"
 {
-#endif
+#endif // defined(__cplusplus)
 
   // External references to Cortex-M exception_handlers.c
 
@@ -33,6 +35,7 @@ extern "C"
   HardFault_Handler (void);
 
 #if defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
+
   extern void
   MemManage_Handler (void);
   extern void
@@ -41,6 +44,7 @@ extern "C"
   UsageFault_Handler (void);
   extern void
   DebugMon_Handler (void);
+  
 #endif
 
   extern void
@@ -69,31 +73,41 @@ extern "C"
 
   typedef void (*handler_ptr_t) (void);
 
-#if defined(MICRO_OS_PLUS_TRACE)
+#if defined(MICRO_OS_PLUS_DIAG_TRACE_ENABLED)
+
 #if defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
+
   void
   dump_exception_stack (exception_stack_frame_s* frame, uint32_t cfsr,
                         uint32_t mmfar, uint32_t bfar, uint32_t lr);
+
 #endif // defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
+
 #if defined(__ARM_ARCH_6M__)
+
   void
   dump_exception_stack (exception_stack_frame_s* frame, uint32_t lr);
+
 #endif // defined(__ARM_ARCH_6M__)
-#endif // defined(MICRO_OS_PLUS_TRACE)
+
+#endif // defined(MICRO_OS_PLUS_DIAG_TRACE_ENABLED)
 
   void
   hard_fault_handler_c (exception_stack_frame_s* frame, uint32_t lr);
 
 #if defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
+
   void
   usage_fault_handler_c (exception_stack_frame_s* frame, uint32_t lr);
+
   void
   bus_fault_handler_c (exception_stack_frame_s* frame, uint32_t lr);
+
 #endif // defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
 
 #if defined(__cplusplus)
 }
-#endif
+#endif // defined(__cplusplus)
 
 // ----------------------------------------------------------------------------
 

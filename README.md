@@ -112,7 +112,7 @@ The following folders should be passed to the compiler during the build:
 The header files to be included in user projects are:
 
 ```c++
-#include <micro-os-plus/architecture.h>
+#include "micro-os-plus/architecture.h"
 ```
 
 #### Source files
@@ -198,7 +198,7 @@ TBD
 According to [semver](https://semver.org) rules:
 
 > Major version X (X.y.z | X > 0) MUST be incremented if any
-backwards incompatible changes are introduced to the public API.
+> backwards incompatible changes are introduced to the public API.
 
 The incompatible changes, in reverse chronological order,
 are:

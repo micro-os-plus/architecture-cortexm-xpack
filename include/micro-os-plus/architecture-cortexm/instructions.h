@@ -14,7 +14,7 @@
 
 // ----------------------------------------------------------------------------
 
-#include <micro-os-plus/architecture-cortexm/defines.h>
+#include "micro-os-plus/architecture-cortexm/defines.h"
 
 #include <stdint.h>
 

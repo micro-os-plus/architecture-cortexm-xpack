@@ -17,31 +17,35 @@
 #if defined(__cplusplus)
 #if !(__cplusplus >= 202002L || (defined(_MSVC_LANG) && _MSVC_LANG >= 202002L))
 #error "C++20 or higher is required"
-#endif
+#endif // !(__cplusplus >= 202002L || (defined(_MSVC_LANG) && _MSVC_LANG >= 202002L))
 #endif // defined(__cplusplus)
 
-#if __has_include(<micro-os-plus/project-config.h>)
-#include <micro-os-plus/project-config.h>
-#elif __has_include(<micro-os-plus/config.h>)
-#pragma message \
-    "micro-os-plus/config.h is deprecated, rename to micro-os-plus/project-config.h and include it instead of micro-os-plus/config.h"
-#include <micro-os-plus/config.h>
-#endif // __has_include(<micro-os-plus/project-config.h>)
+#if __has_include("micro-os-plus/project-config.h")
+#include "micro-os-plus/project-config.h"
+#endif // __has_include("micro-os-plus/project-config.h")
 
-#if __has_include(<micro-os-plus/architecture-defines.h>)
-#include <micro-os-plus/architecture-defines.h>
-#endif // __has_include(<micro-os-plus/architecture-defines.h>)
+#if __has_include("micro-os-plus/architecture-defines.h")
+#include "micro-os-plus/architecture-defines.h"
+#endif // __has_include("micro-os-plus/architecture-defines.h")
 
-#include <micro-os-plus/architecture-cortexm/defines.h>
+// ----------------------------------------------------------------------------
 
-#include <micro-os-plus/architecture-cortexm/types.h>
-// #include <micro-os-plus/architecture-cortexm/declarations.h>
+// No guard is needed; there can be only one architecture in a build.
+// #if defined(MICRO_OS_PLUS_INCLUDE_ARCHITECTURES_CORTEXM_ENABLED)
 
-#include <micro-os-plus/architecture-cortexm/instructions.h>
+// ----------------------------------------------------------------------------
 
-#include <micro-os-plus/architecture-cortexm/registers.h>
+#include "micro-os-plus/architecture-cortexm/defines.h"
+#include "micro-os-plus/architecture-cortexm/types.h"
+#include "micro-os-plus/architecture-cortexm/instructions.h"
+#include "micro-os-plus/architecture-cortexm/registers.h"
+#include "micro-os-plus/architecture-cortexm/exception-handlers.h"
 
-#include <micro-os-plus/architecture-cortexm/inlines/semihosting-inlines.h>
+#include "micro-os-plus/architecture-cortexm/inlines/semihosting-inlines.h"
+
+// ----------------------------------------------------------------------------
+
+// #endif // #if defined(MICRO_OS_PLUS_INCLUDE_ARCHITECTURES_CORTEXM_ENABLED)
 
 // ----------------------------------------------------------------------------
 
