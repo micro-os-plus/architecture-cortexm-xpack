@@ -1,5 +1,5 @@
 # -----------------------------------------------------------------------------
-# DO NOT EDIT! Automatically generated from xcdl-package.jsonc.
+# DO NOT EDIT! Automatically generated from template file: xcdl-package.jsonc
 #
 # This file is part of the µOS++ project (https://micro-os-plus.github.io/).
 # Copyright (c) 2021-2026 Liviu Ionescu. All rights reserved.
@@ -29,7 +29,7 @@ cmake_minimum_required (VERSION 3.20)
 project (
   micro-os-plus-architecture-cortexm
   DESCRIPTION "A source code library with the µOS++ Arm Cortex-M architecture"
-  LANGUAGES CXX
+  LANGUAGES C CXX ASM
 )
 
 # To access the optional functions, include the
@@ -74,11 +74,6 @@ target_include_directories (
 target_sources (
   micro-os-plus-architectures-cortexm-interface INTERFACE "src/_init_fini.c"
                                                           "src/semihosting.cpp"
-)
-
-target_link_libraries (
-  micro-os-plus-architectures-cortexm-interface
-  INTERFACE "micro-os-plus::semihosting"
 )
 
 if (COMMAND xpack_display_target_lists)
