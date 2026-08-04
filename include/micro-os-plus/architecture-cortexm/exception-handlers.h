@@ -44,7 +44,7 @@ extern "C"
   UsageFault_Handler (void);
   extern void
   DebugMon_Handler (void);
-  
+
 #endif
 
   extern void
