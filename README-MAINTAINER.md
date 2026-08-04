@@ -22,13 +22,13 @@ git clone \
   ~/Work/micro-os-plus/architecture-cortexm-xpack.git
 ```
 
-For development purposes, clone the development branch (`xpack-develop`):
+For development purposes, clone the development branch (`xpack-development`):
 
 ```sh
 rm -rf ~/Work/micro-os-plus/architecture-cortexm-xpack.git && \
 mkdir -p ~/Work/micro-os-plus && \
 git clone \
-  --branch xpack-develop \
+  --branch xpack-development \
   https://github.com/micro-os-plus/architecture-cortexm-xpack.git \
   ~/Work/micro-os-plus/architecture-cortexm-xpack.git
 ```
@@ -59,15 +59,15 @@ There are no fixed releases.
 
 In the `micro-os-plus/architecture-cortexm-xpack` Git repo:
 
-- switch to the `xpack-develop` branch
+- switch to the `xpack-development` branch
 - if needed, merge the `xpack` branch
 
 No need to add a tag here, it'll be added when the release is created.
 
 ### Increase the version
 
-Determine the upstream version (like `6.3.0`) and eventually update the
-`package.json` file; the format is `6.3.0-pre`.
+Determine the upstream version (like `7.0.0`) and eventually update the
+`package.json` file; the format is `7.0.0-pre`.
 
 ### Fix possible open issues
 
@@ -75,7 +75,7 @@ Check GitHub issues and pull requests:
 
 - <https://github.com/micro-os-plus/architecture-cortexm-xpack/issues/>
 
-and fix them; assign them to a milestone (like `6.3.0`).
+and fix them; assign them to a milestone (like `7.0.0`).
 
 ### Update `README-MAINTAINER.md`
 
@@ -86,8 +86,8 @@ related to the new version.
 
 - open the `CHANGELOG.md` file
 - check if all previous fixed issues are in
-- add a new entry like _* v6.3.0_
-- commit with a message like _prepare v6.3.0_
+- add a new entry like _\* v7.0.0_
+- commit with a message like _prepare v7.0.0_
 
 ### Push changes
 
@@ -105,14 +105,14 @@ xpm run test-all -C ~/Work/micro-os-plus/architecture-cortexm-xpack.git
 
 ## Publish on the npmjs.com server
 
-- select the `xpack-develop` branch
+- select the `xpack-development` branch
 - commit all changes
 - `npm pack` and check the content of the archive, which should list
   only `package.json`, `README.md`, `LICENSE`, `CHANGELOG.md`,
   the sources and CMake/meson files;
   possibly adjust `.npmignore`
-- `npm version patch`, `npm version minor`, `npm version major`
-- push the `xpack-develop` branch to GitHub
+- `npm version 7.0.0`
+- push the `xpack-development` branch to GitHub
 - the `postversion` npm script should also update tags via `git push origin --tags`
 - wait for the CI job to complete
   (<https://github.com/micro-os-plus/architecture-cortexm-xpack/actions/workflows/ci.yml>)
@@ -126,7 +126,7 @@ and macOS Apple Silicon.
 For this:
 
 - start the `~/actions-runners/micro-os-plus/run.sh &` runner on `xbbma` and `xbbla`
-- ensure that the `xpack-develop` branch is pushed
+- ensure that the `xpack-development` branch is pushed
 - run the `trigger-workflow-test-all` action
 - wait for the **test-all** job to complete
   (<https://github.com/micro-os-plus/architecture-cortexm-xpack/actions/workflows/test-all.yml>)
@@ -145,14 +145,14 @@ The version is visible at:
 When the package is considered stable:
 
 - with a Git client (VS Code is fine)
-- merge `xpack-develop` into `xpack`
+- merge `xpack-development` into `xpack`
 - push to GitHub
-- select `xpack-develop`
+- select `xpack-development`
 
 ## Tag the npm package as `latest`
 
 When the release is considered stable, promote it as `latest`:
 
 - `npm dist-tag ls @micro-os-plus/architecture-cortexm`
-- `npm dist-tag add @micro-os-plus/architecture-cortexm@6.3.0 latest`
+- `npm dist-tag add @micro-os-plus/architecture-cortexm@7.0.0 latest`
 - `npm dist-tag ls @micro-os-plus/architecture-cortexm`

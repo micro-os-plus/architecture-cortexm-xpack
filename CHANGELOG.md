@@ -6,8 +6,12 @@ Please check
 [GitHub](https://github.com/micro-os-plus/architecture-cortexm-xpack/issues/)
 and close existing issues and pull requests.
 
-## 2026-07-31
+## 2026-08-04
 
+* v7.0.0
+* 5b196e1 re-generate top commons
+* 2fd915d package*.json update
+* a5fed11 CHANGELOG update
 * 4b810b2 re-generate top xcdl
 * d186f80 re-generate top commons
 * b917041 xcdl-package.jsonc update
