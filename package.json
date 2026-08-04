@@ -42,7 +42,7 @@
     "jsonc-parser": "^3.3.1"
   },
   "scripts": {
-    "generate-top-commons": "bash node_modules/@xpack/npm-packages-helper/maintenance-scripts/generate-top-commons.sh --micro-os-plus",
+    "generate-top-commons": "node node_modules/@xpack/npm-packages-helper/maintenance-scripts/generate-top-commons.mjs --micro-os-plus",
     "npm-install": "npm install",
     "npm-link-helpers": "npm link @xpack/npm-packages-helper",
     "npm-outdated": "npm outdated",
@@ -60,10 +60,10 @@
       "@xpack-dev-tools/clang": "21.1.8-1.1"
     },
     "actions": {
-      "clang-format": "bash scripts/clang-format.sh",
-      "cmake-format": "bash scripts/cmake-format.sh",
-      "jsonc-format": "bash scripts/jsonc-format.sh",
-      "xcdl-export": "node scripts/xcdl-export.mjs xcdl-package.jsonc"
+      "clang-format": "node scripts/clang-format.mjs",
+      "cmake-format": "node scripts/cmake-format.mjs",
+      "jsonc-format": "node scripts/jsonc-format.mjs",
+      "xcdl-export": "node scripts/xcdl-export.mjs xcdl-package.json*"
     }
   },
   "engines": {
