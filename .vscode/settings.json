@@ -17,7 +17,8 @@
     "*-liquid.*": "liquid",
     "*.liquid": "liquid",
     "*.rb": "ruby",
-    "*.mdx": "mdx"
+    "*.mdx": "mdx",
+    "*.S": "cpp"
   },
   //
   // Language/file type specific settings.
