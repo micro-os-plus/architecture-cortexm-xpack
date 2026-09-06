@@ -34,7 +34,8 @@ extern "C"
   extern void
   HardFault_Handler (void);
 
-#if defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
+#if defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__) \
+    || defined(__ARM_ARCH_8M_MAIN__)
 
   extern void
   MemManage_Handler (void);
@@ -45,7 +46,14 @@ extern "C"
   extern void
   DebugMon_Handler (void);
 
-#endif
+#endif // defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__) || defined(__ARM_ARCH_8M_MAIN__)
+
+#if defined(__ARM_ARCH_8M_MAIN__) || defined(__ARM_ARCH_8M_BASE__)
+
+  extern void
+  SecureFault_Handler (void);
+
+#endif // defined(__ARM_ARCH_8M_MAIN__) || defined(__ARM_ARCH_8M_BASE__)
 
   extern void
   SVC_Handler (void);
@@ -75,13 +83,14 @@ extern "C"
 
 #if defined(MICRO_OS_PLUS_DIAG_TRACE_ENABLED)
 
-#if defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
+#if defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__) \
+    || defined(__ARM_ARCH_8M_MAIN__)
 
   void
   dump_exception_stack (exception_stack_frame_s* frame, uint32_t cfsr,
                         uint32_t mmfar, uint32_t bfar, uint32_t lr);
 
-#endif // defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
+#endif // defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__) || defined(__ARM_ARCH_8M_MAIN__)
 
 #if defined(__ARM_ARCH_6M__)
 
@@ -95,7 +104,8 @@ extern "C"
   void
   hard_fault_handler_c (exception_stack_frame_s* frame, uint32_t lr);
 
-#if defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
+#if defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__) \
+    || defined(__ARM_ARCH_8M_MAIN__)
 
   void
   usage_fault_handler_c (exception_stack_frame_s* frame, uint32_t lr);
@@ -103,7 +113,7 @@ extern "C"
   void
   bus_fault_handler_c (exception_stack_frame_s* frame, uint32_t lr);
 
-#endif // defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
+#endif // defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__) || defined(__ARM_ARCH_8M_MAIN__)
 
 #if defined(__cplusplus)
 }
