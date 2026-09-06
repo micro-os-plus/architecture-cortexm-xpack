@@ -119,11 +119,6 @@ namespace cortexm::architecture::registers
   msp (register_t top_of_main_stack);
 
   // --------------------------------------------------------------------------
-} // namespace cortexm::architecture::registers
-
-namespace cortexm::architecture::registers
-{
-  // --------------------------------------------------------------------------
   // Architecture PSP accessors in C++.
 
   /**
