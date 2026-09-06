@@ -9,8 +9,8 @@
  * obtained from https://opensource.org/licenses/mit.
  */
 
-#ifndef MICRO_OS_PLUS_ARCHITECTURE_CORTEXM_INSTRUCTIONS_H_
-#define MICRO_OS_PLUS_ARCHITECTURE_CORTEXM_INSTRUCTIONS_H_
+#ifndef MICRO_OS_PLUS_ARCHITECTURE_CORTEXM_REGISTERS_H_
+#define MICRO_OS_PLUS_ARCHITECTURE_CORTEXM_REGISTERS_H_
 
 // ----------------------------------------------------------------------------
 
@@ -27,7 +27,7 @@ extern "C"
 #endif // defined(__cplusplus)
 
   // --------------------------------------------------------------------------
-  // Architecture registers getters and mutators in C.
+  // Architecture registers accessorss in C.
 
   /**
    * Main Stack Pointer getter.
@@ -42,6 +42,19 @@ extern "C"
   cortexm_architecture_set_msp (
       cortexm_architecture_register_t top_of_main_stack);
 
+  /**
+   * Process Stack Pointer getter.
+   */
+  static cortexm_architecture_register_t
+  cortexm_architecture_get_psp (void);
+
+  /**
+   * Process Stack Pointer setter.
+   */
+  static void
+  cortexm_architecture_set_psp (
+      cortexm_architecture_register_t top_of_process_stack);
+
   // --------------------------------------------------------------------------
   // Portable architecture assembly instructions in C.
 
@@ -51,9 +64,32 @@ extern "C"
   static micro_os_plus_architecture_register_t
   micro_os_plus_architecture_get_sp (void);
 
+  /**
+   * Stack Pointer setter.
+   */
   static void
   micro_os_plus_architecture_set_sp (
       micro_os_plus_architecture_register_t top_of_stack);
+
+  // --------------------------------------------------------------------------
+
+#if defined(__ARM_ARCH_8M_MAIN__) || defined(__ARM_ARCH_8M_BASE__)
+
+  static cortexm_architecture_register_t
+  cortexm_architecture_get_msplim (void);
+
+  static void
+  cortexm_architecture_set_msplim (
+      cortexm_architecture_register_t bottom_of_main_stack);
+
+  static cortexm_architecture_register_t
+  cortexm_architecture_get_psplim (void);
+
+  static void
+  cortexm_architecture_set_psplim (
+      cortexm_architecture_register_t bottom_of_process_stack);
+
+#endif // defined(__ARM_ARCH_8M_MAIN__) || defined(__ARM_ARCH_8M_BASE__)
 
   // --------------------------------------------------------------------------
 
@@ -68,7 +104,7 @@ extern "C"
 namespace cortexm::architecture::registers
 {
   // --------------------------------------------------------------------------
-  // Architecture getters in C++.
+  // Architecture MSP accessors in C++.
 
   /**
    * Main Stack Pointer getter.
@@ -85,10 +121,30 @@ namespace cortexm::architecture::registers
   // --------------------------------------------------------------------------
 } // namespace cortexm::architecture::registers
 
+namespace cortexm::architecture::registers
+{
+  // --------------------------------------------------------------------------
+  // Architecture PSP accessors in C++.
+
+  /**
+   * Process Stack Pointer getter.
+   */
+  register_t
+  psp (void);
+
+  /**
+   * Process Stack Pointer setter.
+   */
+  void
+  psp (register_t top_of_process_stack);
+
+  // --------------------------------------------------------------------------
+} // namespace cortexm::architecture::registers
+
 namespace micro_os_plus::architecture::registers
 {
   // --------------------------------------------------------------------------
-  // Portable architecture assembly instructions in C++.
+  // Portable architecture accessors in C++.
 
   /**
    * Stack Pointer getter.
