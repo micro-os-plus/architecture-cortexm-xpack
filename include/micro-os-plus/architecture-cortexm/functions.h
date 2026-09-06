@@ -24,6 +24,10 @@ extern "C"
   void
   micro_os_plus_architecture_show_cpuid (void);
 
+  // TODO: implement stack seal.
+  // static void
+  // cortexm_architecture_tz_set_stackseal (uint32_t stack_top);
+
 #if defined(__cplusplus)
 }
 #endif // defined(__cplusplus)
