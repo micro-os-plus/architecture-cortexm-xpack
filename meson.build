@@ -53,6 +53,7 @@ _local_include_directories += [
 _local_sources += [
   'src/_init_fini.c',
   'src/semihosting.cpp',
+  'src/show-cpuid.cpp',
 ]
 
 # https://mesonbuild.com/Reference-manual_functions.html#declare_dependency

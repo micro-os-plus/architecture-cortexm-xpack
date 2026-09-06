@@ -37,6 +37,7 @@
 
 #include "micro-os-plus/architecture-cortexm/defines.h"
 #include "micro-os-plus/architecture-cortexm/types.h"
+#include "micro-os-plus/architecture-cortexm/functions.h"
 #include "micro-os-plus/architecture-cortexm/instructions.h"
 #include "micro-os-plus/architecture-cortexm/registers.h"
 #include "micro-os-plus/architecture-cortexm/exception-handlers.h"

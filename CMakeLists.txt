@@ -72,8 +72,8 @@ target_include_directories (
 )
 
 target_sources (
-  micro-os-plus-architectures-cortexm-interface INTERFACE "src/_init_fini.c"
-                                                          "src/semihosting.cpp"
+  micro-os-plus-architectures-cortexm-interface
+  INTERFACE "src/_init_fini.c" "src/semihosting.cpp" "src/show-cpuid.cpp"
 )
 
 if (COMMAND xpack_display_target_lists)
