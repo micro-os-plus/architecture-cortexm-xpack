@@ -29,6 +29,43 @@
         "filePath": "{{buildFolderPath}}/generated/include/micro-os-plus/architecture-defines.h"
       },
       // "defaultDefine": "MICRO_OS_PLUS_INCLUDE_ARCHITECTURES_CORTEXM_ENABLED"
+      "cdlComponents": [
+        {
+          "id": "debugger-entry-point",
+          "display": "Debugger entry point",
+          "description": "The ELF entry point when the application is started by a debuggger",
+          "sourceFiles": [
+            "src/debugger-entry-point.S"
+          ],
+          // "defaultDefine": "MICRO_OS_PLUS_INCLUDE_ARCHITECTURES_CORTEXM_DEBUGGER_ENTRY_POINT_ENABLED"
+          "cdlOptions": [
+            {
+              "id": "initialise-vtor",
+              "display": "Initialise VTOR",
+              "description": "Initialise the Vector Table Offset Register (VTOR) when the application is started by a debugger",
+              // "defaultDefine": "MICRO_OS_PLUS_INCLUDE_ARCHITECTURES_CORTEXM_DEBUGGER_ENTRY_POINT_INITIALISE_VTOR_ENABLED"
+            }
+          ]
+        },
+        {
+          "id": "reset-handler",
+          "display": "Reset handler",
+          "description": "The reset handler executed when the system is reset",
+          "sourceFiles": [
+            "src/reset-handler.c"
+          ]
+          // "defaultDefine": "MICRO_OS_PLUS_INCLUDE_ARCHITECTURES_CORTEXM_RESET_HANDLER_ENABLED"
+        },
+        {
+          "id": "exception-handlers",
+          "display": "Exception handlers",
+          "description": "The exception handlers executed when exceptions occur",
+          "sourceFiles": [
+            "src/exception-handlers.cpp"
+          ]
+          // "defaultDefine": "MICRO_OS_PLUS_INCLUDE_ARCHITECTURES_CORTEXM_EXCEPTION_HANDLERS_ENABLED"
+        }
+      ]
     }
   ]
 }
