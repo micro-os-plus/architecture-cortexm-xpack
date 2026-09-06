@@ -33,7 +33,7 @@ OUTPUT_ARCH(arm)
  * The entry point is important for debuggers and simulators, the
  * hardware has its own notion of the startup address.
  */
-ENTRY(Reset_Handler)
+ENTRY(_debugger_entry_point)
 
 /*
  * The '__stack' definition is required by newlib crt0; do not remove it.

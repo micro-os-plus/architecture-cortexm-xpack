@@ -33,27 +33,34 @@ OUTPUT_ARCH(arm)
  * The entry point is important for debuggers and simulators, the
  * hardware has its own notion of the startup address.
  */
-ENTRY(Reset_Handler)
+ENTRY(_debugger_entry_point)
 
 /*
  * The '__stack' definition is required by newlib crt0; do not remove it.
  * The stack is located at the very end of the RAM region.
  * With librdimon, crt0.S gets the heap and the stack from the debugger.
+ *
+ * These can be passed via the command line as:
+ * `gcc -Wl,--defsym=__stack=0x20010000 -Wl,--defsym=__stack_size=0x2000...`
+ * Note: the parser does not recognise K or M, only numeric values.
  */
 __stack = DEFINED(__stack) ? __stack : ORIGIN(RAM) + LENGTH(RAM);
-__stack_size = DEFINED(__stack_size) ? __stack_size : 2K;
+__stack_size = DEFINED(__stack_size) ? __stack_size : 4K;
+
+__stack_seal_size = 8;
 
 /* TODO: check if still used by CubeMX */
 _estack = __stack; 	/* STM specific definition */
-
 
 SECTIONS
 {
   /*
    * For Cortex-M devices, the beginning of the startup code is stored in
    * the .interrupt_vectors section, which goes to FLASH.
+   * Minimum alignment is 128, but the exact value is (16+N)*4 rounded to
+   * the next power of two. For large devices 1024 might not be enough.
    */
-  .interrupt_vectors : ALIGN(4)
+  .interrupt_vectors : ALIGN(1024)
   {
     FILL(0xFF)
 
@@ -83,6 +90,8 @@ SECTIONS
    */
   .after_vectors : ALIGN(4)
   {
+    KEEP(*(.debugger_entry_point .debugger_entry_point.*)) 
+
     *(.after_vectors .after_vectors.*)	/* Startup code and ISRs */
   } >FLASH
 
@@ -354,14 +363,18 @@ SECTIONS
     __noinit_end__ = .;            /* µOS++ extension. */
   } >RAM
 
-  /* _sbrk() expects at least word alignment. */
-  . = ALIGN(8);
-  PROVIDE( __end__ = . ); /* Used by crt0.S arm & aarch64 */
-  PROVIDE( __end = . ); /* Used by crt0.S sparc, m68k */
-  PROVIDE( _end = . ); /* Used by libgloss sbrk() */
-  PROVIDE( end = . ); /* Used by newlib _sbrk() arm & aarch64 */
+  .heap (NOLOAD):
+  {
+    /* _sbrk() expects at least word alignment. */
+    . = ALIGN(8);
+    PROVIDE( __end__ = . ); /* Used by crt0.S arm & aarch64 */
+    PROVIDE( __end = . ); /* Used by crt0.S sparc, m68k */
+    PROVIDE( _end = . ); /* Used by libgloss sbrk() */
+    PROVIDE( end = . ); /* Used by newlib _sbrk() arm & aarch64 */
 
-  PROVIDE( __heap_begin__ = . );     /* µOS++ extension. */
+    PROVIDE( __heap_begin__ = . );     /* µOS++ extension. */
+    KEEP(*(.heap*))
+  } >RAM
 
   /*
    * It should generate an error if the heap overrides the stack.
@@ -371,15 +384,28 @@ SECTIONS
     PROVIDE( _heap_end = . );      /* Used by sbrk in some architectures */
     PROVIDE( _heap_end_ = . );     /* Used by sbrk in some architectures */
     PROVIDE( __heap_end = . );     /* Used by sbrk in some architectures */
+    PROVIDE(__heap_limit = .);
+    PROVIDE(__HeapLimit = .);
 
     PROVIDE( __heap_end__ = . );   /* µOS++ extension. */
 
-    /*
-     * libgloss also uses `__heap_limit` in _sbrk(), initially set to
-     * 0xcafedead and later updated to the value returned by SYS_HEAPINFO.
-     */
+    PROVIDE( __stack_limit__ = . );   /* µOS++ extension. */
+
+   /*
+    * libgloss also uses `__heap_limit` in _sbrk(), initially set to
+    * 0xcafedead and later updated to the value returned by SYS_HEAPINFO.
+    */
     . += __stack_size;
   } >RAM
+
+  /* ARMv8-M stack sealing.  */
+  .stackseal (ORIGIN(RAM) + LENGTH(RAM) - __stack_seal_size) (COPY) :
+  {
+    . = ALIGN(8);
+    __stack_seal__ = .;
+    . = . + 8;
+    . = ALIGN(8);
+  } > RAM
 
   /* ---------------------------------------------------------------------- */
   /* After that there are only debugging sections. */
