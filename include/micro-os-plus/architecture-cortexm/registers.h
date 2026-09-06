@@ -113,6 +113,6 @@ namespace micro_os_plus::architecture::registers
 
 // ----------------------------------------------------------------------------
 
-#endif // MICRO_OS_PLUS_ARCHITECTURE_CORTEXM_INSTRUCTIONS_H_
+#endif // MICRO_OS_PLUS_ARCHITECTURE_CORTEXM_REGISTERS_H_
 
 // ----------------------------------------------------------------------------
