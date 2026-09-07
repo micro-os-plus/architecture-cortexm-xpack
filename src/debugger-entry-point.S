@@ -13,13 +13,15 @@
 
 #if defined(MICRO_OS_PLUS_INCLUDE_ARCHITECTURES_CORTEXM_DEBUGGER_ENTRY_POINT_ENABLED)
 
-.equ VTOR, 0xE000ED08
+    .equ VTOR, 0xE000ED08
 
-.section .debugger_entry_point, "ax", %progbits
-.type _debugger_entry_point, %function
-.syntax unified
-.thumb_func
-.global _debugger_entry_point
+    .section .debugger_entry_point, "ax", %progbits
+    .type _debugger_entry_point, %function
+    .syntax unified
+    .thumb_func
+    .global _debugger_entry_point
+
+    .fnstart
 
 _debugger_entry_point:
 
@@ -40,13 +42,16 @@ _debugger_entry_point:
     ldr     r1, =0x00000000           // Arm v6m has no VTOR.
 
 #else
-#error "Unsupported architecture.
+#error "Unsupported architecture."
 #endif // defined(__ARM_ARCH_7M__) ...
 
     str     r0, [r1]
     ldmia   r0!, {r1, r2}
     msr     msp, r1
     bx      r2
+
+    .fnend
+    .size    _debugger_entry_point, . - _debugger_entry_point
 
 #endif // defined(MICRO_OS_PLUS_INCLUDE_ARCHITECTURES_CORTEXM_DEBUGGER_ENTRY_POINT_ENABLED)
 
