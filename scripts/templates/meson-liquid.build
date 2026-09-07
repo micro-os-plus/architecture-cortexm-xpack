@@ -33,7 +33,7 @@
 {% if package.description %}
 # {{package.description}}.
 {%- endif %}
-message('Processing xPack @{{packageScope}}/{{packageName}}...')
+message('Processing xpm package @{{packageScope}}/{{packageName}}...')
 
 # -----------------------------------------------------------------------------
 

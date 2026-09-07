@@ -30,7 +30,7 @@
 # -----------------------------------------------------------------------------
 
 # A source code library with the µOS++ Arm Cortex-M architecture.
-message('Processing xPack @micro-os-plus/architecture-cortexm...')
+message('Processing xpm package @micro-os-plus/architecture-cortexm...')
 
 # -----------------------------------------------------------------------------
 
