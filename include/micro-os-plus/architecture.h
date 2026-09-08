@@ -36,6 +36,9 @@
 // ----------------------------------------------------------------------------
 
 #include "micro-os-plus/architecture-cortexm/defines.h"
+
+#if !defined(__ASSEMBLY__)
+
 #include "micro-os-plus/architecture-cortexm/types.h"
 #include "micro-os-plus/architecture-cortexm/functions.h"
 #include "micro-os-plus/architecture-cortexm/instructions.h"
@@ -43,6 +46,8 @@
 #include "micro-os-plus/architecture-cortexm/exception-handlers.h"
 
 #include "micro-os-plus/architecture-cortexm/inlines/semihosting-inlines.h"
+
+#endif // !defined(__ASSEMBLY__)
 
 // ----------------------------------------------------------------------------
 

@@ -11,6 +11,11 @@
 
 // ----------------------------------------------------------------------------
 
+#define __ASSEMBLY__ 1
+#include "micro-os-plus/architecture.h"
+
+// ----------------------------------------------------------------------------
+
 #if defined(MICRO_OS_PLUS_INCLUDE_ARCHITECTURES_CORTEXM_DEBUGGER_ENTRY_POINT_ENABLED)
 
     .equ VTOR, 0xE000ED08
