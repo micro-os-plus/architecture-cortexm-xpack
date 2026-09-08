@@ -66,8 +66,8 @@ No need to add a tag here, it'll be added when the release is created.
 
 ### Increase the version
 
-Determine the upstream version (like `7.0.0`) and eventually update the
-`package.json` file; the format is `7.0.0-pre`.
+Determine the upstream version (like `8.0.0`) and eventually update the
+`package.json` file; the format is `8.0.0-pre`.
 
 ### Fix possible open issues
 
@@ -75,7 +75,7 @@ Check GitHub issues and pull requests:
 
 - <https://github.com/micro-os-plus/architecture-cortexm-xpack/issues/>
 
-and fix them; assign them to a milestone (like `7.0.0`).
+and fix them; assign them to a milestone (like `8.0.0`).
 
 ### Update `README-MAINTAINER.md`
 
@@ -86,8 +86,8 @@ related to the new version.
 
 - open the `CHANGELOG.md` file
 - check if all previous fixed issues are in
-- add a new entry like _\* v7.0.0_
-- commit with a message like _prepare v7.0.0_
+- add a new entry like _\* v8.0.0_
+- commit with a message like _prepare v8.0.0_
 
 ### Push changes
 
@@ -111,7 +111,7 @@ xpm run test-all -C ~/Work/micro-os-plus/architecture-cortexm-xpack.git
   only `package.json`, `README.md`, `LICENSE`, `CHANGELOG.md`,
   the sources and CMake/meson files;
   possibly adjust `.npmignore`
-- `npm version 7.0.0`
+- `npm version 8.0.0`
 - push the `xpack-development` branch to GitHub
 - the `postversion` npm script should also update tags via `git push origin --tags`
 - wait for the CI job to complete
@@ -154,5 +154,5 @@ When the package is considered stable:
 When the release is considered stable, promote it as `latest`:
 
 - `npm dist-tag ls @micro-os-plus/architecture-cortexm`
-- `npm dist-tag add @micro-os-plus/architecture-cortexm@7.0.0 latest`
+- `npm dist-tag add @micro-os-plus/architecture-cortexm@8.0.0 latest`
 - `npm dist-tag ls @micro-os-plus/architecture-cortexm`

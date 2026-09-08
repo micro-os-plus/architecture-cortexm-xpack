@@ -6,9 +6,40 @@ Please check
 [GitHub](https://github.com/micro-os-plus/architecture-cortexm-xpack/issues/)
 and close existing issues and pull requests.
 
+## 2026-09-08
+
+* v8.0.0
+* 2232762 show-cpuid group 6M & 7M definitions
+* c36d5e6 add svds
+* 3c653f5 fix debugger-entry-point.S includes
+* fb883a2 add micro_os_plus_semihosting_register_t
+
+## 2026-09-07
+
+* eb23f0f cosmetics xpm packages
+* 30b12de debugger-entry-point fix syntax & cosmetics
+
+## 2026-09-06
+
+* fb14d10 settings.json update
+* 0897030 move handlers from device_qemu here
+* c3ed570 functions.h: plan for tz_set_stackseal
+* 0f82d7e registers.h cosmetics
+* 65fd835 add psp, msplim, psplim accessors
+* c3d64f8 registers.h: fix guard
+* 2154f94 exception-handlers.h: add support for arm v8m
+* 077fd84 add show-cpuid
+* 5a00e30 linker scripts final edits before moving to startup
+
+## 2026-08-05
+
+* d063178 readme cosmetics
+
 ## 2026-08-04
 
-* v7.0.0
+* 08b4f9c 7.0.0
+* 0f94e4d prepare v7.0.0
+* 7faca60 re-format
 * 5b196e1 re-generate top commons
 * 2fd915d package*.json update
 * a5fed11 CHANGELOG update
