@@ -26,9 +26,14 @@ extern "C"
 
   // --------------------------------------------------------------------------
 
+    // Type of each entry in structures.
+  typedef micro_os_plus_architecture_register_t
+      micro_os_plus_semihosting_register_t;
+
   // Type of each entry in a parameter block.
   typedef micro_os_plus_architecture_register_t
       micro_os_plus_semihosting_param_block_t;
+      
   // Type of result.
   typedef micro_os_plus_architecture_signed_register_t
       micro_os_plus_semihosting_response_t;
