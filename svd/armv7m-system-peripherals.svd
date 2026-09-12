@@ -5,7 +5,7 @@
   <name>Generic_ARMv7M</name>
   <series>ARMv7-M architecture (Cortex-M3 / Cortex-M4 / Cortex-M7 / SC300)</series>
   <version>1.0</version>
-  <description>Generic ARMv7-M system-peripheral template: NVIC (sized to the full architectural 240-interrupt maximum), SCB (with the full fault-handling register set), SysTick, CoreDebug, and an optional MPU. Built from the verified union of what CMSIS_5's core_cm3.h/core_cm4.h declare for the architecture (both are identical at this level -- the FPU-specific register block that exists on Cortex-M4/M7 is deliberately NOT included here, since plain Cortex-M3 has no FPU at all; ask if you want that added separately). Unlike ARMv6-M, the CoreDebug and SCB.SHCSR/DFSR registers ARE directly accessible from application code on ARMv7-M, not DAP-only.</description>
+  <description>Generic ARMv7-M system-peripheral template: NVIC (sized to the full architectural 240-interrupt maximum), SCB (with the full fault-handling register set), SCnSCB (ICTR/ACTLR), SysTick, DCB (named CoreDebug prior to CMSIS_6), and an optional MPU. Built from the verified union of what CMSIS_6's core_cm3.h/core_cm4.h/core_cm7.h declare for the architecture (all three are identical at this level -- the FPU-specific register block that exists on Cortex-M4/M7 is deliberately NOT included here, since plain Cortex-M3 has no FPU at all; ask if you want that added separately). Unlike ARMv6-M, DCB and SCB.SHCSR/DFSR are directly accessible from application code on ARMv7-M, not DAP-only. Verified against ARM-software/CMSIS_6@main commit 26206e47dc (2026-09-11), CMSIS-Core(M) v6.3.1-dev.</description>
   <licenseText>                                                   
     ARM Limited (ARM) is supplying this software for use with Cortex-M\n
     processor based microcontroller, but can be equally used for other\n
@@ -187,7 +187,7 @@
     </peripheral>
     <peripheral>
       <name>SCB</name>
-      <description>System Control Block, ARMv7-M register set. Verified against CMSIS_5 core_cm3.h/core_cm4.h defines (both are identical at the SCB level -- the FPU-related extras live in a separate optional FPU block, not shown here, since plain Cortex-M3 has no FPU at all). PFR/DFR/ADR/MMFR/ISAR are read-only ID registers whose exact values are implementation specific.</description>
+      <description>System Control Block, ARMv7-M register set. Verified against CMSIS_6 core_cm3.h/core_cm4.h/core_cm7.h defines (all three are identical at the SCB level -- the FPU-related extras live in a separate optional FPU block, not shown here, since plain Cortex-M3 has no FPU at all). ID_PFR/ID_DFR/ID_AFR/ID_MMFR/ID_ISAR are read-only ID registers whose exact values are implementation specific (renamed from PFR/DFR/ADR/MMFR/ISAR in CMSIS_6, to match the naming CMSIS has always used for the same registers on ARMv8-M). CMSIS_6's SCB_Type also declares an alias of NVIC's STIR at offset 0x200 (same physical register as NVIC-&gt;STIR, at 0xE000EF00) -- not duplicated here, STIR is modeled once, under NVIC, same treatment as SAU/SCB's SFSR/SFAR aliasing on the ARMv8-M Mainline file.</description>
       <groupName>SCB</groupName>
       <baseAddress>0xE000ED00</baseAddress>
       <addressBlock>
@@ -348,7 +348,8 @@
               <bitWidth>3</bitWidth>
             </field>
             <field>
-              <name>ENDIANESS</name>
+              <name>ENDIANNESS</name>
+              <description>Renamed from ENDIANESS in CMSIS_6 (kept as a deprecated alias there)</description>
               <bitOffset>15</bitOffset>
               <bitWidth>1</bitWidth>
               <access>read-only</access>
@@ -792,7 +793,7 @@
           </fields>
         </register>
         <register>
-          <name>PFR%s</name>
+          <name>ID_PFR%s</name>
           <dim>2</dim>
           <dimIncrement>0x4</dimIncrement>
           <description>Processor Feature Register, implementation defined</description>
@@ -802,7 +803,7 @@
           <resetValue>0x00000000</resetValue>
         </register>
         <register>
-          <name>DFR</name>
+          <name>ID_DFR</name>
           <description>Debug Feature Register, implementation defined</description>
           <addressOffset>0x48</addressOffset>
           <size>32</size>
@@ -811,7 +812,7 @@
           <fields />
         </register>
         <register>
-          <name>ADR</name>
+          <name>ID_AFR</name>
           <description>Auxiliary Feature Register, implementation defined</description>
           <addressOffset>0x4C</addressOffset>
           <size>32</size>
@@ -820,7 +821,7 @@
           <fields />
         </register>
         <register>
-          <name>MMFR%s</name>
+          <name>ID_MMFR%s</name>
           <dim>4</dim>
           <dimIncrement>0x4</dimIncrement>
           <description>Memory Model Feature Register, implementation defined</description>
@@ -830,7 +831,7 @@
           <resetValue>0x00000000</resetValue>
         </register>
         <register>
-          <name>ISAR%s</name>
+          <name>ID_ISAR%s</name>
           <dim>5</dim>
           <dimIncrement>0x4</dimIncrement>
           <description>Instruction Set Attributes Register, implementation defined</description>
@@ -1262,6 +1263,44 @@
       </registers>
     </peripheral>
     <peripheral>
+      <name>SCnSCB</name>
+      <description>System Control and ID Registers not in the SCB address range: ICTR (Interrupt Controller Type Register) and ACTLR (Auxiliary Control Register). Verified against CMSIS_6 core_cm3.h/core_cm4.h/core_cm7.h.</description>
+      <groupName>SCnSCB</groupName>
+      <baseAddress>0xE000E000</baseAddress>
+      <addressBlock>
+        <offset>0x0</offset>
+        <size>0xC</size>
+        <usage>registers</usage>
+      </addressBlock>
+      <registers>
+        <register>
+          <name>ICTR</name>
+          <description>Interrupt Controller Type Register</description>
+          <addressOffset>0x4</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>INTLINESNUM</name>
+              <description>(Number of 32-interrupt NVIC banks implemented) - 1: total external interrupts = (INTLINESNUM+1)*32</description>
+              <bitOffset>0</bitOffset>
+              <bitWidth>4</bitWidth>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>ACTLR</name>
+          <description>Auxiliary Control Register -- wholly IMPLEMENTATION DEFINED by the architecture: bit meanings differ even among Arm's own reference cores (e.g. core_cm3.h defines DISMCYCINT/DISDEFWBUF/DISFOLD; core_cm4.h adds DISFPCA/DISOOFP for its optional FPU; core_cm7.h redefines the whole register around its cache/branch-prediction microarchitecture) -- deliberately left with no fields, same treatment as the ID_* registers above.</description>
+          <addressOffset>0x8</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x00000000</resetValue>
+          <fields />
+        </register>
+      </registers>
+    </peripheral>
+    <peripheral>
       <name>SysTick</name>
       <description>SysTick Timer. Identical register set on every Cortex-M core (ARMv6-M through current ARMv8-M).</description>
       <groupName>SysTick</groupName>
@@ -1362,9 +1401,9 @@
       </registers>
     </peripheral>
     <peripheral>
-      <name>CoreDebug</name>
-      <description>Core Debug Registers (DHCSR, DCRSR, DCRDR, DEMCR). Fixed ADIv5/CoreSight debug architecture -- identical on every Cortex-M core.</description>
-      <groupName>CoreDebug</groupName>
+      <name>DCB</name>
+      <description>Debug Control Block (DHCSR, DCRSR, DCRDR, DEMCR) -- named "CoreDebug" prior to CMSIS_6, which renamed it to DCB across the whole M-profile line ("CoreDebug"/"CoreDebug_Type" remain as deprecated aliases for the same registers). Fixed ADIv5/CoreSight debug architecture -- identical on every Cortex-M core.</description>
+      <groupName>DCB</groupName>
       <baseAddress>0xE000EDF0</baseAddress>
       <addressBlock>
         <offset>0x0</offset>
@@ -1460,8 +1499,9 @@
           <fields>
             <field>
               <name>REGSEL</name>
+              <description>Widened from 5 to 7 bits in CMSIS_6</description>
               <bitOffset>0</bitOffset>
-              <bitWidth>5</bitWidth>
+              <bitWidth>7</bitWidth>
             </field>
             <field>
               <name>REGWnR</name>

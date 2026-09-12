@@ -5,7 +5,7 @@
   <name>Generic_ARMv8MMainline</name>
   <series>ARMv8-M Mainline architecture (Cortex-M33 / Cortex-M35P / Cortex-M55 / Cortex-M85)</series>
   <version>1.0</version>
-  <description>Generic ARMv8-M Mainline system-peripheral template: NVIC (sized to the full architectural 496-interrupt maximum), SCB (the full ARMv7-M fault-handling set plus the Security Extension additions), SysTick, DCB (renamed CoreDebug), and an optional MPU with RBAR/RLAR base+limit regions -- plus the optional Security Extension (TrustZone) SAU peripheral. Built from CMSIS_5's core_armv8mml.h (Cortex-M33's core header), NOT from any single vendor SVD. The Security Extension itself, SAU region count, MPU presence, and FPU/DSP presence are all implementation-defined per device -- fields like NVIC.ITNS, SCB.NSACR/SFSR/SFAR, and the STTNS/SYSRESETREQS/BFHFNMINS/PRIS/SLEEPDEEPS/SECUREFAULT* bits are Secure-only and RAZ/WI (or fixed) when the Security Extension is absent. Deliberately excluded, same rationale as the ARMv7-M file: the FPU/MVFR/cache-maintenance register blocks (CLIDR/CTR/CCSIDR/CSSELR, ICIALLU..BPIALL, CCR.DC/IC/BP -- Cortex-M55/M85-specific cache support) and trace components (ITM/DWT/TPIU).</description>
+  <description>Generic ARMv8-M Mainline system-peripheral template: NVIC (sized to the full architectural 496-interrupt maximum), SCB (the full ARMv7-M fault-handling set plus the Security Extension additions), SCnSCB (ICTR/ACTLR/CPPWR), SysTick, DCB (named CoreDebug prior to CMSIS_6), and an optional MPU with RBAR/RLAR base+limit regions -- plus the optional Security Extension (TrustZone) SAU peripheral. Built from CMSIS_6's core_cm33.h (Cortex-M33's core header), NOT from any single vendor SVD. The Security Extension itself, SAU region count, MPU presence, and FPU/DSP presence are all implementation-defined per device -- fields like NVIC.ITNS, SCB.NSACR/SFSR/SFAR, and the STTNS/SYSRESETREQS/BFHFNMINS/PRIS/SLEEPDEEPS/SECUREFAULT* bits are Secure-only and RAZ/WI (or fixed) when the Security Extension is absent. Deliberately excluded, same rationale as the ARMv7-M file: the FPU/MVFR/cache-maintenance register blocks (CLIDR/CTR/CCSIDR/CSSELR, ICIALLU..BPIALL, CCR.DC/IC/BP -- Cortex-M55/M85-specific cache support) and trace components (ITM/DWT/TPIU). Verified against ARM-software/CMSIS_6@main commit 26206e47dc (2026-09-11), CMSIS-Core(M) v6.3.1-dev.</description>
   <licenseText>                                                   
     ARM Limited (ARM) is supplying this software for use with Cortex-M\n
     processor based microcontroller, but can be equally used for other\n
@@ -37,7 +37,7 @@
   <peripherals>
     <peripheral>
       <name>NVIC</name>
-      <description>Nested Vectored Interrupt Controller. ARMv8-M packs interrupt state into 16 banks of 32 bits each (ISER/ICER/ISPR/ICPR/IABR/ITNS) plus 124 32-bit IPR words, covering the full architectural maximum of 496 external interrupts (verified against CMSIS core_armv8mbl.h/core_armv8mml.h: IPR is a 496-byte array, i.e. 124 words of 4 packed 8-bit priorities each -- same total on both profiles). ITNS (Interrupt Target Non-Secure) is new versus ARMv6-M/ARMv7-M: one bit per interrupt selecting whether it targets the Secure or the Non-secure state; Secure-only access, and RAZ/WI when the Security Extension is not implemented. Mainline additionally has STIR, at the same offset as on ARMv7-M.</description>
+      <description>Nested Vectored Interrupt Controller. ARMv8-M packs interrupt state into 16 banks of 32 bits each (ISER/ICER/ISPR/ICPR/IABR/ITNS) plus 124 32-bit IPR words, covering the full architectural maximum of 496 external interrupts (verified against CMSIS_6 core_cm23.h/core_cm33.h: IPR is a 496-byte array, i.e. 124 words of 4 packed 8-bit priorities each -- same total on both profiles). ITNS (Interrupt Target Non-Secure) is new versus ARMv6-M/ARMv7-M: one bit per interrupt selecting whether it targets the Secure or the Non-secure state; Secure-only access, and RAZ/WI when the Security Extension is not implemented. Mainline additionally has STIR, at the same offset as on ARMv7-M.</description>
       <groupName>NVIC</groupName>
       <baseAddress>0xE000E100</baseAddress>
       <addressBlock>
@@ -204,7 +204,7 @@
     </peripheral>
     <peripheral>
       <name>SCB</name>
-      <description>System Control Block, ARMv8-M Mainline register set. Verified against CMSIS_5 core_armv8mml.h. Superset of ARMv7-M's SCB plus the Security Extension: NSACR (Non-secure Access Control), SFSR/SFAR (Secure Fault Status/Address -- physically the same registers CMSIS also exposes via SAU-&gt;SFSR/SFAR; modeled once here, under SCB, since SAU and SCB share the same 0xE000ED00-0xE000EDEF page -- see the two &lt;addressBlock&gt; entries below and the SAU peripheral's description), and extra ICSR/AIRCR/SCR/SHCSR/CFSR bits (see the individual register descriptions). ID_ISAR now has 6 words (ID_ISAR5 added) versus 5 on ARMv7-M; the ID_* register names themselves also changed (ADR/DFR -&gt; ID_AFR/ID_DFR) to match current CMSIS naming for ARMv8-M. Deliberately excluded, same rationale as ARMv7-M: CFSR.MLSPERR/LSPERR (FPU lazy-stacking bits) are documented but the FPU block itself is not modeled, and the cache-maintenance registers present on cache-capable implementations (CLIDR/CTR/CCSIDR/CSSELR, ICIALLU..BPIALL, MVFR0-2, CCR.DC/IC/BP -- Cortex-M55/M85-specific) are out of scope, same as trace components (ITM/DWT/TPIU).</description>
+      <description>System Control Block, ARMv8-M Mainline register set. Verified against CMSIS_6 core_cm33.h. Superset of ARMv7-M's SCB plus the Security Extension: NSACR (Non-secure Access Control), SFSR/SFAR (Secure Fault Status/Address -- physically the same registers CMSIS also exposes via SAU-&gt;SFSR/SFAR; modeled once here, under SCB, since SAU and SCB share the same 0xE000ED00-0xE000EDEF page -- see the two &lt;addressBlock&gt; entries below and the SAU peripheral's description), and extra ICSR/AIRCR/SCR/SHCSR/CFSR bits (see the individual register descriptions). ID_ISAR now has 6 words (ID_ISAR5 added) versus 5 on ARMv7-M; the ID_* register names themselves also changed (ADR/DFR -&gt; ID_AFR/ID_DFR) to match current CMSIS naming for ARMv8-M. Deliberately excluded, same rationale as ARMv7-M: CFSR.MLSPERR/LSPERR (FPU lazy-stacking bits) are documented but the FPU block itself is not modeled, and the cache-maintenance registers present on cache-capable implementations (CLIDR/CTR/CCSIDR/CSSELR, ICIALLU..BPIALL, MVFR0-2, CCR.DC/IC/BP -- Cortex-M55/M85-specific) are out of scope, same as trace components (ITM/DWT/TPIU).</description>
       <groupName>SCB</groupName>
       <baseAddress>0xE000ED00</baseAddress>
       <addressBlock>
@@ -396,7 +396,8 @@
               <bitWidth>1</bitWidth>
             </field>
             <field>
-              <name>ENDIANESS</name>
+              <name>ENDIANNESS</name>
+              <description>Renamed from ENDIANESS in CMSIS_6 (kept as a deprecated alias there)</description>
               <bitOffset>15</bitOffset>
               <bitWidth>1</bitWidth>
               <access>read-only</access>
@@ -1064,7 +1065,7 @@
     </peripheral>
     <peripheral>
       <name>MPU</name>
-      <description>Memory Protection Unit -- OPTIONAL on ARMv8-M Mainline (__MPU_PRESENT). Region format changed from ARMv7-M's RBAR/RASR (base + size-encoded) to RBAR/RLAR (base + limit), and gained MAIR0/MAIR1 memory-attribute indirection registers (verified against CMSIS core_armv8mbl.h/core_armv8mml.h). Includes 3 alias RBAR/RLAR pairs, same as ARMv7-M (MPU_TYPE_RALIASES=4).</description>
+      <description>Memory Protection Unit -- OPTIONAL on ARMv8-M Mainline (__MPU_PRESENT). Region format changed from ARMv7-M's RBAR/RASR (base + size-encoded) to RBAR/RLAR (base + limit), and gained MAIR0/MAIR1 memory-attribute indirection registers (verified against CMSIS_6 core_cm23.h/core_cm33.h). Includes 3 alias RBAR/RLAR pairs, same as ARMv7-M (MPU_TYPE_RALIASES=4). RLAR.PXN (Privileged eXecute Never, bit 4) is Mainline-only -- absent from Baseline's RLAR entirely, not just RAZ/WI.</description>
       <groupName>MPU</groupName>
       <baseAddress>0xE000ED90</baseAddress>
       <addressBlock>
@@ -1193,6 +1194,12 @@
               <bitWidth>3</bitWidth>
             </field>
             <field>
+              <name>PXN</name>
+              <description>Privileged eXecute Never -- new in CMSIS_6, Mainline only</description>
+              <bitOffset>4</bitOffset>
+              <bitWidth>1</bitWidth>
+            </field>
+            <field>
               <name>LIMIT</name>
               <description>Limit address, 32-byte aligned</description>
               <bitOffset>5</bitOffset>
@@ -1253,6 +1260,12 @@
               <description>MAIR index</description>
               <bitOffset>1</bitOffset>
               <bitWidth>3</bitWidth>
+            </field>
+            <field>
+              <name>PXN</name>
+              <description>Privileged eXecute Never -- new in CMSIS_6, Mainline only</description>
+              <bitOffset>4</bitOffset>
+              <bitWidth>1</bitWidth>
             </field>
             <field>
               <name>LIMIT</name>
@@ -1317,6 +1330,12 @@
               <bitWidth>3</bitWidth>
             </field>
             <field>
+              <name>PXN</name>
+              <description>Privileged eXecute Never -- new in CMSIS_6, Mainline only</description>
+              <bitOffset>4</bitOffset>
+              <bitWidth>1</bitWidth>
+            </field>
+            <field>
               <name>LIMIT</name>
               <description>Limit address, 32-byte aligned</description>
               <bitOffset>5</bitOffset>
@@ -1377,6 +1396,12 @@
               <description>MAIR index</description>
               <bitOffset>1</bitOffset>
               <bitWidth>3</bitWidth>
+            </field>
+            <field>
+              <name>PXN</name>
+              <description>Privileged eXecute Never -- new in CMSIS_6, Mainline only</description>
+              <bitOffset>4</bitOffset>
+              <bitWidth>1</bitWidth>
             </field>
             <field>
               <name>LIMIT</name>
@@ -1450,7 +1475,7 @@
     </peripheral>
     <peripheral>
       <name>SAU</name>
-      <description>Security Attribution Unit -- present only when the Security Extension (TrustZone) is implemented; absent entirely on a Non-secure-only/single-state part. RNR/RBAR/RLAR are further optional within that: only present when __SAUREGION_PRESENT=1, i.e. the implementation has at least one programmable SAU region (a part can implement the Security Extension with the whole memory map fixed Secure/Non-secure by IDAU alone and no SAU regions at all). Verified against CMSIS core_armv8mbl.h/core_armv8mml.h (identical on both profiles). SFSR/SFAR are modeled once, under SCB, since SAU_Type and SCB_Type both expose the same physical registers at the same address on Mainline; Baseline has neither (no SecureFault handler exists there).</description>
+      <description>Security Attribution Unit -- present only when the Security Extension (TrustZone) is implemented; absent entirely on a Non-secure-only/single-state part. RNR/RBAR/RLAR are further optional within that: only present when __SAUREGION_PRESENT=1, i.e. the implementation has at least one programmable SAU region (a part can implement the Security Extension with the whole memory map fixed Secure/Non-secure by IDAU alone and no SAU regions at all). Verified against CMSIS_6 core_cm23.h/core_cm33.h (identical on both profiles). SFSR/SFAR are modeled once, under SCB, since SAU_Type and SCB_Type both expose the same physical registers at the same address on Mainline -- CMSIS_6 now says so explicitly (SAU_Type's own SFSR/SFAR are commented "deprecated: use SCB-&gt;SFSR"/"SCB-&gt;SFAR"); Baseline has neither (no SecureFault handler exists there).</description>
       <groupName>SAU</groupName>
       <baseAddress>0xE000EDD0</baseAddress>
       <addressBlock>
@@ -1551,6 +1576,78 @@
               <description>Limit address, 32-byte aligned</description>
               <bitOffset>5</bitOffset>
               <bitWidth>27</bitWidth>
+            </field>
+          </fields>
+        </register>
+      </registers>
+    </peripheral>
+    <peripheral>
+      <name>SCnSCB</name>
+      <description>System Control and ID Registers not in the SCB address range: ICTR (Interrupt Controller Type Register), ACTLR (Auxiliary Control Register), and CPPWR (Coprocessor Power Control -- new in ARMv8-M Mainline). Verified against CMSIS_6 core_cm33.h. Absent entirely on ARMv8-M Baseline, same as ARMv6-M.</description>
+      <groupName>SCnSCB</groupName>
+      <baseAddress>0xE000E000</baseAddress>
+      <addressBlock>
+        <offset>0x0</offset>
+        <size>0x10</size>
+        <usage>registers</usage>
+      </addressBlock>
+      <registers>
+        <register>
+          <name>ICTR</name>
+          <description>Interrupt Controller Type Register</description>
+          <addressOffset>0x4</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>INTLINESNUM</name>
+              <description>(Number of 32-interrupt NVIC banks implemented) - 1: total external interrupts = (INTLINESNUM+1)*32</description>
+              <bitOffset>0</bitOffset>
+              <bitWidth>4</bitWidth>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>ACTLR</name>
+          <description>Auxiliary Control Register -- wholly IMPLEMENTATION DEFINED by the architecture, same as on ARMv7-M -- deliberately left with no fields.</description>
+          <addressOffset>0x8</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x00000000</resetValue>
+          <fields />
+        </register>
+        <register>
+          <name>CPPWR</name>
+          <description>Coprocessor Power Control Register -- new in ARMv8-M Mainline; only meaningful if an FPU (coprocessors 10/11) is implemented.</description>
+          <addressOffset>0xC</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>SU10</name>
+              <description>Coprocessor 10 (FPU) power enable -- only meaningful if an FPU is implemented</description>
+              <bitOffset>20</bitOffset>
+              <bitWidth>1</bitWidth>
+            </field>
+            <field>
+              <name>SUS10</name>
+              <description>Coprocessor 10 (FPU) power enable in Sleep -- only meaningful if an FPU is implemented</description>
+              <bitOffset>21</bitOffset>
+              <bitWidth>1</bitWidth>
+            </field>
+            <field>
+              <name>SU11</name>
+              <description>Coprocessor 11 (FPU) power enable -- only meaningful if an FPU is implemented</description>
+              <bitOffset>22</bitOffset>
+              <bitWidth>1</bitWidth>
+            </field>
+            <field>
+              <name>SUS11</name>
+              <description>Coprocessor 11 (FPU) power enable in Sleep -- only meaningful if an FPU is implemented</description>
+              <bitOffset>23</bitOffset>
+              <bitWidth>1</bitWidth>
             </field>
           </fields>
         </register>
@@ -1658,7 +1755,7 @@
     </peripheral>
     <peripheral>
       <name>DCB</name>
-      <description>Debug Control Block -- CMSIS's ARMv8-M name for what core_cm0.h/core_cm3.h call CoreDebug (same base address, 0xE000EDF0). Adds DAUTHCTRL (Debug Authentication Control) and DSCSR (Debug Security Control and Status) versus ARMv6-M/ARMv7-M's CoreDebug -- both Security-Extension-related, present regardless of profile. Verified against CMSIS core_armv8mbl.h/core_armv8mml.h.</description>
+      <description>Debug Control Block -- CMSIS's ARMv8-M name for what core_cm0.h/core_cm3.h call CoreDebug (same base address, 0xE000EDF0). Adds DAUTHCTRL (Debug Authentication Control) and DSCSR (Debug Security Control and Status) versus ARMv6-M/ARMv7-M's CoreDebug -- both Security-Extension-related, present regardless of profile. Verified against CMSIS_6 core_cm23.h/core_cm33.h.</description>
       <groupName>DCB</groupName>
       <baseAddress>0xE000EDF0</baseAddress>
       <addressBlock>

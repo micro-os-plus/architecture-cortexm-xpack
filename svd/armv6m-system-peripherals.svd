@@ -5,7 +5,7 @@
   <name>Generic_ARMv6M</name>
   <series>ARMv6-M architecture (Cortex-M0 / Cortex-M0+ / Cortex-M1 / SC000)</series>
   <version>1.0</version>
-  <description>Generic ARMv6-M system-peripheral template: NVIC, SCB, SysTick, CoreDebug, and an optional MPU. Built from the verified union of what CMSIS_5's core_cm0.h and core_cm0plus.h declare for the architecture, NOT from any single vendor SVD (none of ST/Nordic/NXP's published SVDs define these). IMPORTANT: __VTOR_PRESENT, __MPU_PRESENT and __NVIC_PRIO_BITS are implementation-defined per ARMv6-M -- see the VTOR and MPU peripheral descriptions and the &lt;cpu&gt; block below for what varies by device. Field widths for priority registers (NVIC IPRn, SCB SHPR2/SHPR3) are kept at their full architectural 8 bits rather than narrowed to a specific device's __NVIC_PRIO_BITS, since that value differs per implementation (commonly 2, but the architecture permits others).</description>
+  <description>Generic ARMv6-M system-peripheral template: NVIC, SCB, SysTick, DCB (named CoreDebug prior to CMSIS_6), and an optional MPU. Built from the verified union of what CMSIS_6's core_cm0.h and core_cm0plus.h declare for the architecture, NOT from any single vendor SVD (none of ST/Nordic/NXP's published SVDs define these). IMPORTANT: __VTOR_PRESENT, __MPU_PRESENT and __NVIC_PRIO_BITS are implementation-defined per ARMv6-M -- see the VTOR and MPU peripheral descriptions and the &lt;cpu&gt; block below for what varies by device. Field widths for priority registers (NVIC IPRn, SCB SHPR2/SHPR3) are kept at their full architectural 8 bits rather than narrowed to a specific device's __NVIC_PRIO_BITS, since that value differs per implementation (commonly 2, but the architecture permits others). Verified against ARM-software/CMSIS_6@main commit 26206e47dc (2026-09-11), CMSIS-Core(M) v6.3.1-dev.</description>
   <licenseText>                                                   
     ARM Limited (ARM) is supplying this software for use with Cortex-M\n
     processor based microcontroller, but can be equally used for other\n
@@ -382,7 +382,7 @@
     </peripheral>
     <peripheral>
       <name>SCB</name>
-      <description>System Control Block, ARMv6-M register set. Verified against CMSIS_5 core_cm0.h/core_cm0plus.h defines. No SHPR1, no CFSR/HFSR/MMFAR/BFAR/AFSR (no MemManage/BusFault/UsageFault on v6-M), no AIRCR.PRIGROUP/VECTRESET, no ICSR.RETTOBASE (all ARMv7-M+ only). SHCSR exists but with only one bit (SVCALLPENDED) implemented. VTOR is present in the address map but is only wired up on implementations with __VTOR_PRESENT=1 (e.g. Cortex-M0+); on plain Cortex-M0 that offset is reserved. SHCSR and DFSR are only accessible over the DAP (debugger), not from application code -- see the CoreDebug peripheral's description.</description>
+      <description>System Control Block, ARMv6-M register set. Verified against CMSIS_6 core_cm0.h/core_cm0plus.h defines. No SHPR1, no CFSR/HFSR/MMFAR/BFAR/AFSR (no MemManage/BusFault/UsageFault on v6-M), no AIRCR.PRIGROUP/VECTRESET, no ICSR.RETTOBASE (all ARMv7-M+ only). SHCSR exists but with only one bit (SVCALLPENDED) implemented. VTOR is present in the address map but is only wired up on implementations with __VTOR_PRESENT=1 (e.g. Cortex-M0+); on plain Cortex-M0 that offset is reserved. SHCSR and DFSR are only accessible over the DAP (debugger), not from application code -- see the CoreDebug peripheral's description.</description>
       <groupName>SCB</groupName>
       <baseAddress>0xE000ED00</baseAddress>
       <addressBlock>
@@ -529,7 +529,8 @@
               <bitWidth>1</bitWidth>
             </field>
             <field>
-              <name>ENDIANESS</name>
+              <name>ENDIANNESS</name>
+              <description>Renamed from ENDIANESS in CMSIS_6 (kept as a deprecated alias there)</description>
               <bitOffset>15</bitOffset>
               <bitWidth>1</bitWidth>
               <access>read-only</access>
@@ -904,9 +905,9 @@
       </registers>
     </peripheral>
     <peripheral>
-      <name>CoreDebug</name>
-      <description>Core Debug Registers (DHCSR, DCRSR, DCRDR, DEMCR). Fixed ADIv5/CoreSight debug architecture -- identical on every Cortex-M core. On ARMv6-M these registers are only accessible over the external Debug Access Port (DAP) by a debugger/probe -- application/firmware code running on the processor cannot read or write them via normal load/store instructions (confirmed in CMSIS core_cm0.h/core_cm0plus.h: "Core Debug Registers ... are only accessible over DAP and not via processor"). On ARMv7-M and later they ARE accessible from firmware.</description>
-      <groupName>CoreDebug</groupName>
+      <name>DCB</name>
+      <description>Debug Control Block (DHCSR, DCRSR, DCRDR, DEMCR) -- named "CoreDebug" prior to CMSIS_6, which renamed it to DCB across the whole M-profile line ("CoreDebug"/"CoreDebug_Type" remain as deprecated aliases for the same registers). Fixed ADIv5/CoreSight debug architecture -- identical on every Cortex-M core. On ARMv6-M these registers are only accessible over the external Debug Access Port (DAP) by a debugger/probe -- application/firmware code running on the processor cannot read or write them via normal load/store instructions (confirmed in CMSIS core_cm0.h/core_cm0plus.h: "Core Debug Registers ... are only accessible over DAP and not via processor"). On ARMv7-M and later they ARE accessible from firmware. Cortex-M0/M0+'s own headers still don't define this struct at all (DAP-only, "not covered by the header file") -- the register content here is cross-referenced from core_cm4.h/core_cm7.h for documentation purposes.</description>
+      <groupName>DCB</groupName>
       <baseAddress>0xE000EDF0</baseAddress>
       <addressBlock>
         <offset>0x0</offset>
@@ -1002,8 +1003,9 @@
           <fields>
             <field>
               <name>REGSEL</name>
+              <description>Widened from 5 to 7 bits in CMSIS_6</description>
               <bitOffset>0</bitOffset>
-              <bitWidth>5</bitWidth>
+              <bitWidth>7</bitWidth>
             </field>
             <field>
               <name>REGWnR</name>

@@ -75,20 +75,29 @@ def mk_peripheral(name, base_addr, desc, group=None, size='0x400', address_block
     return p, regs
 
 # ---------------------------------------------------------------------------
-# CoreDebug -- identical across v6-M/v7-M/v8-M (fixed ADIv5/CoreSight debug
-# architecture, not part of the M-profile ISA). Verified against
-# CMSIS_5 core_cm4.h defines.
+# CoreDebug/DCB -- identical across v6-M/v7-M/v8-M (fixed ADIv5/CoreSight
+# debug architecture, not part of the M-profile ISA). Verified against
+# CMSIS_6 core_cm4.h/core_cm7.h defines. CMSIS_6 renamed this block from
+# "CoreDebug" to "DCB" (Debug Control Block) across the whole M-profile line
+# -- "CoreDebug"/"CoreDebug_Type" survive only as deprecated aliases -- and
+# widened DCRSR.REGSEL from 5 to 7 bits; both are reflected here even though
+# neither M0 nor M0+'s own header defines this struct at all (see v6m_note).
 # ---------------------------------------------------------------------------
 def build_coredebug(v6m_note=False):
-    p, regs = mk_peripheral('CoreDebug', '0xE000EDF0',
-        'Core Debug Registers (DHCSR, DCRSR, DCRDR, DEMCR). Fixed ADIv5/CoreSight '
-        'debug architecture -- identical on every Cortex-M core.' +
+    p, regs = mk_peripheral('DCB', '0xE000EDF0',
+        'Debug Control Block (DHCSR, DCRSR, DCRDR, DEMCR) -- named "CoreDebug" prior '
+        'to CMSIS_6, which renamed it to DCB across the whole M-profile line ("CoreDebug"/'
+        '"CoreDebug_Type" remain as deprecated aliases for the same registers). Fixed '
+        'ADIv5/CoreSight debug architecture -- identical on every Cortex-M core.' +
         (' On ARMv6-M these registers are only accessible over the external '
          'Debug Access Port (DAP) by a debugger/probe -- application/firmware '
          'code running on the processor cannot read or write them via normal '
          'load/store instructions (confirmed in CMSIS core_cm0.h/core_cm0plus.h: '
          '"Core Debug Registers ... are only accessible over DAP and not via '
-         'processor"). On ARMv7-M and later they ARE accessible from firmware.'
+         'processor"). On ARMv7-M and later they ARE accessible from firmware. '
+         'Cortex-M0/M0+\'s own headers still don\'t define this struct at all (DAP-only, '
+         '"not covered by the header file") -- the register content here is '
+         'cross-referenced from core_cm4.h/core_cm7.h for documentation purposes.'
          if v6m_note else ''),
         size='0x10')
     regs.append(mkreg('DHCSR', '0x0', 'read-write', '0x00000000', [
@@ -104,7 +113,7 @@ def build_coredebug(v6m_note=False):
                 access='write-only'),
     ], desc='Debug Halting Control and Status Register'))
     regs.append(mkreg('DCRSR', '0x4', 'write-only', '0x00000000', [
-        mkfield('REGSEL', 0, 5), mkfield('REGWnR', 16, 1),
+        mkfield('REGSEL', 0, 7, 'Widened from 5 to 7 bits in CMSIS_6'), mkfield('REGWnR', 16, 1),
     ], desc='Debug Core Register Selector Register'))
     regs.append(mkreg('DCRDR', '0x8', 'read-write', '0x00000000', [
         mkfield('DBGTMP', 0, 32),
@@ -225,7 +234,7 @@ def cpuid_fields():
 
 def build_scb_v6m():
     p, regs = mk_peripheral('SCB', '0xE000ED00',
-        'System Control Block, ARMv6-M register set. Verified against CMSIS_5 '
+        'System Control Block, ARMv6-M register set. Verified against CMSIS_6 '
         'core_cm0.h/core_cm0plus.h defines. No SHPR1, no CFSR/HFSR/MMFAR/BFAR/AFSR '
         '(no MemManage/BusFault/UsageFault on v6-M), no AIRCR.PRIGROUP/VECTRESET, no '
         'ICSR.RETTOBASE (all ARMv7-M+ only). SHCSR exists but with only one bit '
@@ -255,7 +264,7 @@ def build_scb_v6m():
     regs.append(mkreg('AIRCR', '0xC', 'read-write', '0x00000000', [
         mkfield('VECTCLRACTIVE', 1, 1, 'Reserved for debug use'),
         mkfield('SYSRESETREQ', 2, 1),
-        mkfield('ENDIANESS', 15, 1, access='read-only'),
+        mkfield('ENDIANNESS', 15, 1, 'Renamed from ENDIANESS in CMSIS_6 (kept as a deprecated alias there)', access='read-only'),
         mkfield('VECTKEY', 16, 16, 'Write 0x05FA to permit the write; reads as 0xFA05'),
     ], desc='Application Interrupt and Reset Control Register. No PRIGROUP or VECTRESET '
             '(both ARMv7-M+ only -- v6-M has no configurable priority grouping).'))
@@ -280,11 +289,17 @@ def build_scb_v6m():
 
 def build_scb_v7m():
     p, regs = mk_peripheral('SCB', '0xE000ED00',
-        'System Control Block, ARMv7-M register set. Verified against CMSIS_5 '
-        'core_cm3.h/core_cm4.h defines (both are identical at the SCB level -- the '
-        'FPU-related extras live in a separate optional FPU block, not shown here, '
-        'since plain Cortex-M3 has no FPU at all). PFR/DFR/ADR/MMFR/ISAR are read-only '
-        'ID registers whose exact values are implementation specific.', size='0x90')
+        'System Control Block, ARMv7-M register set. Verified against CMSIS_6 '
+        'core_cm3.h/core_cm4.h/core_cm7.h defines (all three are identical at the SCB '
+        'level -- the FPU-related extras live in a separate optional FPU block, not '
+        'shown here, since plain Cortex-M3 has no FPU at all). ID_PFR/ID_DFR/ID_AFR/'
+        'ID_MMFR/ID_ISAR are read-only ID registers whose exact values are '
+        'implementation specific (renamed from PFR/DFR/ADR/MMFR/ISAR in CMSIS_6, to '
+        'match the naming CMSIS has always used for the same registers on ARMv8-M). '
+        'CMSIS_6\'s SCB_Type also declares an alias of NVIC\'s STIR at offset 0x200 '
+        '(same physical register as NVIC->STIR, at 0xE000EF00) -- not duplicated here, '
+        'STIR is modeled once, under NVIC, same treatment as SAU/SCB\'s SFSR/SFAR '
+        'aliasing on the ARMv8-M Mainline file.', size='0x90')
     regs.append(mkreg('CPUID', '0x0', 'read-only', '0x00000000', cpuid_fields(),
                        desc='CPUID Base Register. Reset value is implementation/revision specific.'))
     regs.append(mkreg('ICSR', '0x4', 'read-write', '0x00000000', [
@@ -303,7 +318,7 @@ def build_scb_v7m():
         mkfield('VECTCLRACTIVE', 1, 1, 'Reserved for debug use'),
         mkfield('SYSRESETREQ', 2, 1),
         mkfield('PRIGROUP', 8, 3, 'Interrupt priority grouping'),
-        mkfield('ENDIANESS', 15, 1, access='read-only'),
+        mkfield('ENDIANNESS', 15, 1, 'Renamed from ENDIANESS in CMSIS_6 (kept as a deprecated alias there)', access='read-only'),
         mkfield('VECTKEY', 16, 16, 'Write 0x05FA to permit the write; reads as 0xFA05'),
     ], desc='Application Interrupt and Reset Control Register'))
     regs.append(mkreg('SCR', '0x10', 'read-write', '0x00000000', [
@@ -356,13 +371,13 @@ def build_scb_v7m():
                        desc='BusFault Address Register, valid only when CFSR.BFARVALID is set'))
     regs.append(mkreg('AFSR', '0x3C', 'read-write', '0x00000000', [mkfield('IMPDEF', 0, 32)],
                        desc='Auxiliary Fault Status Register, implementation defined'))
-    regs.append(mkregarray('PFR', '0x40', 2, '0x4', 'read-only', '0x00000000',
+    regs.append(mkregarray('ID_PFR', '0x40', 2, '0x4', 'read-only', '0x00000000',
                             desc='Processor Feature Register, implementation defined'))
-    regs.append(mkreg('DFR', '0x48', 'read-only', '0x00000000', [], desc='Debug Feature Register, implementation defined'))
-    regs.append(mkreg('ADR', '0x4C', 'read-only', '0x00000000', [], desc='Auxiliary Feature Register, implementation defined'))
-    regs.append(mkregarray('MMFR', '0x50', 4, '0x4', 'read-only', '0x00000000',
+    regs.append(mkreg('ID_DFR', '0x48', 'read-only', '0x00000000', [], desc='Debug Feature Register, implementation defined'))
+    regs.append(mkreg('ID_AFR', '0x4C', 'read-only', '0x00000000', [], desc='Auxiliary Feature Register, implementation defined'))
+    regs.append(mkregarray('ID_MMFR', '0x50', 4, '0x4', 'read-only', '0x00000000',
                             desc='Memory Model Feature Register, implementation defined'))
-    regs.append(mkregarray('ISAR', '0x60', 5, '0x4', 'read-only', '0x00000000',
+    regs.append(mkregarray('ID_ISAR', '0x60', 5, '0x4', 'read-only', '0x00000000',
                             desc='Instruction Set Attributes Register, implementation defined'))
     regs.append(mkreg('CPACR', '0x88', 'read-write', '0x00000000', [
         mkfield('CP10', 20, 2, 'FPU access privileges -- only meaningful if an FPU is implemented (Cortex-M4/M7)'),
@@ -431,18 +446,52 @@ def build_mpu_v7m():
 print('mpu builders loaded')
 
 # ---------------------------------------------------------------------------
+# SCnSCB (System Control and ID Registers not in the SCB) -- a real,
+# longstanding part of ARMv7-M/ARMv8-M (present since core_cm3.h in CMSIS_5
+# too, not a CMSIS_6 addition) that earlier revisions of this file missed
+# entirely; added when cross-checking against CMSIS_6's core_cm3.h/
+# core_cm4.h/core_cm7.h/core_cm33.h. Absent on ARMv6-M (core_cm0.h/
+# core_cm0plus.h define no such struct) and on ARMv8-M Baseline (core_cm23.h
+# likewise has none).
+# ---------------------------------------------------------------------------
+def build_scnscb_v7m():
+    p, regs = mk_peripheral('SCnSCB', '0xE000E000',
+        'System Control and ID Registers not in the SCB address range: ICTR '
+        '(Interrupt Controller Type Register) and ACTLR (Auxiliary Control Register). '
+        'Verified against CMSIS_6 core_cm3.h/core_cm4.h/core_cm7.h.', size='0xC')
+    regs.append(mkreg('ICTR', '0x4', 'read-only', '0x00000000', [
+        mkfield('INTLINESNUM', 0, 4, '(Number of 32-interrupt NVIC banks implemented) - 1: '
+                'total external interrupts = (INTLINESNUM+1)*32'),
+    ], desc='Interrupt Controller Type Register'))
+    regs.append(mkreg('ACTLR', '0x8', 'read-write', '0x00000000', [],
+        desc='Auxiliary Control Register -- wholly IMPLEMENTATION DEFINED by the '
+             'architecture: bit meanings differ even among Arm\'s own reference cores '
+             '(e.g. core_cm3.h defines DISMCYCINT/DISDEFWBUF/DISFOLD; core_cm4.h adds '
+             'DISFPCA/DISOOFP for its optional FPU; core_cm7.h redefines the whole '
+             'register around its cache/branch-prediction microarchitecture) -- '
+             'deliberately left with no fields, same treatment as the ID_* registers '
+             'above.'))
+    return p
+
+print('scnscb builder loaded')
+
+# ---------------------------------------------------------------------------
 # ARMv8-M (Baseline: Cortex-M23; Mainline: Cortex-M33/M35P/M55/M85).
-# Verified against CMSIS_5 core_armv8mbl.h / core_armv8mml.h. Both profiles
-# add the optional Security Extension (TrustZone): SAU, NVIC.ITNS, SCB.NSACR/
-# SFSR/SFAR, and Secure-only fields scattered across ICSR/AIRCR/SCR/SHCSR/DCB
-# -- all RAZ/WI or fixed-value when the Security Extension is not implemented.
+# Verified against CMSIS_6 core_cm23.h / core_cm33.h (CMSIS_6 dropped the old
+# generic core_armv8mbl.h/core_armv8mml.h headers in favor of one header per
+# real core; core_cm23.h and core_cm33.h are the plain, cache-free reference
+# implementations for each profile, same role core_armv8mbl.h/core_armv8mml.h
+# played in CMSIS_5). Both profiles add the optional Security Extension
+# (TrustZone): SAU, NVIC.ITNS, SCB.NSACR/SFSR/SFAR, and Secure-only fields
+# scattered across ICSR/AIRCR/SCR/SHCSR/DCB -- all RAZ/WI or fixed-value when
+# the Security Extension is not implemented.
 # ---------------------------------------------------------------------------
 
 def build_nvic_v8m(mainline):
     desc = ('Nested Vectored Interrupt Controller. ARMv8-M packs interrupt state into '
             '16 banks of 32 bits each (ISER/ICER/ISPR/ICPR/IABR/ITNS) plus 124 32-bit '
             'IPR words, covering the full architectural maximum of 496 external '
-            'interrupts (verified against CMSIS core_armv8mbl.h/core_armv8mml.h: IPR is '
+            'interrupts (verified against CMSIS_6 core_cm23.h/core_cm33.h: IPR is '
             'a 496-byte array, i.e. 124 words of 4 packed 8-bit priorities each -- same '
             'total on both profiles). ITNS (Interrupt Target Non-Secure) is new versus '
             'ARMv6-M/ARMv7-M: one bit per interrupt selecting whether it targets the '
@@ -511,7 +560,7 @@ def aircr_v8m_fields(mainline):
         mkfield('BFHFNMINS', 13, 1, 'BusFault/HardFault/NMI target Non-secure state '
                 'when set -- Security Extension only'),
         mkfield('PRIS', 14, 1, 'Prioritize Secure exceptions -- Security Extension only'),
-        mkfield('ENDIANESS', 15, 1, access='read-only'),
+        mkfield('ENDIANNESS', 15, 1, 'Renamed from ENDIANESS in CMSIS_6 (kept as a deprecated alias there)', access='read-only'),
         mkfield('VECTKEY', 16, 16, 'Write 0x05FA to permit the write; reads as 0xFA05'),
     ]
     return f
@@ -543,8 +592,8 @@ def ccr_v8m_fields():
 
 def build_scb_v8m_baseline():
     p, regs = mk_peripheral('SCB', '0xE000ED00',
-        'System Control Block, ARMv8-M Baseline register set. Verified against CMSIS_5 '
-        'core_armv8mbl.h. Minimal fault model like ARMv6-M -- no SHPR1, no CFSR/HFSR/'
+        'System Control Block, ARMv8-M Baseline register set. Verified against CMSIS_6 '
+        'core_cm23.h. Minimal fault model like ARMv6-M -- no SHPR1, no CFSR/HFSR/'
         'MMFAR/BFAR/AFSR/CPACR/NSACR/SFSR/SFAR/ID_* registers at all (no MemManage/'
         'BusFault/UsageFault/SecureFault handlers on Baseline), no AIRCR.PRIGROUP '
         '(fixed priority split, like ARMv6-M). Unlike ARMv6-M, ICSR.RETTOBASE exists and '
@@ -588,8 +637,8 @@ def build_scb_v8m_baseline():
 
 def build_scb_v8m_mainline():
     p, regs = mk_peripheral('SCB', '0xE000ED00',
-        'System Control Block, ARMv8-M Mainline register set. Verified against CMSIS_5 '
-        'core_armv8mml.h. Superset of ARMv7-M\'s SCB plus the Security Extension: NSACR '
+        'System Control Block, ARMv8-M Mainline register set. Verified against CMSIS_6 '
+        'core_cm33.h. Superset of ARMv7-M\'s SCB plus the Security Extension: NSACR '
         '(Non-secure Access Control), SFSR/SFAR (Secure Fault Status/Address -- '
         'physically the same registers CMSIS also exposes via SAU->SFSR/SFAR; modeled '
         'once here, under SCB, since SAU and SCB share the same 0xE000ED00-0xE000EDEF '
@@ -719,8 +768,10 @@ def build_mpu_v8m(mainline):
             ('Mainline' if mainline else 'Baseline') + ' (__MPU_PRESENT). Region format '
             'changed from ARMv7-M\'s RBAR/RASR (base + size-encoded) to RBAR/RLAR '
             '(base + limit), and gained MAIR0/MAIR1 memory-attribute indirection '
-            'registers (verified against CMSIS core_armv8mbl.h/core_armv8mml.h). ' +
-            ('Includes 3 alias RBAR/RLAR pairs, same as ARMv7-M (MPU_TYPE_RALIASES=4).'
+            'registers (verified against CMSIS_6 core_cm23.h/core_cm33.h). ' +
+            ('Includes 3 alias RBAR/RLAR pairs, same as ARMv7-M (MPU_TYPE_RALIASES=4). '
+             'RLAR.PXN (Privileged eXecute Never, bit 4) is Mainline-only -- absent from '
+             'Baseline\'s RLAR entirely, not just RAZ/WI.'
              if mainline else
              'No alias registers on Baseline, matching ARMv6-M\'s MPU shape.'))
     p, regs = mk_peripheral('MPU', '0xE000ED90', desc, size='0x38')
@@ -736,9 +787,14 @@ def build_mpu_v8m(mainline):
                             mkfield('AP', 1, 2, 'Access permissions'),
                             mkfield('SH', 3, 2, 'Shareability'),
                             mkfield('BASE', 5, 27, 'Base address, 32-byte aligned')]
-    rlar_fields = lambda: [mkfield('EN', 0, 1, 'Region enable'),
-                            mkfield('AttrIndx', 1, 3, 'MAIR index'),
-                            mkfield('LIMIT', 5, 27, 'Limit address, 32-byte aligned')]
+    def rlar_fields():
+        f = [mkfield('EN', 0, 1, 'Region enable'),
+             mkfield('AttrIndx', 1, 3, 'MAIR index')]
+        if mainline:
+            f.append(mkfield('PXN', 4, 1, 'Privileged eXecute Never -- new in CMSIS_6, '
+                              'Mainline only'))
+        f.append(mkfield('LIMIT', 5, 27, 'Limit address, 32-byte aligned'))
+        return f
     offsets = [('0xC', '')] + ([('0x14', '_A1'), ('0x1C', '_A2'), ('0x24', '_A3')]
                                 if mainline else [])
     for off, suf in offsets:
@@ -771,10 +827,12 @@ def build_sau_v8m():
         '__SAUREGION_PRESENT=1, i.e. the implementation has at least one programmable '
         'SAU region (a part can implement the Security Extension with the whole memory '
         'map fixed Secure/Non-secure by IDAU alone and no SAU regions at all). Verified '
-        'against CMSIS core_armv8mbl.h/core_armv8mml.h (identical on both profiles). '
-        'SFSR/SFAR are modeled once, under SCB, since SAU_Type and SCB_Type both expose '
-        'the same physical registers at the same address on Mainline; Baseline has '
-        'neither (no SecureFault handler exists there).', size='0x14')
+        'against CMSIS_6 core_cm23.h/core_cm33.h (identical on both profiles). SFSR/SFAR '
+        'are modeled once, under SCB, since SAU_Type and SCB_Type both expose the same '
+        'physical registers at the same address on Mainline -- CMSIS_6 now says so '
+        'explicitly (SAU_Type\'s own SFSR/SFAR are commented "deprecated: use '
+        'SCB->SFSR"/"SCB->SFAR"); Baseline has neither (no SecureFault handler exists '
+        'there).', size='0x14')
     regs.append(mkreg('CTRL', '0x0', 'read-write', '0x00000000', [
         mkfield('ENABLE', 0, 1),
         mkfield('ALLNS', 1, 1, 'All Non-secure -- forces the whole memory map '
@@ -797,6 +855,40 @@ def build_sau_v8m():
 print('sau v8m builder loaded')
 
 # ---------------------------------------------------------------------------
+# SCnSCB -- same peripheral as ARMv7-M's (see build_scnscb_v7m), plus CPPWR
+# (Coprocessor Power Control), new in ARMv8-M Mainline. Absent on Baseline
+# (core_cm23.h defines no SCnSCB at all, same as ARMv6-M).
+# ---------------------------------------------------------------------------
+def build_scnscb_v8m_mainline():
+    p, regs = mk_peripheral('SCnSCB', '0xE000E000',
+        'System Control and ID Registers not in the SCB address range: ICTR '
+        '(Interrupt Controller Type Register), ACTLR (Auxiliary Control Register), and '
+        'CPPWR (Coprocessor Power Control -- new in ARMv8-M Mainline). Verified against '
+        'CMSIS_6 core_cm33.h. Absent entirely on ARMv8-M Baseline, same as ARMv6-M.',
+        size='0x10')
+    regs.append(mkreg('ICTR', '0x4', 'read-only', '0x00000000', [
+        mkfield('INTLINESNUM', 0, 4, '(Number of 32-interrupt NVIC banks implemented) - 1: '
+                'total external interrupts = (INTLINESNUM+1)*32'),
+    ], desc='Interrupt Controller Type Register'))
+    regs.append(mkreg('ACTLR', '0x8', 'read-write', '0x00000000', [],
+        desc='Auxiliary Control Register -- wholly IMPLEMENTATION DEFINED by the '
+             'architecture, same as on ARMv7-M -- deliberately left with no fields.'))
+    regs.append(mkreg('CPPWR', '0xC', 'read-write', '0x00000000', [
+        mkfield('SU10', 20, 1, 'Coprocessor 10 (FPU) power enable -- only meaningful if '
+                'an FPU is implemented'),
+        mkfield('SUS10', 21, 1, 'Coprocessor 10 (FPU) power enable in Sleep -- only '
+                'meaningful if an FPU is implemented'),
+        mkfield('SU11', 22, 1, 'Coprocessor 11 (FPU) power enable -- only meaningful if '
+                'an FPU is implemented'),
+        mkfield('SUS11', 23, 1, 'Coprocessor 11 (FPU) power enable in Sleep -- only '
+                'meaningful if an FPU is implemented'),
+    ], desc='Coprocessor Power Control Register -- new in ARMv8-M Mainline; only '
+            'meaningful if an FPU (coprocessors 10/11) is implemented.'))
+    return p
+
+print('scnscb v8m builder loaded')
+
+# ---------------------------------------------------------------------------
 # DCB -- CMSIS's ARMv8-M name for what core_cm0.h/core_cm3.h call CoreDebug
 # (same base address, 0xE000EDF0). Adds DAUTHCTRL and DSCSR; DHCSR/DEMCR gain
 # Security Extension bits and, on Mainline, keep the full ARMv7-M fault/
@@ -807,8 +899,8 @@ def build_dcb_v8m(mainline):
             'call CoreDebug (same base address, 0xE000EDF0). Adds DAUTHCTRL (Debug '
             'Authentication Control) and DSCSR (Debug Security Control and Status) '
             'versus ARMv6-M/ARMv7-M\'s CoreDebug -- both Security-Extension-related, '
-            'present regardless of profile. Verified against CMSIS core_armv8mbl.h/'
-            'core_armv8mml.h.' +
+            'present regardless of profile. Verified against CMSIS_6 core_cm23.h/'
+            'core_cm33.h.' +
             ('' if mainline else ' Baseline\'s DHCSR has no C_SNAPSTALL bit, and DEMCR '
              'only defines TRCENA/VC_CORERESET/VC_HARDERR -- no other VC_*, no MON_*, no '
              'MONPRKEY/UMON_EN/SDME/VC_SFERR -- matching Baseline\'s minimal exception '

@@ -25,6 +25,20 @@ LICENSE_TEXT = (
     '  '
 )
 
+# Exact CMSIS_6 snapshot this file's register content was verified against.
+# Update both the commit hash/date and the version comment whenever the
+# files are re-verified against a newer CMSIS_6 checkout -- see the
+# "Updated for CMSIS_6" section in README.md for what a re-verification
+# pass should look like.
+CMSIS6_COMMIT = '26206e47dcf0abfbdc64eb753a0b6334b24439f6'
+CMSIS6_DATE = '2026-09-11'
+CMSIS6_VERSION = 'v6.3.1-dev'  # CMSIS-Core(M) version per that commit's cmsis_version.h;
+                                # last tagged stable release at that point was v6.3.0
+CMSIS6_PROVENANCE = (
+    ' Verified against ARM-software/CMSIS_6@main commit '
+    f'{CMSIS6_COMMIT[:10]} ({CMSIS6_DATE}), CMSIS-Core(M) {CMSIS6_VERSION}.'
+)
+
 
 def make_device(name, series, desc, cpu_name, revision, mpu, fpu, vtor, priobits,
                  vendor_systick='false', extra_cpu=None):
@@ -38,7 +52,7 @@ def make_device(name, series, desc, cpu_name, revision, mpu, fpu, vtor, priobits
     ET.SubElement(root, 'name').text = name
     ET.SubElement(root, 'series').text = series
     ET.SubElement(root, 'version').text = '1.0'
-    ET.SubElement(root, 'description').text = desc
+    ET.SubElement(root, 'description').text = desc + CMSIS6_PROVENANCE
     ET.SubElement(root, 'licenseText').text = LICENSE_TEXT
     cpu = ET.SubElement(root, 'cpu')
     ET.SubElement(cpu, 'name').text = cpu_name
@@ -71,15 +85,15 @@ def write_device(root, filename):
 root_v6 = make_device(
     name='Generic_ARMv6M',
     series='ARMv6-M architecture (Cortex-M0 / Cortex-M0+ / Cortex-M1 / SC000)',
-    desc=('Generic ARMv6-M system-peripheral template: NVIC, SCB, SysTick, CoreDebug, '
-          'and an optional MPU. Built from the verified union of what CMSIS_5\'s '
-          'core_cm0.h and core_cm0plus.h declare for the architecture, NOT from any '
-          'single vendor SVD (none of ST/Nordic/NXP\'s published SVDs define these). '
-          'IMPORTANT: __VTOR_PRESENT, __MPU_PRESENT and __NVIC_PRIO_BITS are '
-          'implementation-defined per ARMv6-M -- see the VTOR and MPU peripheral '
-          'descriptions and the <cpu> block below for what varies by device. Field '
-          'widths for priority registers (NVIC IPRn, SCB SHPR2/SHPR3) are kept at '
-          'their full architectural 8 bits rather than narrowed to a specific '
+    desc=('Generic ARMv6-M system-peripheral template: NVIC, SCB, SysTick, DCB '
+          '(named CoreDebug prior to CMSIS_6), and an optional MPU. Built from the '
+          'verified union of what CMSIS_6\'s core_cm0.h and core_cm0plus.h declare for '
+          'the architecture, NOT from any single vendor SVD (none of ST/Nordic/NXP\'s '
+          'published SVDs define these). IMPORTANT: __VTOR_PRESENT, __MPU_PRESENT and '
+          '__NVIC_PRIO_BITS are implementation-defined per ARMv6-M -- see the VTOR and '
+          'MPU peripheral descriptions and the <cpu> block below for what varies by '
+          'device. Field widths for priority registers (NVIC IPRn, SCB SHPR2/SHPR3) are '
+          'kept at their full architectural 8 bits rather than narrowed to a specific '
           'device\'s __NVIC_PRIO_BITS, since that value differs per implementation '
           '(commonly 2, but the architecture permits others).'),
     cpu_name='CM0', revision='r0p0', mpu='false', fpu='false', vtor='false', priobits='2')
@@ -98,19 +112,21 @@ root_v7 = make_device(
     series='ARMv7-M architecture (Cortex-M3 / Cortex-M4 / Cortex-M7 / SC300)',
     desc=('Generic ARMv7-M system-peripheral template: NVIC (sized to the full '
           'architectural 240-interrupt maximum), SCB (with the full fault-handling '
-          'register set), SysTick, CoreDebug, and an optional MPU. Built from the '
-          'verified union of what CMSIS_5\'s core_cm3.h/core_cm4.h declare for the '
-          'architecture (both are identical at this level -- the FPU-specific '
-          'register block that exists on Cortex-M4/M7 is deliberately NOT included '
-          'here, since plain Cortex-M3 has no FPU at all; ask if you want that added '
-          'separately). Unlike ARMv6-M, the CoreDebug and SCB.SHCSR/DFSR registers ARE '
-          'directly accessible from application code on ARMv7-M, not DAP-only.'),
+          'register set), SCnSCB (ICTR/ACTLR), SysTick, DCB (named CoreDebug prior to '
+          'CMSIS_6), and an optional MPU. Built from the verified union of what '
+          'CMSIS_6\'s core_cm3.h/core_cm4.h/core_cm7.h declare for the architecture '
+          '(all three are identical at this level -- the FPU-specific register block '
+          'that exists on Cortex-M4/M7 is deliberately NOT included here, since plain '
+          'Cortex-M3 has no FPU at all; ask if you want that added separately). Unlike '
+          'ARMv6-M, DCB and SCB.SHCSR/DFSR are directly accessible from application '
+          'code on ARMv7-M, not DAP-only.'),
     cpu_name='CM3', revision='r0p1', mpu='false', fpu='false', vtor='true', priobits='3')
 
 peripherals7 = ET.SubElement(root_v7, 'peripherals')
 peripherals7.append(bg.build_nvic_v7m())
 peripherals7.append(bg.build_scb_v7m())
 peripherals7.append(bg.build_mpu_v7m())
+peripherals7.append(bg.build_scnscb_v7m())
 peripherals7.append(bg.build_systick())
 peripherals7.append(bg.build_coredebug(v6m_note=False))
 write_device(root_v7, 'armv7m-system-peripherals.svd')
@@ -120,10 +136,12 @@ root_v8bl = make_device(
     name='Generic_ARMv8MBaseline',
     series='ARMv8-M Baseline architecture (Cortex-M23)',
     desc=('Generic ARMv8-M Baseline system-peripheral template: NVIC, SCB, SysTick, '
-          'DCB (renamed CoreDebug), and an optional MPU -- plus the optional Security '
-          'Extension (TrustZone) SAU peripheral and the Secure/Non-secure fields on '
-          'NVIC/SCB/DCB. Built from CMSIS_5\'s core_armv8mbl.h (Cortex-M23\'s core '
-          'header), NOT from any single vendor SVD. IMPORTANT: __VTOR_PRESENT, '
+          'DCB (named CoreDebug prior to CMSIS_6), and an optional MPU -- plus the '
+          'optional Security Extension (TrustZone) SAU peripheral and the Secure/'
+          'Non-secure fields on NVIC/SCB/DCB. No SCnSCB on this profile (Baseline\'s '
+          'own core_cm23.h defines none, same as ARMv6-M). Built from CMSIS_6\'s '
+          'core_cm23.h (Cortex-M23\'s core header), NOT from any single vendor SVD. '
+          'IMPORTANT: __VTOR_PRESENT, '
           '__MPU_PRESENT, __SAUREGION_PRESENT, whether the Security Extension is '
           'implemented at all, and __NVIC_PRIO_BITS are all implementation-defined per '
           'ARMv8-M Baseline device -- see the individual peripheral descriptions and '
@@ -151,18 +169,19 @@ root_v8ml = make_device(
     series='ARMv8-M Mainline architecture (Cortex-M33 / Cortex-M35P / Cortex-M55 / Cortex-M85)',
     desc=('Generic ARMv8-M Mainline system-peripheral template: NVIC (sized to the '
           'full architectural 496-interrupt maximum), SCB (the full ARMv7-M '
-          'fault-handling set plus the Security Extension additions), SysTick, DCB '
-          '(renamed CoreDebug), and an optional MPU with RBAR/RLAR base+limit regions '
-          '-- plus the optional Security Extension (TrustZone) SAU peripheral. Built '
-          'from CMSIS_5\'s core_armv8mml.h (Cortex-M33\'s core header), NOT from any '
-          'single vendor SVD. The Security Extension itself, SAU region count, MPU '
-          'presence, and FPU/DSP presence are all implementation-defined per device -- '
-          'fields like NVIC.ITNS, SCB.NSACR/SFSR/SFAR, and the STTNS/SYSRESETREQS/'
-          'BFHFNMINS/PRIS/SLEEPDEEPS/SECUREFAULT* bits are Secure-only and RAZ/WI (or '
-          'fixed) when the Security Extension is absent. Deliberately excluded, same '
-          'rationale as the ARMv7-M file: the FPU/MVFR/cache-maintenance register '
-          'blocks (CLIDR/CTR/CCSIDR/CSSELR, ICIALLU..BPIALL, CCR.DC/IC/BP -- '
-          'Cortex-M55/M85-specific cache support) and trace components (ITM/DWT/TPIU).'),
+          'fault-handling set plus the Security Extension additions), SCnSCB (ICTR/'
+          'ACTLR/CPPWR), SysTick, DCB (named CoreDebug prior to CMSIS_6), and an '
+          'optional MPU with RBAR/RLAR base+limit regions -- plus the optional Security '
+          'Extension (TrustZone) SAU peripheral. Built from CMSIS_6\'s core_cm33.h '
+          '(Cortex-M33\'s core header), NOT from any single vendor SVD. The Security '
+          'Extension itself, SAU region count, MPU presence, and FPU/DSP presence are '
+          'all implementation-defined per device -- fields like NVIC.ITNS, SCB.NSACR/'
+          'SFSR/SFAR, and the STTNS/SYSRESETREQS/BFHFNMINS/PRIS/SLEEPDEEPS/'
+          'SECUREFAULT* bits are Secure-only and RAZ/WI (or fixed) when the Security '
+          'Extension is absent. Deliberately excluded, same rationale as the ARMv7-M '
+          'file: the FPU/MVFR/cache-maintenance register blocks (CLIDR/CTR/CCSIDR/'
+          'CSSELR, ICIALLU..BPIALL, CCR.DC/IC/BP -- Cortex-M55/M85-specific cache '
+          'support) and trace components (ITM/DWT/TPIU).'),
     cpu_name='CM33', revision='r0p0', mpu='false', fpu='false', vtor='true', priobits='3')
 
 peripherals_v8ml = ET.SubElement(root_v8ml, 'peripherals')
@@ -170,6 +189,7 @@ peripherals_v8ml.append(bg.build_nvic_v8m(mainline=True))
 peripherals_v8ml.append(bg.build_scb_v8m_mainline())
 peripherals_v8ml.append(bg.build_mpu_v8m(mainline=True))
 peripherals_v8ml.append(bg.build_sau_v8m())
+peripherals_v8ml.append(bg.build_scnscb_v8m_mainline())
 peripherals_v8ml.append(bg.build_systick())
 peripherals_v8ml.append(bg.build_dcb_v8m(mainline=True))
 write_device(root_v8ml, 'armv8m-mainline-system-peripherals.svd')
