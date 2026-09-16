@@ -6,9 +6,19 @@ Please check
 [GitHub](https://github.com/micro-os-plus/architecture-cortexm-xpack/issues/)
 and close existing issues and pull requests.
 
+## 2026-09-16
+
+* v8.1.0
+* 717f8d7 reset-handler.c use dsb & isb
+* 99df2e2 add dsb & isb
+
+## 2026-09-12
+
+* 314ab41 update svds for cmsis 6.3.1
+* d7838dc add armv8m-* svds
+
 ## 2026-09-08
 
-* v8.0.0
 * 2232762 show-cpuid group 6M & 7M definitions
 * c36d5e6 add svds
 * 3c653f5 fix debugger-entry-point.S includes
