@@ -133,6 +133,7 @@ For this:
 
 ### Publish
 
+- `npm login`
 - `npm publish --tag test` (use `npm publish --access public` when
   publishing for the first time)
 
