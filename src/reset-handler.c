@@ -79,7 +79,13 @@ Reset_Handler (void)
 // sequence as a result of compiler optimisations, therefore the
 // FPU must be enabled before calling any C/C++ functions, including main().
 // (`SystemInit()` happens too late).
-#if (defined(__ARM_PCS_VFP) && (__ARM_PCS_VFP > 0U)) \
+// Note: `__ARM_FP` (not `__ARM_PCS_VFP`) is the correct guard here: it is
+// defined whenever the compiler may emit hardware FP instructions (i.e.
+// whenever `-mfpu=`/`-march=...+fp` selects an FPU, for both
+// `-mfloat-abi=softfp` and `=hard`), whereas `__ARM_PCS_VFP` only reflects
+// whether the procedure-call standard passes floats in VFP registers
+// (`=hard` only) and misses `softfp` builds that still use the FPU.
+#if (defined(__ARM_FP) && (__ARM_FP > 0U)) \
     || (defined(__ARM_FEATURE_MVE) && (__ARM_FEATURE_MVE > 0U))
 
   // Enable CP10 and CP11 coprocessor.
@@ -89,7 +95,13 @@ Reset_Handler (void)
   // Lazy save.
   FPU_FPCCR |= FPU_FPCCR_ASPEN_MASK // enable automatic state preservation
                | FPU_FPCCR_LSPEN_MASK; // enable lazy context save
-               
+
+  // Without these barriers, an FP instruction fetched (or already in the
+  // pipeline) before the CPACR write above takes effect can still fault,
+  // e.g. in the prologue of the very next call, under the hard-float ABI.
+  cortexm_architecture_dsb ();
+  cortexm_architecture_isb ();
+
 #endif // defined (__FPU_USED) ...
 
 #if defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__) \
