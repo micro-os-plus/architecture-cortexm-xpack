@@ -66,6 +66,32 @@ extern "C"
   }
 
   static inline __attribute__ ((always_inline)) void
+  cortexm_architecture_dsb (void)
+  {
+    __asm__ volatile (
+
+        " dsb "
+
+        : /* Outputs */
+        : /* Inputs */
+        : "memory" /* Clobbers */
+    );
+  }
+
+  static inline __attribute__ ((always_inline)) void
+  cortexm_architecture_isb (void)
+  {
+    __asm__ volatile (
+
+        " isb "
+
+        : /* Outputs */
+        : /* Inputs */
+        : "memory" /* Clobbers */
+    );
+  }
+
+  static inline __attribute__ ((always_inline)) void
   micro_os_plus_architecture_nop (void)
   {
     cortexm_architecture_nop ();
@@ -121,6 +147,18 @@ namespace cortexm::architecture
     cortexm_architecture_wfi ();
   }
 
+  inline __attribute__ ((always_inline)) void
+  dsb (void)
+  {
+    cortexm_architecture_dsb ();
+  }
+
+  inline __attribute__ ((always_inline)) void
+  isb (void)
+  {
+    cortexm_architecture_isb ();
+  }
+
   // --------------------------------------------------------------------------
 } // namespace cortexm::architecture
 
@@ -144,6 +182,18 @@ namespace micro_os_plus::architecture
   wfi (void)
   {
     cortexm::architecture::wfi ();
+  }
+
+  inline __attribute__ ((always_inline)) void
+  dsb (void)
+  {
+    cortexm::architecture::dsb ();
+  }
+
+  inline __attribute__ ((always_inline)) void
+  isb (void)
+  {
+    cortexm::architecture::isb ();
   }
 
   // --------------------------------------------------------------------------
