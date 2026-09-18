@@ -6,9 +6,17 @@ Please check
 [GitHub](https://github.com/micro-os-plus/architecture-cortexm-xpack/issues/)
 and close existing issues and pull requests.
 
+## 2026-09-18
+
+* v8.2.0
+* b31211d cosmetics
+* a268bf7 add MICRO_OS_PLUS_ARCHITECTURES_CORTEXM_VTOR_PRESENT
+
 ## 2026-09-16
 
-* v8.1.0
+* 65eb15b README update
+* d015c0d 8.1.0
+* ae71455 prepare v8.1.0
 * 717f8d7 reset-handler.c use dsb & isb
 * 99df2e2 add dsb & isb
 
