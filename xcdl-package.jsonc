@@ -65,6 +65,16 @@
           ]
           // "defaultDefine": "MICRO_OS_PLUS_INCLUDE_ARCHITECTURES_CORTEXM_EXCEPTION_HANDLERS_ENABLED"
         }
+      ],
+      "cdlOptions": [
+        {
+          "id": "vtor-present",
+          "display": "VTOR present",
+          "description": "Indicates if the Vector Table Offset Register (VTOR) is present",
+          "configurable": false
+          // "defaultDefine": "MICRO_OS_PLUS_ARCHITECTURES_CORTEXM_VTOR_PRESENT"
+        }
+
       ]
     }
   ]

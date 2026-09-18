@@ -30,7 +30,8 @@
 
 _debugger_entry_point:
 
-#if defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__) || defined(__ARM_ARCH_8M_MAIN__)
+#if defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__) || defined(__ARM_ARCH_8M_MAIN__) \
+    || defined (MICRO_OS_PLUS_ARCHITECTURES_CORTEXM_VTOR_PRESENT)
 
     ldr     r1, =VTOR
 
