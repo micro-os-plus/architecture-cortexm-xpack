@@ -51,7 +51,7 @@ using namespace micro_os_plus;
 static const char*
 get_cortex_m_core_suffix (uint16_t part_no)
 {
-#if defined(__ARM_ARCH_6M__) || defined(__ARM_ARCH_7M__) 
+#if defined(__ARM_ARCH_6M__) || defined(__ARM_ARCH_7M__)
 
   // Group them since on QEMU the M0 tests run on M3.
   switch (part_no)

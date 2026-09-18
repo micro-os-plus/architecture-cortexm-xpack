@@ -153,7 +153,7 @@ dependency with:
 ```cmake
 target_link_libraries(your-target PRIVATE
 
-  micro-os-plus::architecture-cortexm
+  micro-os-plus::architecture
 )
 ```
 
@@ -176,7 +176,7 @@ exe = executable(
     # Nothing, not static.
   ],
   dependencies: [
-    micro_os_plus_architecture_cortexm_dependency,
+    micro_os_plus_architecture_dependency,
   ]
 )
 ```

@@ -28,7 +28,7 @@
         "type": "c-header",
         "filePath": "{{buildFolderPath}}/generated/include/micro-os-plus/architecture-defines.h"
       },
-      // "defaultDefine": "MICRO_OS_PLUS_INCLUDE_ARCHITECTURES_CORTEXM_ENABLED"
+      // "defaultDefine": "MICRO_OS_PLUS_ARCHITECTURES_CORTEXM_ENABLED"
       "cdlComponents": [
         {
           "id": "debugger-entry-point",
@@ -37,13 +37,13 @@
           "sourceFiles": [
             "src/debugger-entry-point.S"
           ],
-          // "defaultDefine": "MICRO_OS_PLUS_INCLUDE_ARCHITECTURES_CORTEXM_DEBUGGER_ENTRY_POINT_ENABLED"
+          // "defaultDefine": "MICRO_OS_PLUS_ARCHITECTURES_CORTEXM_DEBUGGER_ENTRY_POINT_ENABLED"
           "cdlOptions": [
             {
               "id": "initialise-vtor",
               "display": "Initialise VTOR",
               "description": "Initialise the Vector Table Offset Register (VTOR) when the application is started by a debugger",
-              // "defaultDefine": "MICRO_OS_PLUS_INCLUDE_ARCHITECTURES_CORTEXM_DEBUGGER_ENTRY_POINT_INITIALISE_VTOR_ENABLED"
+              // "defaultDefine": "MICRO_OS_PLUS_ARCHITECTURES_CORTEXM_DEBUGGER_ENTRY_POINT_INITIALISE_VTOR_ENABLED"
             }
           ]
         },
