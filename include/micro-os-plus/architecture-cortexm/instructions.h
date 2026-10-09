@@ -37,12 +37,18 @@ extern "C"
 
   /**
    * `bkpt` instruction.
+   *
+   * It also acts as a compiler memory barrier, so that a debugger
+   * stopped at the breakpoint sees all the preceding stores in memory.
    */
   static void
   cortexm_architecture_bkpt (void);
 
   /**
    * `wfi` instruction.
+   *
+   * It also acts as a compiler memory barrier, so that variables changed
+   * by interrupt handlers are read again after it returns.
    */
   static void
   cortexm_architecture_wfi (void);
@@ -96,6 +102,34 @@ extern "C"
    */
   static void
   micro_os_plus_architecture_wfi (void);
+
+  /**
+   * @brief Data synchronisation barrier.
+   *
+   * @details
+   * Ensures that all explicit memory accesses, and all system register
+   * writes, issued before this call complete before any instruction
+   * after it executes. It also acts as a compiler memory barrier.
+   *
+   * On Cortex-M, it is implemented with the `dsb` instruction.
+   */
+  static void
+  micro_os_plus_architecture_data_barrier (void);
+
+  /**
+   * @brief Instruction synchronisation barrier.
+   *
+   * @details
+   * Ensures that the instructions after this call are fetched and
+   * executed only after the effects of the preceding context-changing
+   * operations (such as system register writes, or code written to
+   * memory) are visible. Usually called right after
+   * `micro_os_plus_architecture_data_barrier()`.
+   *
+   * On Cortex-M, it is implemented with the `isb` instruction.
+   */
+  static void
+  micro_os_plus_architecture_instruction_barrier (void);
 
   // --------------------------------------------------------------------------
 
@@ -169,16 +203,25 @@ namespace micro_os_plus::architecture
   wfi (void);
 
   /**
-   * The assembler `dsb` (Data Synchronization Barrier) instruction.
+   * @brief Data synchronisation barrier.
+   *
+   * @details
+   * The C++ equivalent of `micro_os_plus_architecture_data_barrier()`;
+   * on Cortex-M, it is implemented with the `dsb` instruction.
    */
   void
-  dsb (void);
+  data_barrier (void);
 
   /**
-   * The assembler `isb` (Instruction Synchronization Barrier) instruction.
+   * @brief Instruction synchronisation barrier.
+   *
+   * @details
+   * The C++ equivalent of
+   * `micro_os_plus_architecture_instruction_barrier()`; on Cortex-M,
+   * it is implemented with the `isb` instruction.
    */
   void
-  isb (void);
+  instruction_barrier (void);
 
   // ------------------------------------------------------------------------
 } // namespace micro_os_plus::architecture

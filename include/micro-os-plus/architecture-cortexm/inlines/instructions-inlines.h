@@ -115,6 +115,24 @@ extern "C"
     cortexm_architecture_wfi ();
   }
 
+  /**
+   * Data synchronisation barrier (`dsb`).
+   */
+  static inline __attribute__ ((always_inline)) void
+  micro_os_plus_architecture_data_barrier (void)
+  {
+    cortexm_architecture_dsb ();
+  }
+
+  /**
+   * Instruction synchronisation barrier (`isb`).
+   */
+  static inline __attribute__ ((always_inline)) void
+  micro_os_plus_architecture_instruction_barrier (void)
+  {
+    cortexm_architecture_isb ();
+  }
+
   // --------------------------------------------------------------------------
 
 #if defined(__cplusplus)
@@ -185,13 +203,13 @@ namespace micro_os_plus::architecture
   }
 
   inline __attribute__ ((always_inline)) void
-  dsb (void)
+  data_barrier (void)
   {
     cortexm::architecture::dsb ();
   }
 
   inline __attribute__ ((always_inline)) void
-  isb (void)
+  instruction_barrier (void)
   {
     cortexm::architecture::isb ();
   }
