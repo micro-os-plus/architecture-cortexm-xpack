@@ -17,7 +17,7 @@
 # https://github.com/micro-os-plus/architecture-cortexm-xpack/actions/workflows/test-ci.yml
 
 # Workflow for running some tests on each Push.
-name: CI on Push
+name: Test on Push
 
 # https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions
 # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows
@@ -34,48 +34,64 @@ on:
       - '**'
     # ... include everything except ...
     paths-ignore:
-      - '.vscode/**'
-      - 'LICENSE'
-      - '**.md'
-      - '.clang-format'
-      - '.gitignore'
-      - '.npmignore'
+      - '.claude/**'
+      - '.github/skills/**'
       - '.github/workflows/publish-github-pages.yml'
       - '.github/workflows/test-all.yml'
+      - '.github/copilot-instructions.md'
+      - '.github/FUNDING.yml'
+      - '.settings/**'
+      - '.vscode/**'
+      - 'maintenance/**'
       - 'tests/scripts/**'
-      - '**/README**'
       - 'website/**'
+      - 'LICENSE*'
+      - '**.md'
+      - '.gitignore'
+      - '.npmignore'
+      - '**/README**'
 
-# Allow one concurrent run.
+# Allow one concurrent run per push; new pushes cancel older runs.
+# https://docs.github.com/en/actions/using-jobs/using-concurrency
 concurrency:
-  group: 'test'
+  group: 'tests-ci-${{ github.ref_name }}'
+  # A new push to the same branch cancels the older run.
   cancel-in-progress: true
 
 jobs:
   ci-test:
-    name: 'Architecture: Cortex-M tests'
+    name: 'Architecture: Cortex-M CI tests'
 
     runs-on: ${{ matrix.os }}
 
     strategy:
+      # Run all platforms to completion, even if one fails.
+      fail-fast: false
       matrix:
         # https://github.com/actions/runner-images
-        os: [ 'ubuntu-24.04', 'ubuntu-24.04-arm', 'macos-15-intel', 'macos-15', 'windows-2025' ]
+        os:
+          [
+            'ubuntu-24.04',
+            'ubuntu-24.04-arm',
+            'macos-15-intel',
+            'macos-15',
+            'windows-2025'
+          ]
         # https://nodejs.org/en - use LTS
-        node-version: [ 24 ]
+        node-version: ['24']
         # https://www.npmjs.com/package/xpm
-        xpm-version: [ 0.23.2 ]
+        xpm-version: ['0.23.2']
 
     steps:
       - name: Checkout
         # https://github.com/actions/checkout/
-        uses: actions/checkout@v6.0.1
+        uses: actions/checkout@v7.0.1
         with:
           fetch-depth: 3
 
       - name: Setup Node.js ${{ matrix.node-version }} on ${{ matrix.os }}
         # https://github.com/actions/setup-node
-        uses: actions/setup-node@v6.1.0
+        uses: actions/setup-node@v7.0.0
         with:
           node-version: ${{ matrix.node-version }}
 
@@ -94,9 +110,11 @@ jobs:
       - name: Satisfy project dependencies on ${{ matrix.os }}
         run: |
           npm ci
+          npm ci
+          xpm install
           xpm run install-ci
 
       - name: Run tests on ${{ matrix.os }}
         run: xpm run test-ci
         env:
-            CI: true
+          CI: true

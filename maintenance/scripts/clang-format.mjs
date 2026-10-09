@@ -1,6 +1,6 @@
 /*
  * DO NOT EDIT! Automatically generated from template file:
- * npm-packages-helper/templates/common/scripts/cmake-format-liquid.mjs
+ * npm-packages-helper/templates/common/maintenance/scripts/clang-format-liquid.mjs
  *
  * This file is part of the µOS++ project (https://micro-os-plus.github.io/).
  * Copyright (c) 2026 Liviu Ionescu. All rights reserved.
@@ -14,40 +14,26 @@
 
 // ----------------------------------------------------------------------------
 
-// pip3 install --user cmakelang pyyaml
-
 import { execFileSync } from 'child_process'
 import { globSync } from 'glob'
-import path from 'path'
 
-const pyUserBase = execFileSync('python3', ['-m', 'site', '--user-base'], {
-  encoding: 'utf8',
-}).trim()
-const cmakeFormatPath = path.join(pyUserBase, 'bin', 'cmake-format')
-
-const version = execFileSync(cmakeFormatPath, ['--version'], {
-  encoding: 'utf8',
-}).trim()
-console.log(`cmake-format ${version}`)
-
-const files = globSync(['**/CMakeLists.txt', '**/*.cmake'], {
-  ignore: [
-    '**/build/**',
-    '**/xpacks/**',
-    '**/node_modules/**',
-  ],
-})
+const files = [
+  ...globSync('{include,src}/**/*.{cpp,c,h}'),
+  ...globSync('tests/sources/{include,src}/*.{cpp,c,h}'),
+  ...globSync('tests/platforms/*/{include,src}/**/*.{cpp,c,h}'),
+  ...globSync('tests/platforms/*/device/{include,src}/**/*.{cpp,c,h}'),
+]
 
 const args = [
-  '--config-file',
-  'config/.cmake-format.py',
-  '--in-place',
+  '--style=file:maintenance/config/.clang-format',
+  '-i',
+  '--verbose',
   ...files,
 ]
 
 console.log()
-console.log(`[${cmakeFormatPath} ${args.join(' ')}]`)
+console.log(`[clang-format ${args.join(' ')}]`)
 
-execFileSync(cmakeFormatPath, args, { stdio: 'inherit' })
+execFileSync('clang-format', args, { stdio: 'inherit' })
 
 // ----------------------------------------------------------------------------

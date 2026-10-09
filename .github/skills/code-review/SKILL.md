@@ -1,6 +1,6 @@
 ---
 name: code-review
-description: 'Perform a thorough, uncompromising code review of C++ sources, headers, and documentation in the µOS++ Intrusive Lists project. Use when the user asks for a "code review", to "review the code", to "review changes", or to check a file, folder, or pull request for style, naming, documentation, and correctness issues.'
+description: 'Perform a thorough, uncompromising code review of C++ sources, headers, and documentation in the Architecture: Cortex-M project. Use when the user asks for a "code review", to "review the code", to "review changes", or to check a file, folder, or pull request for style, naming, documentation, and correctness issues.'
 argument-hint: 'Optional: path or folder to review; defaults to the whole repository'
 ---
 
@@ -27,7 +27,7 @@ specifically, with file and line references.
 
 - C/C++ identifiers use `snake_case` (types, functions, variables, members).
 - File names are lower-case words separated by dashes (e.g.
-  `doubly-list-links.h`).
+  `instructions-inlines.h`).
 - Formatting matches `.clang-format` (run `xpm run clang-format` mentally;
   flag anything that looks inconsistent with it).
 - No lines exceed 80 characters, including comments, except possibly the
@@ -38,11 +38,12 @@ specifically, with file and line references.
 - Declarations live in `include/`, out-of-line definitions in `src/`,
   inline (header-only) definitions in `inlines/`.
 - Usually there is only one public header (like
-  `include/micro-os-plus/utils/lists.h`);
+  `include/micro-os-plus/architecture.h`);
   internal headers are located in a subfolder named after the public header
-  (e.g. `include/micro-os-plus/utils/lists/`).
-- New source files are registered in the top-level `CMakeLists.txt` and
-  `meson.build` (generated from xcdl-package.jsonc).
+  (e.g. `include/micro-os-plus/architecture-cortexm/`).
+- New source files are registered in `xcdl-package.jsonc`, and the
+  top-level `CMakeLists.txt` and `meson.build` are regenerated from it
+  with `xpm run xcdl-export`; the generated files are not edited by hand.
 
 ### Documentation (Doxygen)
 
@@ -103,17 +104,24 @@ specifically, with file and line references.
 
 ### Correctness and maintainability
 
-- Look for undefined behaviour, lifetime/ownership issues, missing
-  `const`-correctness, and incorrect intrusive-list pointer handling
-  (links, insertion/removal, iterator invalidation).
-- Check for potential ABI or layout implications of changes to link
-  structures.
+- Look for undefined behaviour, missing `const`-correctness, and
+  incorrect inline assembly (wrong mnemonics or operand direction,
+  missing clobbers or `memory` barriers, 32-bit operands used for
+  64-bit registers, and Cortex-M or AArch32 leftovers that are not
+  valid AArch64).
+- Check for potential ABI implications of changes to the public types
+  and to the semihosting call interface.
 - Flag weak assumptions, missing edge-case handling, and any deviation
   from existing patterns in the codebase without justification.
 - Check that thread-safety/reentrancy expectations are documented where
-  relevant (these lists provide no internal locking; any method that could
-  be called from an ISR or from multiple threads without external
-  synchronisation should say so explicitly).
+  relevant (any function that could be called from an exception handler
+  or from multiple cores should say so explicitly).
+- Check API symmetry between the parallel forms of each API (the
+  `aarch64_architecture_*` and `micro_os_plus_architecture_*` C
+  functions, and the `aarch64::architecture` and
+  `micro_os_plus::architecture` C++ namespaces); every function should
+  exist in all forms, with consistent names, unless the omission is
+  deliberate and justified.
 - Check API symmetry between related class templates (e.g. `doubly_list`
   versus `intrusive_list`); if one offers a convenience method the other
   lacks (such as `unlink_head`/`unlink_tail`), confirm this is a deliberate

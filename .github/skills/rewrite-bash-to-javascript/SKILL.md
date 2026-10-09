@@ -1,24 +1,25 @@
 ---
 name: rewrite-bash-to-javascript
 description: 'Rewrite a bash/shell script (.sh) in this project as an ES module Node.js script (.mjs), following the conventions already used by jsonc-format.mjs and xcdl-export.mjs. Use when the user asks to "rewrite", "convert", "port", or "translate" a bash script into JavaScript/Node.js, or to replace a shell script with a .mjs equivalent.'
-argument-hint: 'Path to the .sh script to convert, e.g. scripts/cmake-format.sh'
+argument-hint: 'Path to the .sh script to convert, e.g. maintenance/scripts/cmake-format.sh'
 ---
 
 # Rewrite Bash Scripts to JavaScript — µTest++ Testing Framework
 
 ## When to Use
 
-- The user asks to rewrite, convert, port, or translate a `scripts/*.sh`
-  file into JavaScript/Node.js.
+- The user asks to rewrite, convert, port, or translate a
+  `maintenance/scripts/*.sh` file into JavaScript/Node.js.
 - The user wants a new `.mjs` equivalent of an existing shell script,
-  matching the style of [jsonc-format.mjs](../../../scripts/jsonc-format.mjs)
-  and [xcdl-export.mjs](../../../scripts/xcdl-export.mjs).
+  matching the style of
+  [jsonc-format.mjs](../../../maintenance/scripts/jsonc-format.mjs) and
+  [xcdl-export.mjs](../../../maintenance/scripts/xcdl-export.mjs).
 
 ## Step 1 — Conversion Conventions
 
 Follow the style already established by
-[jsonc-format.mjs](../../../scripts/jsonc-format.mjs) and
-[xcdl-export.mjs](../../../scripts/xcdl-export.mjs):
+[jsonc-format.mjs](../../../maintenance/scripts/jsonc-format.mjs) and
+[xcdl-export.mjs](../../../maintenance/scripts/xcdl-export.mjs):
 
 - **Module system**: use ES module syntax (`import`/`export`) with a
   `.mjs` extension; `package.json` does not set `"type": "module"`, so the
@@ -59,13 +60,14 @@ Follow the style already established by
   pinned for existing dependencies.
 - **Wiring**: update the corresponding entry under `xpack.actions` in
   `package.json` to invoke the script directly with `node`, e.g.
-  `"cmake-format": "node scripts/cmake-format.mjs"`, mirroring the
-  existing `xcdl-export` action. Remove the now-unused `.sh` file only if
-  the user confirms it is no longer needed elsewhere.
+  `"cmake-format": "node maintenance/scripts/cmake-format.mjs"`,
+  mirroring the existing `xcdl-export` action. Remove the now-unused
+  `.sh` file only if the user confirms it is no longer needed elsewhere.
 
 ## Step 2 — Verify
 
-- Run the new `.mjs` script directly (`node scripts/<name>.mjs ...`) and
-  compare its effect against the original `.sh` script on the same input.
+- Run the new `.mjs` script directly
+  (`node maintenance/scripts/<name>.mjs ...`) and compare its effect
+  against the original `.sh` script on the same input.
 - Run the corresponding `xpm run <action>` command to confirm the
   `package.json` wiring works end-to-end.
