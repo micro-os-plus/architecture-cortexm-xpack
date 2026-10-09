@@ -5,8 +5,7 @@
   "copyright": "Copyright (c) 2022-2026 Liviu Ionescu. All rights reserved.",
   "cdlComponents": [
     {
-      "id": "micro-os-plus.architectures.cortexm",
-      "alias": "micro-os-plus.architecture",
+      "id": "micro-os-plus.architecture.cortexm",
       "display": "Cortex-M architecture",
       "description": "The Cortex-M architecture definitions",
       "publicIncludeFolders": [
@@ -28,7 +27,7 @@
         "type": "c-header",
         "filePath": "{{buildFolderPath}}/generated/include/micro-os-plus/architecture-defines.h"
       },
-      // "defaultDefine": "MICRO_OS_PLUS_ARCHITECTURES_CORTEXM_ENABLED"
+      // "defaultDefine": "MICRO_OS_PLUS_ARCHITECTURE_CORTEXM_ENABLED"
       "cdlComponents": [
         {
           "id": "debugger-entry-point",
@@ -37,13 +36,13 @@
           "sourceFiles": [
             "src/debugger-entry-point.S"
           ],
-          // "defaultDefine": "MICRO_OS_PLUS_ARCHITECTURES_CORTEXM_DEBUGGER_ENTRY_POINT_ENABLED"
+          // "defaultDefine": "MICRO_OS_PLUS_ARCHITECTURE_CORTEXM_DEBUGGER_ENTRY_POINT_ENABLED"
           "cdlOptions": [
             {
               "id": "initialise-vtor",
               "display": "Initialise VTOR",
               "description": "Initialise the Vector Table Offset Register (VTOR) when the application is started by a debugger",
-              // "defaultDefine": "MICRO_OS_PLUS_ARCHITECTURES_CORTEXM_DEBUGGER_ENTRY_POINT_INITIALISE_VTOR_ENABLED"
+              // "defaultDefine": "MICRO_OS_PLUS_ARCHITECTURE_CORTEXM_DEBUGGER_ENTRY_POINT_INITIALISE_VTOR_ENABLED"
             }
           ]
         },
@@ -54,7 +53,7 @@
           "sourceFiles": [
             "src/reset-handler.c"
           ]
-          // "defaultDefine": "MICRO_OS_PLUS_INCLUDE_ARCHITECTURES_CORTEXM_RESET_HANDLER_ENABLED"
+          // "defaultDefine": "MICRO_OS_PLUS_ARCHITECTURE_CORTEXM_RESET_HANDLER_ENABLED"
         },
         {
           "id": "exception-handlers",
@@ -63,7 +62,7 @@
           "sourceFiles": [
             "src/exception-handlers.cpp"
           ]
-          // "defaultDefine": "MICRO_OS_PLUS_INCLUDE_ARCHITECTURES_CORTEXM_EXCEPTION_HANDLERS_ENABLED"
+          // "defaultDefine": "MICRO_OS_PLUS_ARCHITECTURE_CORTEXM_EXCEPTION_HANDLERS_ENABLED"
         }
       ],
       "cdlOptions": [
@@ -72,9 +71,8 @@
           "display": "VTOR present",
           "description": "Indicates if the Vector Table Offset Register (VTOR) is present",
           "configurable": false
-          // "defaultDefine": "MICRO_OS_PLUS_ARCHITECTURES_CORTEXM_VTOR_PRESENT"
+          // "defaultDefine": "MICRO_OS_PLUS_ARCHITECTURE_CORTEXM_VTOR_PRESENT"
         }
-
       ]
     }
   ]

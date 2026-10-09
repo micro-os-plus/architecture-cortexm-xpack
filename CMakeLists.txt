@@ -1,5 +1,6 @@
 # -----------------------------------------------------------------------------
-# DO NOT EDIT! Automatically generated from template file: xcdl-package.jsonc
+# DO NOT EDIT! Automatically generated from template file:
+# xcdl-package.jsonc
 #
 # This file is part of the µOS++ project (https://micro-os-plus.github.io/).
 # Copyright (c) 2021-2026 Liviu Ionescu. All rights reserved.
@@ -19,10 +20,10 @@
 # This creates libraries that can be linked to a target with:
 #
 # ~~~
-# target_link_libraries(your-target PUBLIC micro-os-plus::architectures-cortexm-debugger-entry-point)
-# target_link_libraries(your-target PUBLIC micro-os-plus::architectures-cortexm-reset-handler)
-# target_link_libraries(your-target PUBLIC micro-os-plus::architectures-cortexm-exception-handlers)
-# target_link_libraries(your-target PUBLIC micro-os-plus::architectures-cortexm)
+# target_link_libraries(your-target PUBLIC micro-os-plus::architecture-cortexm-debugger-entry-point)
+# target_link_libraries(your-target PUBLIC micro-os-plus::architecture-cortexm-reset-handler)
+# target_link_libraries(your-target PUBLIC micro-os-plus::architecture-cortexm-exception-handlers)
+# target_link_libraries(your-target PUBLIC micro-os-plus::architecture-cortexm)
 # ~~~
 
 # -----------------------------------------------------------------------------
@@ -43,9 +44,8 @@ if (COMMAND xpack_get_package_name_and_version)
   xpack_get_package_name_and_version (
     "${CMAKE_CURRENT_SOURCE_DIR}/package.json"
   )
-  message (
-    VERBOSE
-    "Processing xpm package ${PACKAGE_JSON_NAME}@${PACKAGE_JSON_VERSION}..."
+  message (VERBOSE
+           "Processing xpm package ${PACKAGE_JSON_NAME}@${PACKAGE_JSON_VERSION}..."
   )
 endif ()
 
@@ -64,23 +64,20 @@ endif ()
 # read-only; properties must be set on the underlying target, not on the alias
 # itself.
 
+
+
 # https://cmake.org/cmake/help/v3.20/command/add_library.html?highlight=interface#interface-libraries
 # Visibility keywords: PRIVATE applies to the target itself; INTERFACE passes
 # properties up to targets that link against it; PUBLIC does both.
-add_library (
-  micro-os-plus-architectures-cortexm-debugger-entry-point-interface INTERFACE
-  EXCLUDE_FROM_ALL
-)
+add_library (micro-os-plus-architecture-cortexm-debugger-entry-point-interface INTERFACE EXCLUDE_FROM_ALL)
 
 target_sources (
-  micro-os-plus-architectures-cortexm-debugger-entry-point-interface
+  micro-os-plus-architecture-cortexm-debugger-entry-point-interface
   INTERFACE "src/debugger-entry-point.S"
 )
 
 if (COMMAND xpack_display_target_lists)
-  xpack_display_target_lists (
-    micro-os-plus-architectures-cortexm-debugger-entry-point-interface
-  )
+  xpack_display_target_lists (micro-os-plus-architecture-cortexm-debugger-entry-point-interface)
 endif ()
 
 # -----------------------------------------------------------------------------
@@ -88,33 +85,28 @@ endif ()
 
 # https://cmake.org/cmake/help/v3.20/command/add_library.html#alias-libraries
 add_library (
-  micro-os-plus::architectures-cortexm-debugger-entry-point ALIAS
-  micro-os-plus-architectures-cortexm-debugger-entry-point-interface
+  micro-os-plus::architecture-cortexm-debugger-entry-point ALIAS micro-os-plus-architecture-cortexm-debugger-entry-point-interface
 )
 message (
   VERBOSE
-  "> micro-os-plus::architectures-cortexm-debugger-entry-point -> micro-os-plus-architectures-cortexm-debugger-entry-point-interface"
+  "> micro-os-plus::architecture-cortexm-debugger-entry-point -> micro-os-plus-architecture-cortexm-debugger-entry-point-interface"
 )
 
 # -----------------------------------------------------------------------------
 
+
 # https://cmake.org/cmake/help/v3.20/command/add_library.html?highlight=interface#interface-libraries
 # Visibility keywords: PRIVATE applies to the target itself; INTERFACE passes
 # properties up to targets that link against it; PUBLIC does both.
-add_library (
-  micro-os-plus-architectures-cortexm-reset-handler-interface INTERFACE
-  EXCLUDE_FROM_ALL
-)
+add_library (micro-os-plus-architecture-cortexm-reset-handler-interface INTERFACE EXCLUDE_FROM_ALL)
 
 target_sources (
-  micro-os-plus-architectures-cortexm-reset-handler-interface
+  micro-os-plus-architecture-cortexm-reset-handler-interface
   INTERFACE "src/reset-handler.c"
 )
 
 if (COMMAND xpack_display_target_lists)
-  xpack_display_target_lists (
-    micro-os-plus-architectures-cortexm-reset-handler-interface
-  )
+  xpack_display_target_lists (micro-os-plus-architecture-cortexm-reset-handler-interface)
 endif ()
 
 # -----------------------------------------------------------------------------
@@ -122,33 +114,28 @@ endif ()
 
 # https://cmake.org/cmake/help/v3.20/command/add_library.html#alias-libraries
 add_library (
-  micro-os-plus::architectures-cortexm-reset-handler ALIAS
-  micro-os-plus-architectures-cortexm-reset-handler-interface
+  micro-os-plus::architecture-cortexm-reset-handler ALIAS micro-os-plus-architecture-cortexm-reset-handler-interface
 )
 message (
   VERBOSE
-  "> micro-os-plus::architectures-cortexm-reset-handler -> micro-os-plus-architectures-cortexm-reset-handler-interface"
+  "> micro-os-plus::architecture-cortexm-reset-handler -> micro-os-plus-architecture-cortexm-reset-handler-interface"
 )
 
 # -----------------------------------------------------------------------------
 
+
 # https://cmake.org/cmake/help/v3.20/command/add_library.html?highlight=interface#interface-libraries
 # Visibility keywords: PRIVATE applies to the target itself; INTERFACE passes
 # properties up to targets that link against it; PUBLIC does both.
-add_library (
-  micro-os-plus-architectures-cortexm-exception-handlers-interface INTERFACE
-  EXCLUDE_FROM_ALL
-)
+add_library (micro-os-plus-architecture-cortexm-exception-handlers-interface INTERFACE EXCLUDE_FROM_ALL)
 
 target_sources (
-  micro-os-plus-architectures-cortexm-exception-handlers-interface
+  micro-os-plus-architecture-cortexm-exception-handlers-interface
   INTERFACE "src/exception-handlers.cpp"
 )
 
 if (COMMAND xpack_display_target_lists)
-  xpack_display_target_lists (
-    micro-os-plus-architectures-cortexm-exception-handlers-interface
-  )
+  xpack_display_target_lists (micro-os-plus-architecture-cortexm-exception-handlers-interface)
 endif ()
 
 # -----------------------------------------------------------------------------
@@ -156,41 +143,42 @@ endif ()
 
 # https://cmake.org/cmake/help/v3.20/command/add_library.html#alias-libraries
 add_library (
-  micro-os-plus::architectures-cortexm-exception-handlers ALIAS
-  micro-os-plus-architectures-cortexm-exception-handlers-interface
+  micro-os-plus::architecture-cortexm-exception-handlers ALIAS micro-os-plus-architecture-cortexm-exception-handlers-interface
 )
 message (
   VERBOSE
-  "> micro-os-plus::architectures-cortexm-exception-handlers -> micro-os-plus-architectures-cortexm-exception-handlers-interface"
+  "> micro-os-plus::architecture-cortexm-exception-handlers -> micro-os-plus-architecture-cortexm-exception-handlers-interface"
 )
 
 # -----------------------------------------------------------------------------
+
 
 # https://cmake.org/cmake/help/v3.20/command/add_library.html?highlight=interface#interface-libraries
 # Visibility keywords: PRIVATE applies to the target itself; INTERFACE passes
 # properties up to targets that link against it; PUBLIC does both.
-add_library (
-  micro-os-plus-architectures-cortexm-interface INTERFACE EXCLUDE_FROM_ALL
-)
+add_library (micro-os-plus-architecture-cortexm-interface INTERFACE EXCLUDE_FROM_ALL)
 
 target_include_directories (
-  micro-os-plus-architectures-cortexm-interface INTERFACE "include"
+  micro-os-plus-architecture-cortexm-interface 
+  INTERFACE "include"
 )
 
 target_sources (
-  micro-os-plus-architectures-cortexm-interface
-  INTERFACE "src/_init_fini.c" "src/semihosting.cpp" "src/show-cpuid.cpp"
+  micro-os-plus-architecture-cortexm-interface
+  INTERFACE "src/_init_fini.c"
+            "src/semihosting.cpp"
+            "src/show-cpuid.cpp"
 )
 
 target_link_libraries (
-  micro-os-plus-architectures-cortexm-interface
-  INTERFACE "micro-os-plus::architectures-cortexm-debugger-entry-point"
-            "micro-os-plus::architectures-cortexm-reset-handler"
-            "micro-os-plus::architectures-cortexm-exception-handlers"
+  micro-os-plus-architecture-cortexm-interface 
+  INTERFACE "micro-os-plus::architecture-cortexm-debugger-entry-point"
+            "micro-os-plus::architecture-cortexm-reset-handler"
+            "micro-os-plus::architecture-cortexm-exception-handlers"
 )
 
 if (COMMAND xpack_display_target_lists)
-  xpack_display_target_lists (micro-os-plus-architectures-cortexm-interface)
+  xpack_display_target_lists (micro-os-plus-architecture-cortexm-interface)
 endif ()
 
 # -----------------------------------------------------------------------------
@@ -198,21 +186,11 @@ endif ()
 
 # https://cmake.org/cmake/help/v3.20/command/add_library.html#alias-libraries
 add_library (
-  micro-os-plus::architectures-cortexm ALIAS
-  micro-os-plus-architectures-cortexm-interface
+  micro-os-plus::architecture-cortexm ALIAS micro-os-plus-architecture-cortexm-interface
 )
 message (
   VERBOSE
-  "> micro-os-plus::architectures-cortexm -> micro-os-plus-architectures-cortexm-interface"
-)
-
-add_library (
-  micro-os-plus::architecture ALIAS
-  micro-os-plus-architectures-cortexm-interface
-)
-message (
-  VERBOSE
-  "> micro-os-plus::architecture -> micro-os-plus-architectures-cortexm-interface"
+  "> micro-os-plus::architecture-cortexm -> micro-os-plus-architecture-cortexm-interface"
 )
 
 # -----------------------------------------------------------------------------
