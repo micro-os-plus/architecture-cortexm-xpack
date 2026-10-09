@@ -22,7 +22,7 @@
  * .bss/.noinit section (the _end symbol), and extends up to the stack.
  *
  * To make use of the multi-region initialisations, define
- * MICRO_OS_PLUS_INCLUDE_STARTUP_INIT_MULTIPLE_RAM_SECTIONS
+ * MICRO_OS_PLUS_STARTUP_INITIALISE_MULTIPLE_RAM_SECTIONS_ENABLED
  * for the startup.cpp file.
  */
 
