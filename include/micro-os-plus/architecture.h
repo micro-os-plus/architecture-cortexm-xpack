@@ -30,14 +30,11 @@
 
 // ----------------------------------------------------------------------------
 
-// No guard is needed; there can be only one architecture in a build.
-// #if defined(MICRO_OS_PLUS_INCLUDE_ARCHITECTURES_CORTEXM_ENABLED)
+#if defined(MICRO_OS_PLUS_ARCHITECTURE_CORTEXM_ENABLED)
 
 // ----------------------------------------------------------------------------
 
-#include "micro-os-plus/architecture-cortexm/defines.h"
-
-#if !defined(__ASSEMBLY__)
+#if !defined(__ASSEMBLER__)
 
 #include "micro-os-plus/architecture-cortexm/types.h"
 #include "micro-os-plus/architecture-cortexm/functions.h"
@@ -47,11 +44,11 @@
 
 #include "micro-os-plus/architecture-cortexm/inlines/semihosting-inlines.h"
 
-#endif // !defined(__ASSEMBLY__)
+#endif // !defined(__ASSEMBLER__)
 
 // ----------------------------------------------------------------------------
 
-// #endif // #if defined(MICRO_OS_PLUS_INCLUDE_ARCHITECTURES_CORTEXM_ENABLED)
+#endif // defined(MICRO_OS_PLUS_ARCHITECTURE_CORTEXM_ENABLED)
 
 // ----------------------------------------------------------------------------
 

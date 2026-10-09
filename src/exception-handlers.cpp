@@ -23,8 +23,8 @@
 
 // ----------------------------------------------------------------------------
 
-#if defined( \
-    MICRO_OS_PLUS_INCLUDE_ARCHITECTURES_CORTEXM_EXCEPTION_HANDLERS_ENABLED)
+#if defined(MICRO_OS_PLUS_ARCHITECTURE_CORTEXM_ENABLED) && defined( \
+    MICRO_OS_PLUS_ARCHITECTURE_CORTEXM_EXCEPTION_HANDLERS_ENABLED)
 
 // ----------------------------------------------------------------------------
 
@@ -462,6 +462,6 @@ SysTick_Handler (void)
 
 // ----------------------------------------------------------------------------
 
-#endif // defined(MICRO_OS_PLUS_INCLUDE_ARCHITECTURES_CORTEXM_EXCEPTION_HANDLERS_ENABLED)
+#endif // defined(MICRO_OS_PLUS_ARCHITECTURE_CORTEXM_ENABLED) &&defined(MICRO_OS_PLUS_ARCHITECTURE_CORTEXM_EXCEPTION_HANDLERS_ENABLED)
 
 // ----------------------------------------------------------------------------

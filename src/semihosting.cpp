@@ -16,7 +16,7 @@
 
 // ----------------------------------------------------------------------------
 
-#if defined(MICRO_OS_PLUS_SEMIHOSTING_ENABLED)
+#if defined(MICRO_OS_PLUS_ARCHITECTURE_CORTEXM_ENABLED) && defined(MICRO_OS_PLUS_SEMIHOSTING_ENABLED)
 
 // ----------------------------------------------------------------------------
 
@@ -69,6 +69,6 @@ micro_os_plus_semihosting_call_host (
 
 // ----------------------------------------------------------------------------
 
-#endif // defined(MICRO_OS_PLUS_SEMIHOSTING_ENABLED)
+#endif // defined(MICRO_OS_PLUS_ARCHITECTURE_CORTEXM_ENABLED) && defined(MICRO_OS_PLUS_SEMIHOSTING_ENABLED)
 
 // ----------------------------------------------------------------------------

@@ -16,6 +16,11 @@
 #include <stdint.h>
 
 // ----------------------------------------------------------------------------
+
+#if defined(MICRO_OS_PLUS_ARCHITECTURE_CORTEXM_ENABLED) && defined(MICRO_OS_PLUS_ARCHITECTURE_CORTEXM_RESET_HANDLER_ENABLED)
+
+
+// ----------------------------------------------------------------------------
 // SCB/FPU register addresses (used instead of the SCB->.../FPU->... accessors
 // since CMSIS is not available here, being device specific).
 
@@ -32,10 +37,6 @@
 
 #define FPU_FPCCR_ASPEN_MASK (1UL << 31U)
 #define FPU_FPCCR_LSPEN_MASK (1UL << 30U)
-
-// ----------------------------------------------------------------------------
-
-#if defined(MICRO_OS_PLUS_INCLUDE_ARCHITECTURES_CORTEXM_RESET_HANDLER_ENABLED)
 
 // ----------------------------------------------------------------------------
 
@@ -126,6 +127,6 @@ Reset_Handler (void)
 
 // ----------------------------------------------------------------------------
 
-#endif // defined(MICRO_OS_PLUS_INCLUDE_ARCHITECTURES_CORTEXM_RESET_HANDLER_ENABLED)
+#endif // defined(MICRO_OS_PLUS_ARCHITECTURE_CORTEXM_ENABLED) &&defined(MICRO_OS_PLUS_ARCHITECTURE_CORTEXM_RESET_HANDLER_ENABLED)
 
 // ----------------------------------------------------------------------------

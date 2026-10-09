@@ -11,12 +11,13 @@
 
 // ----------------------------------------------------------------------------
 
-#define __ASSEMBLY__ 1
+// Defined by the compiler for .S files.
+// #define __ASSEMBLER__ 1
 #include "micro-os-plus/architecture.h"
 
 // ----------------------------------------------------------------------------
 
-#if defined(MICRO_OS_PLUS_INCLUDE_ARCHITECTURES_CORTEXM_DEBUGGER_ENTRY_POINT_ENABLED)
+#if defined(MICRO_OS_PLUS_ARCHITECTURE_CORTEXM_ENABLED) && defined(MICRO_OS_PLUS_ARCHITECTURE_CORTEXM_DEBUGGER_ENTRY_POINT_ENABLED)
 
     .equ VTOR, 0xE000ED08
 
@@ -31,17 +32,17 @@
 _debugger_entry_point:
 
 #if defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__) || defined(__ARM_ARCH_8M_MAIN__) \
-    || defined (MICRO_OS_PLUS_ARCHITECTURES_CORTEXM_VTOR_PRESENT)
+    || defined (MICRO_OS_PLUS_ARCHITECTURE_CORTEXM_VTOR_PRESENT)
 
     ldr     r1, =VTOR
 
-#if defined(MICRO_OS_PLUS_INCLUDE_ARCHITECTURES_CORTEXM_DEBUGGER_ENTRY_POINT_INITIALISE_VTOR_ENABLED)
+#if defined(MICRO_OS_PLUS_ARCHITECTURE_CORTEXM_DEBUGGER_ENTRY_POINT_INITIALISE_VTOR_ENABLED)
 
     ldr     r0, =_interrupt_vectors   // r0 = &_interrupt_vectors
     bic     r0, r0, #0x3F             // r0 &= ~0x3F (clear low 6 bits)
     str     r0, [r1]                  // SCB->VTOR = r0
     
-#endif // defined(MICRO_OS_PLUS_INCLUDE_ARCHITECTURES_CORTEXM_DEBUGGER_ENTRY_POINT_INITIALISE_VTOR_ENABLED)
+#endif // defined(MICRO_OS_PLUS_ARCHITECTURE_CORTEXM_DEBUGGER_ENTRY_POINT_INITIALISE_VTOR_ENABLED)
 
 #elif defined(__ARM_ARCH_6M__) || defined(__ARM_ARCH_8M_BASE__)
 
@@ -59,6 +60,6 @@ _debugger_entry_point:
     .fnend
     .size    _debugger_entry_point, . - _debugger_entry_point
 
-#endif // defined(MICRO_OS_PLUS_INCLUDE_ARCHITECTURES_CORTEXM_DEBUGGER_ENTRY_POINT_ENABLED)
+#endif // defined(MICRO_OS_PLUS_ARCHITECTURE_CORTEXM_ENABLED) && defined(MICRO_OS_PLUS_ARCHITECTURE_CORTEXM_DEBUGGER_ENTRY_POINT_ENABLED)
 
 // ----------------------------------------------------------------------------
