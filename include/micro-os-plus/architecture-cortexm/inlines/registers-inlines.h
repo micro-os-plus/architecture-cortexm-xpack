@@ -33,7 +33,7 @@ extern "C"
 
     __asm__ volatile (
 
-        "msr %0, msp"
+        "mrs %0, msp"
 
         : "=r"(result) /* Outputs */
         : /* Inputs */
@@ -62,7 +62,7 @@ extern "C"
 
     __asm__ volatile (
 
-        "msr %0, psp"
+        "mrs %0, psp"
 
         : "=r"(result) /* Outputs */
         : /* Inputs */
@@ -107,7 +107,7 @@ extern "C"
 
     __asm__ volatile (
 
-        "msr %0, msplim"
+        "mrs %0, msplim"
 
         : "=r"(result) /* Outputs */
         : /* Inputs */
@@ -136,7 +136,7 @@ extern "C"
 
     __asm__ volatile (
 
-        "msr %0, psplim"
+        "mrs %0, psplim"
 
         : "=r"(result) /* Outputs */
         : /* Inputs */
