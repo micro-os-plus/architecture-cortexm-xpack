@@ -23,8 +23,8 @@
 
 // ----------------------------------------------------------------------------
 
-#if defined(MICRO_OS_PLUS_ARCHITECTURE_CORTEXM_ENABLED) && defined( \
-    MICRO_OS_PLUS_ARCHITECTURE_CORTEXM_EXCEPTION_HANDLERS_ENABLED)
+#if defined(MICRO_OS_PLUS_ARCHITECTURE_CORTEXM_ENABLED) \
+    && defined(MICRO_OS_PLUS_ARCHITECTURE_CORTEXM_EXCEPTION_HANDLERS_ENABLED)
 
 // ----------------------------------------------------------------------------
 

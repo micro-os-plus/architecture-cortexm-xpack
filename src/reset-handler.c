@@ -17,8 +17,8 @@
 
 // ----------------------------------------------------------------------------
 
-#if defined(MICRO_OS_PLUS_ARCHITECTURE_CORTEXM_ENABLED) && defined(MICRO_OS_PLUS_ARCHITECTURE_CORTEXM_RESET_HANDLER_ENABLED)
-
+#if defined(MICRO_OS_PLUS_ARCHITECTURE_CORTEXM_ENABLED) \
+    && defined(MICRO_OS_PLUS_ARCHITECTURE_CORTEXM_RESET_HANDLER_ENABLED)
 
 // ----------------------------------------------------------------------------
 // SCB/FPU register addresses (used instead of the SCB->.../FPU->... accessors
