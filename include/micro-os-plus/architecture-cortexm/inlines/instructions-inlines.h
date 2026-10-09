@@ -48,7 +48,7 @@ extern "C"
 
         : /* Outputs */
         : /* Inputs */
-        : /* Clobbers */
+        : "memory" /* Clobbers */
     );
   }
 
@@ -61,7 +61,7 @@ extern "C"
 
         : /* Outputs */
         : /* Inputs */
-        : /* Clobbers */
+        : "memory" /* Clobbers */
     );
   }
 
