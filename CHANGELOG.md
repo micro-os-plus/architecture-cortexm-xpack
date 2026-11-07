@@ -6,9 +6,27 @@ Please check
 [GitHub](https://github.com/micro-os-plus/architecture-cortexm-xpack/issues/)
 and close existing issues and pull requests.
 
+## 2026-11-07
+
+* 817b44c re-generate top commons
+
+## 2026-10-09
+
+* v9.0.0
+* 9b75817 re-format
+* c758b96 re-generate xcdl
+* 522ec5d linker-scripts cosmetics
+* a17aee8 MICRO_OS_PLUS_ARCHITECTURE_CORTEXM_ENABLED
+* 97b4e38 registers-inline.h fix mrs
+* 221df7d add data/instruction barrier
+* d15ce67 instructions-inlines.h clobber memory
+* 60b41c4 xcdl micro-os-plus.architecture.cortexm
+* 0f98bec re-generate top commons
+
 ## 2026-09-18
 
-* v8.2.0
+* 6e0a262 8.2.0
+* b86b220 prepare v8.2.0
 * b31211d cosmetics
 * a268bf7 add MICRO_OS_PLUS_ARCHITECTURE_CORTEXM_VTOR_PRESENT
 
