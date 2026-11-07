@@ -63,7 +63,8 @@
       "clang-format": "node maintenance/scripts/clang-format.mjs",
       "cmake-format": "node maintenance/scripts/cmake-format.mjs",
       "jsonc-format": "node maintenance/scripts/jsonc-format.mjs",
-      "xcdl-export": "node maintenance/scripts/xcdl-export.mjs xcdl-package.json*"
+      "xcdl-export": "node maintenance/scripts/xcdl-export.mjs xcdl-package.json*",
+      "xpm-link": "xpm link"
     }
   },
   "engines": {

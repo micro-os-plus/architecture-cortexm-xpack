@@ -224,10 +224,11 @@ target_link_libraries(your-target PRIVATE
 )
 ```
 
-The generic alias `micro-os-plus::architecture` refers to the same
-library, and can be used when the application is architecture agnostic.
+Architecture agnostic applications that refer to the generic
+`micro-os-plus::architecture` library must define it in their platform
+specific part, as an alias to `micro-os-plus::architectures-cortexm`.
 
-Both include the separate interface libraries
+The library includes the separate interface libraries
 `micro-os-plus::architectures-cortexm-reset-handler`,
 `micro-os-plus::architectures-cortexm-exception-handlers`, and
 `micro-os-plus::architectures-cortexm-debugger-entry-point`, which are
@@ -259,12 +260,13 @@ exe = executable(
 )
 ```
 
-The generic `micro_os_plus_architecture_dependency` object (with the
-corresponding `_compile_c_args` and `_compile_cpp_args` variables) refers
-to the same sources, and can be used when the application is
-architecture agnostic.
+Architecture agnostic applications that refer to the generic
+`micro_os_plus_architecture_dependency` object (with the corresponding
+`_compile_c_args` and `_compile_cpp_args` variables) must define them in
+their platform specific part, as copies of
+`micro_os_plus_architecture_cortexm_dependency` and its variables.
 
-Both include the separate
+The dependency includes the separate
 `micro_os_plus_architecture_cortexm_reset_handler_dependency`,
 `micro_os_plus_architecture_cortexm_exception_handlers_dependency`, and
 `micro_os_plus_architecture_cortexm_debugger_entry_point_dependency`

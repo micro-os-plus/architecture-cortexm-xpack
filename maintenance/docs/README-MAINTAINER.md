@@ -60,7 +60,7 @@ There are no fixed releases.
 In the `micro-os-plus/architecture-cortexm-xpack` Git repo:
 
 - switch to the `xpack-development` branch
-- if needed, merge the `xpack` branch
+- if necessary, rebase `xpack-development` on top of the `xpack` branch
 
 No need to add a tag here, it'll be added when the release is created.
 
@@ -146,7 +146,7 @@ The version is visible at:
 When the package is considered stable:
 
 - with a Git client (VS Code is fine)
-- merge `xpack-development` into `xpack`
+- rebase `xpack` on top of `xpack-development`
 - push to GitHub
 - select `xpack-development`
 

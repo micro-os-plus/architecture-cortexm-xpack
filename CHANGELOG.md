@@ -10,7 +10,7 @@ and close existing issues and pull requests.
 
 * v8.2.0
 * b31211d cosmetics
-* a268bf7 add MICRO_OS_PLUS_ARCHITECTURES_CORTEXM_VTOR_PRESENT
+* a268bf7 add MICRO_OS_PLUS_ARCHITECTURE_CORTEXM_VTOR_PRESENT
 
 ## 2026-09-16
 

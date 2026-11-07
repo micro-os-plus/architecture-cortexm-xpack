@@ -1,5 +1,7 @@
 {
   "descriptiveName": "Architecture: Cortex-M",
+  "permalinkName": "architecture-cortexm",
+  "preferredName": "Architecture: Cortex-M",
   "githubActionsNodeVersions": [
     "24"
   ],
@@ -13,5 +15,6 @@
   "githubActionsXpmVersions": [
     "0.23.2"
   ],
+  "skipCiTests": true,
   "useSelfHostedRunners": false
 }

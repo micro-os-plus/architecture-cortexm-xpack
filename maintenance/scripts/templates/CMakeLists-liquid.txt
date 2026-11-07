@@ -89,6 +89,33 @@ endif ()
 {%- assign objectsArtefacts = component.cdlArtefacts | where: 'type', 'objectFiles' %}
 {%- assign objectsArtefact = objectsArtefacts | first %}
 {%- assign objectsSuffix = objectsArtefact.id %}
+{%- comment %}
+  The compiler options are maps of categories, each with an array of strings.
+  Flatten them in a fixed category order. The `remove` category is not
+  additive. The `linker` category is collected separately, since it goes to
+  the link options.
+{%- endcomment %}
+{%- assign optionCategories = "target,optimisations,warnings,debugging,miscellaneous" | split: "," %}
+{%- assign publicOptions = "" | split: "" %}
+{%- assign privateOptions = "" | split: "" %}
+{%- assign publicLinkerOptions = "" | split: "" %}
+{%- assign privateLinkerOptions = "" | split: "" %}
+{%- if component.publicCompilerOptions.linker and component.publicCompilerOptions.linker.size > 0 %}
+  {%- assign publicLinkerOptions = component.publicCompilerOptions.linker %}
+{%- endif %}
+{%- if component.privateCompilerOptions.linker and component.privateCompilerOptions.linker.size > 0 %}
+  {%- assign privateLinkerOptions = component.privateCompilerOptions.linker %}
+{%- endif %}
+{%- for category in optionCategories %}
+  {%- assign categoryOptions = component.publicCompilerOptions[category] %}
+  {%- if categoryOptions and categoryOptions.size > 0 %}
+    {%- assign publicOptions = publicOptions | concat: categoryOptions %}
+  {%- endif %}
+  {%- assign categoryOptions = component.privateCompilerOptions[category] %}
+  {%- if categoryOptions and categoryOptions.size > 0 %}
+    {%- assign privateOptions = privateOptions | concat: categoryOptions %}
+  {%- endif %}
+{%- endfor %}
 
 # https://cmake.org/cmake/help/v3.20/command/add_library.html?highlight=interface#interface-libraries
 # Visibility keywords: PRIVATE applies to the target itself; INTERFACE passes
@@ -125,18 +152,21 @@ target_compile_definitions (
             {% endif %}"{{define}}"{% endfor %}
 )
 {%- endif %}
-{%- assign compilerOptions = "" | split: "" %}
-{%- if component.publicCompilerOptions and component.publicCompilerOptions.size > 0 %}
-  {%- assign compilerOptions = compilerOptions | concat: component.publicCompilerOptions %}
-{%- endif %}
-{%- if component.privateCompilerOptions and component.privateCompilerOptions.size > 0 %}
-  {%- assign compilerOptions = compilerOptions | concat: component.privateCompilerOptions %}
-{%- endif %}
+{%- assign compilerOptions = publicOptions | concat: privateOptions %}
 {%- if compilerOptions.size > 0 %}
 
 target_compile_options (
   {{nameDash}}-interface 
   INTERFACE{% for option in compilerOptions %}{% if forloop.first %} {% else %}
+            {% endif %}"{{option}}"{% endfor %}
+)
+{%- endif %}
+{%- assign linkerOptions = publicLinkerOptions | concat: privateLinkerOptions %}
+{%- if linkerOptions.size > 0 %}
+
+target_link_options (
+  {{nameDash}}-interface 
+  INTERFACE{% for option in linkerOptions %}{% if forloop.first %} {% else %}
             {% endif %}"{{option}}"{% endfor %}
 )
 {%- endif %}
@@ -259,26 +289,37 @@ target_compile_definitions (
           {% endif %}"{{define}}"{% endfor %}
 )
 {%- endif %}
-{%- if component.publicCompilerOptions and component.publicCompilerOptions.size > 0 %}
+{%- if publicOptions.size > 0 %}
 
 # Use PUBLIC to allow propagating the compile options to consumers of the
 # OBJECT library, which may cause conflicts with consumer-specific compile
 # options.
 target_compile_options (
   {{nameDash}}-{{objectsSuffix}}
-  PUBLIC{% for option in component.publicCompilerOptions %}{% if forloop.first %} {% else %}
+  PUBLIC{% for option in publicOptions %}{% if forloop.first %} {% else %}
           {% endif %}"{{option}}"{% endfor %}
 )
 {%- endif %}
-{%- if component.privateCompilerOptions and component.privateCompilerOptions.size > 0 %}
+{%- if privateOptions.size > 0 %}
 
 # Use PRIVATE to avoid propagating the compile options to consumers of the
 # OBJECT library, which may cause conflicts with consumer-specific compile
 # options.
 target_compile_options (
   {{nameDash}}-{{objectsSuffix}}
-  PRIVATE{% for option in component.publicCompilerOptions %}{% if forloop.first %} {% else %}
+  PRIVATE{% for option in privateOptions %}{% if forloop.first %} {% else %}
           {% endif %}"{{option}}"{% endfor %}
+)
+{%- endif %}
+{%- if publicLinkerOptions.size > 0 %}
+
+# Use PUBLIC to allow propagating the link options to consumers of the
+# OBJECT library. The private link options have no effect on it, since
+# it is not linked.
+target_link_options (
+  {{nameDash}}-{{objectsSuffix}}
+  PUBLIC{% for option in publicLinkerOptions %}{% if forloop.first %} {% else %}
+         {% endif %}"{{option}}"{% endfor %}
 )
 {%- endif %}
 {%- if component.dependencies and component.dependencies.size > 0 %}
@@ -395,26 +436,37 @@ target_compile_definitions (
           {% endif %}"{{define}}"{% endfor %}
 )
 {%- endif %}
-{%- if component.publicCompilerOptions and component.publicCompilerOptions.size > 0 %}
+{%- if publicOptions.size > 0 %}
 
 # Use PUBLIC to allow propagating the compile options to consumers of the
 # STATIC library, which may cause conflicts with consumer-specific compile
 # options.
 target_compile_options (
   {{nameDash}}-{{staticSuffix}}
-  PUBLIC{% for option in component.publicCompilerOptions %}{% if forloop.first %} {% else %}
+  PUBLIC{% for option in publicOptions %}{% if forloop.first %} {% else %}
           {% endif %}"{{option}}"{% endfor %}
 )
 {%- endif %}
-{%- if component.privateCompilerOptions and component.privateCompilerOptions.size > 0 %}
+{%- if privateOptions.size > 0 %}
 
 # Use PRIVATE to avoid propagating the compile options to consumers of the
 # STATIC library, which may cause conflicts with consumer-specific compile
 # options.
 target_compile_options (
   {{nameDash}}-{{staticSuffix}}
-  PRIVATE{% for option in component.publicCompilerOptions %}{% if forloop.first %} {% else %}
+  PRIVATE{% for option in privateOptions %}{% if forloop.first %} {% else %}
           {% endif %}"{{option}}"{% endfor %}
+)
+{%- endif %}
+{%- if publicLinkerOptions.size > 0 %}
+
+# Use PUBLIC to allow propagating the link options to consumers of the
+# STATIC library. The private link options have no effect on it, since
+# it is not linked.
+target_link_options (
+  {{nameDash}}-{{staticSuffix}}
+  PUBLIC{% for option in publicLinkerOptions %}{% if forloop.first %} {% else %}
+         {% endif %}"{{option}}"{% endfor %}
 )
 {%- endif %}
 {%- if component.dependencies and component.dependencies.size > 0 %}
