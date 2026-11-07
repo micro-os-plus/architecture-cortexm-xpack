@@ -1,6 +1,6 @@
 {
   "name": "@micro-os-plus/architecture-cortexm",
-  "version": "9.0.0-pre",
+  "version": "9.0.0",
   "description": "A source code library with the µOS++ Arm Cortex-M architecture",
   "keywords": [
     "xpack",
